@@ -17,7 +17,8 @@ import com.ar.tbz.services.Servicios;
 
 @RestController
 @RequestMapping("/legajo")
-@CrossOrigin(origins = { "https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
+@CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
+		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
 
 public class LegajoController {
 
@@ -27,33 +28,37 @@ public class LegajoController {
 	boolean testLocalhost = false;
 //	boolean testLocalhost = true;
 
-	
-	
-	// Test de datos prueba desde el Front End 
+	// Test de datos prueba desde el Front End
 	// -----------------------------------------------------------------------------------------
 	// Generar Autodiagnostico
 	@RequestMapping(value = "/autodiagnosticoTest", method = RequestMethod.POST, produces = "application/json")
 	public String crearAutodiagnostico(@RequestBody Test test) throws Exception {
 
 		System.out.println("Entra al proceso autodiagnostico " + new Date());
-	    String datos = test.getDatos() ;
+		String datos = test.getDatos();
 
 		// cambiar este mensaje por el de error si corresponde
 		return datos;
 	}
-	
-	
-	
-	
+
+	@RequestMapping(value = "/test", method = RequestMethod.POST, produces = "application/json")
+	public String test(@RequestBody Test test) throws Exception {
+
+		String datos = test.getDatos();
+
+		// cambiar este mensaje por el de error si corresponde
+		return datos;
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// recuperar legajo
 
 	@RequestMapping(value = "/empleado/{id}", method = RequestMethod.GET, produces = "application/json")
 
 	public Legajo showLegajo(@PathVariable Integer id, Model model) throws Exception {
-		
+
 		System.out.println("Entra al proceso Legajo " + new Date());
-		
+
 		Legajo legajo = new Legajo();
 
 		if (testLocalhost) {
@@ -67,7 +72,7 @@ public class LegajoController {
 		} else {
 			System.out.println("Entra al read base de datos " + new Date());
 
-			legajo = Servicios.recuperarDniLegajo(""+id);
+			legajo = Servicios.recuperarDniLegajo("" + id);
 
 			System.out.println("Sale del  read base de datos " + new Date());
 
@@ -80,27 +85,25 @@ public class LegajoController {
 
 	}
 
-	
 	// -----------------------------------------------------------------------------------------
 	// Generar Autodiagnostico
 	@RequestMapping(value = "/autodiagnostico", method = RequestMethod.POST, produces = "application/json")
 	public String crearAutodiagnostico(@RequestBody Resultado resultado) throws Exception {
-		int idAutodiagnostico = 0 ;
+		int idAutodiagnostico = 0;
 
 		try {
 			System.out.println("Entra al proceso autodiagnostico " + new Date());
-			
+
 			resultado.getLegajo().formatearLegajo();
 			Legajo legajo = resultado.getLegajo();
-			
-			Servicios.grabarAutoDiagnostico(resultado);			
+
+			Servicios.grabarAutoDiagnostico(resultado);
 			idAutodiagnostico = resultado.getLegajo().getIdAutodiagnostico();
-			
+
 //			Servicios.crearTransacciones(resultado);
-			
 
 			Servicios.crearMail(resultado);
-			
+
 //			Servicios.crearPDF(resultado);
 //			Servicios.crearQRCode(resultado);
 		} catch (Exception e) {
@@ -110,9 +113,8 @@ public class LegajoController {
 		}
 
 		// cambiar este mensaje por el de error si corresponde
-		return ""+idAutodiagnostico;
+		return "" + idAutodiagnostico;
 	}
-
 
 	// ---------------------------------------------------------------------------------------------
 	// Metodo usado para testear desde el Postman con ID
@@ -129,7 +131,7 @@ public class LegajoController {
 
 		// ------------------------------------ sacar se usa solo testing
 
-		System.out.println("Entra al proceso autodiagnostico/{id} " + new Date()+ "ID " + id);
+		System.out.println("Entra al proceso autodiagnostico/{id} " + new Date() + "ID " + id);
 
 		// Resultado resultado = new Resultado();
 
@@ -165,7 +167,6 @@ public class LegajoController {
 		 * 
 		 */
 
-
 		// boolean createResults = false ;
 		Resultado resultTest = null;
 		if (createResults) {
@@ -183,8 +184,7 @@ public class LegajoController {
 //		Servicios.crearPDF(resultado);
 //		Servicios.crearQRCode(resultado);
 
-		
-		//Servicios.envioMail(resultado);
+		// Servicios.envioMail(resultado);
 
 	}
 
@@ -238,11 +238,6 @@ public class LegajoController {
 
 	// ---------------------------------------------------------------------------------------------
 
-	
-	
-
-	
-	
 	// -------------------------------------------- createResultsText
 
 	private Resultado createResultsToText() {
