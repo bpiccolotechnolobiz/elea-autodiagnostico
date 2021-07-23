@@ -8,16 +8,20 @@ import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
 import com.ar.tbz.conexion.Conexion;
+import com.ar.tbz.domain.Autodiagnostico;
 import com.ar.tbz.domain.Legajo;
+import com.ar.tbz.domain.LugarAcceso;
 import com.ar.tbz.domain.Resultado;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
@@ -84,8 +88,7 @@ public class Servicios {
 //		  .routeParam("placeholder", "value")
 //		  .asJson();
 //	}
-	
-	
+
 	public static void crearQRCode(Resultado resultado) throws Exception {
 
 		// se usa para no recuperar de la tabla (false)
@@ -223,12 +226,11 @@ public class Servicios {
 		qrCode.close();
 
 	}
-	
+
 	public synchronized static List<String> recuperarPreguntas(Integer idAutodiagnostico) throws Exception {
 
 		System.out.println("Entra recuperar preguntas y respuestas según idAutodiagnostico");
-		
-		
+
 		Connection conn = null;
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
@@ -237,16 +239,17 @@ public class Servicios {
 		String preguntasRespuestas = "";
 		try {
 			conn = Conexion.generarConexion();
-			
-			String query = "SELECT A.descripcionPregunta, B.respuestaPregunta FROM preguntas A, respuestas B WHERE B.idPregunta=A.idPregunta AND B.idAutodiagnostico=" + idAutodiagnostico + " ORDER BY A.idPregunta ASC;";
+
+			String query = "SELECT A.descripcionPregunta, B.respuestaPregunta FROM preguntas A, respuestas B WHERE B.idPregunta=A.idPregunta AND B.idAutodiagnostico="
+					+ idAutodiagnostico + " ORDER BY A.idPregunta ASC;";
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				preguntasRespuestas = rs.getString("descripcionPregunta") + "," + rs.getString("respuestaPregunta");
 				listPregRtas.add(preguntasRespuestas);
 			}
-			
+
 		} catch (Exception e) {
 			throw new Exception(e);
 		} finally {
@@ -259,9 +262,95 @@ public class Servicios {
 				}
 			}
 		}
-		
+
 		return listPregRtas;
-		
+
+	}
+
+	// ------------------------------------------- lugares de acceso
+	public synchronized static List<LugarAcceso> recuperarLugaresDeAcceso() throws Exception {
+
+		System.out.println("Entra recupera Lugares de Acceso ");
+
+		List<LugarAcceso> listLugaresAcceso = new ArrayList<LugarAcceso>();
+		LugarAcceso lugarAcceso = null;
+
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+		boolean status = false;
+		try {
+
+			conn = Conexion.generarConexion();
+
+			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso";
+			pstm = conn.prepareStatement(query);
+			rs = pstm.executeQuery();
+			while (rs.next()) {
+				lugarAcceso = new LugarAcceso();
+				lugarAcceso.setIdLugarAcceso(rs.getInt("idLugarAcceso"));
+				lugarAcceso.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
+
+				listLugaresAcceso.add(lugarAcceso);
+			}
+
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					throw new Exception(e2);
+				}
+			}
+		}
+
+		return listLugaresAcceso;
+
+	} // end method recuperarLugaresDeAcceso
+
+	public synchronized static List<Autodiagnostico> buscarDiagnostico(Map<String, String> form) throws Exception {
+		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico where 1 = 1 "
+//				+ " fecha_autodiagnostico = ? and nroLegajo = ?"
+		;
+		StringBuilder sb = new StringBuilder(query);
+		Connection conn = null;
+		List<Autodiagnostico> resultado = new ArrayList<Autodiagnostico>();
+		try {
+			for (Map.Entry<String, String> entry : form.entrySet()) {
+				if (entry.getKey().equals("nroLegajo") && entry.getValue().equals("-1")) {
+					sb.append(" and " + entry.getKey() + " > 0 ");
+				} else {
+					sb.append(" and " + entry.getKey() + " = " + entry.getValue());
+				}
+			}
+
+			conn = Conexion.generarConexion();
+			PreparedStatement pstm = conn.prepareStatement(query);
+			ResultSet rs = pstm.executeQuery(sb.toString());
+			while (rs.next()) {
+				Autodiagnostico nuevoAutoD = new Autodiagnostico(rs.getInt(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(9), rs.getBoolean((10)));
+				resultado.add(nuevoAutoD);
+			}
+
+		} catch (SQLException e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					throw new Exception(e2);
+				}
+			}
+		}
+		return resultado;
 	}
 
 	public synchronized static String recuperarLugarDeAcceso(Integer idAcceso) throws Exception {
@@ -430,7 +519,7 @@ public class Servicios {
 			 */
 
 //			pstm = conn.prepareStatement(query);
-			pstm = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
+			pstm = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
 			pstm.setObject(1, resultado.getLegajo().getNroLegajo());
 			pstm.setObject(2, resultado.getLegajo().getDni());
@@ -546,8 +635,7 @@ public class Servicios {
 			// fecha_autodiagnostico = ?";
 			// query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico order by
 			// idAutodiagnostico desc ";
-			
-			
+
 			////////////////////////////////////////////////////////
 			// Recuperar el ID del autodiagnostico
 			int llave = 0;
@@ -556,11 +644,10 @@ public class Servicios {
 				// resultSet.getInt(numeroDeLaColumna) retorna el valor de una columna
 				llave = rsKeysAutodiag.getInt(1);
 			}
-			
+
 			idAutodiagnostico = llave;
 			resultado.getLegajo().setIdAutodiagnostico(idAutodiagnostico);
 			////////////////////////////////////////////////////////
-			
 
 //			query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico where  fecha_autodiagnostico = ? and nroLegajo = ?";
 //			pstm = conn.prepareStatement(query);
@@ -581,11 +668,10 @@ public class Servicios {
 			System.out.println("Id autodiagnostico " + idAutodiagnostico);
 
 			// actualizacion de la transaccion
-			
-			
+
 			// Grabar respuesta PANTALLA TEMPERATURA
 			query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
-			
+
 			pstm = conn.prepareStatement(query);
 
 			pstm.setObject(1, idAutodiagnostico);
@@ -594,7 +680,6 @@ public class Servicios {
 			pstm.executeUpdate();
 
 			System.out.println("Grabando respuesta temperatura: [" + query + "]");
-			
 
 			// Grabar respuestas PANTALLA SINTOMAS
 			StringTokenizer token = new StringTokenizer(resultado.getSintomas(), "@@");
@@ -624,7 +709,6 @@ public class Servicios {
 				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Sintomas ");
 			}
 
-			
 			// Grabar respuestas PANTALLA ANTECEDENTES
 			token = new StringTokenizer(resultado.getAntecedentes(), "@@");
 
@@ -680,9 +764,10 @@ public class Servicios {
 
 	/*
 	 * insert into [dbo].[autodiagnostico] (nroLegajo, dni, nombre, apellido,
-	 * telefono, empresa, emailLaboral, emailUsuario, estadoSintomas, estadoContactoEstrecho,
-	 * estadoAntecedentes, resultado, fecha_autodiagnostico, fecha_hasta_resultado,
-	 * comentario, modificadoPor, modificadoEn, idLugarAcceso) values (12345678,
+	 * telefono, empresa, emailLaboral, emailUsuario, estadoSintomas,
+	 * estadoContactoEstrecho, estadoAntecedentes, resultado, fecha_autodiagnostico,
+	 * fecha_hasta_resultado, comentario, modificadoPor, modificadoEn,
+	 * idLugarAcceso) values (12345678,
 	 * 12345678,'','','','','pepe@prueba.com',0,0,0,1,'2021-06-18T10:34:09','2021-06
 	 * -18T22:34:09', null,null,null,1)
 	 * 
