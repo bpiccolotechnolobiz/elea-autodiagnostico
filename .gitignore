@@ -5,7 +5,7 @@
 *.log
 
 
-./settings
+.settings/
 .project
 .classpath
 
