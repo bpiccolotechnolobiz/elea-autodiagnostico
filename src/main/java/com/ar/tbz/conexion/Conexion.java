@@ -11,13 +11,6 @@ import java.util.Properties;
 
 public class Conexion {
 	private static final String SERVER_NAME = "172.16.0.50";
-//	private static final String SERVER_NAME = "172.16.0.53";
-	private static final int PORT_NUMBER = 0;
-
-	private static final String USER_NAME = "";
-	private static final String PASSWORD = "";
-
-	public static final String DB_NAME = "";
 
 	public static Connection generarConexion() {
 
@@ -36,7 +29,8 @@ public class Conexion {
 			// PASSWORD);
 
 			Properties properties = new Properties();
-			properties.load(new FileInputStream(new File("/autodiagnostico/autodiagnostico-back.properties")));
+			properties.load(
+					new FileInputStream(new File("/aplicaciones/autodiagnostico/autodiagnostico-back.properties")));
 
 			String serverName = properties.getProperty("database.url");
 			String user = properties.getProperty("database.user");
