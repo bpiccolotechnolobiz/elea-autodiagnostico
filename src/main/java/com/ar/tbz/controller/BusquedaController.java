@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +20,8 @@ import com.ar.tbz.services.Servicios;
 public class BusquedaController {
 
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
-	public synchronized static List<Autodiagnostico> buscarDiagnostico(Map<String, String> form) throws Exception {
+	public synchronized static List<Autodiagnostico> buscarDiagnostico(@RequestBody Map<String, String> form)
+			throws Exception {
 		return Servicios.buscarDiagnostico(form);
 	}
 
