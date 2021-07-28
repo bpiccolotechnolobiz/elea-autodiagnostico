@@ -14,6 +14,7 @@ public class Autodiagnostico {
 	private String empresa;
 	private String mail;
 	private int idLugarAcceso;
+	private String descripcionLugarAcceso;
 
 	private boolean estadoSintomas;
 	private boolean estadoContactoEstrecho;
@@ -26,6 +27,31 @@ public class Autodiagnostico {
 	private Date modificadoEn;
 
 	public Autodiagnostico() {
+
+	}
+
+	public Autodiagnostico(int id, String legajo, String dni, String nombre, String apellido, String telefono,
+			int lugarAcceso, boolean sintomas, String mail, String empresa, boolean estadoContactoEstrecho,
+			boolean estadoAntecedentes, Date fecha_autodiagnostico, Date fecha_hasta_resultado, String comentario,
+			int modificadoPor, Date modificadoEn) {
+		idAutodiagnostico = id;
+//		version = vers;
+		nroLegajo = legajo;
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.telefono = telefono;
+		this.idLugarAcceso = lugarAcceso;
+		this.estadoSintomas = sintomas;
+		this.mail = mail;
+		this.empresa = empresa;
+		this.estadoContactoEstrecho = estadoContactoEstrecho;
+		this.estadoAntecedentes = estadoAntecedentes;
+		this.fecha_autodiagnostico = fecha_autodiagnostico;
+		this.fecha_hasta_resultado = fecha_hasta_resultado;
+		this.comentario = comentario;
+		this.modificadoPor = modificadoPor;
+		this.modificadoEn = modificadoEn;
 
 	}
 
@@ -194,6 +220,14 @@ public class Autodiagnostico {
 
 	public void setModificadoEn(Date modificadoEn) {
 		this.modificadoEn = modificadoEn;
+	}
+
+	public String getDescripcionLugarAcceso() {
+		return descripcionLugarAcceso;
+	}
+
+	public void setDescripcionLugarAcceso(String descripcionLugarAcceso) {
+		this.descripcionLugarAcceso = descripcionLugarAcceso;
 	}
 
 	@Override
