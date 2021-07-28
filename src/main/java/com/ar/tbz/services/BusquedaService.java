@@ -41,8 +41,10 @@ public class BusquedaService {
 			PreparedStatement pstm = conn.prepareStatement(query);
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
-				Autodiagnostico nuevoAutoD = new Autodiagnostico(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(9), rs.getBoolean((10)));
+				Autodiagnostico nuevoAutoD = new Autodiagnostico(rs.getInt("idAutodiagnostico"),
+						rs.getString("nroLegajo"), rs.getString("dni"), rs.getString("nombre"),
+						rs.getString("apellido"), rs.getString("telefono"), rs.getInt("idLugarAcceso"),
+						rs.getBoolean(("resultado")));
 				resultado.add(nuevoAutoD);
 			}
 
