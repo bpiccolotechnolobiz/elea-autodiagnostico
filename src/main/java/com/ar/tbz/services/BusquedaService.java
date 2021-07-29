@@ -38,14 +38,14 @@ public class BusquedaService {
 			}
 
 			conn = Conexion.generarConexion();
-			log.info("Query_statement: " + query);
+			log.info("Query_statement: " + sb.toString());
 			PreparedStatement pstm = conn.prepareStatement(sb.toString());
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
 				Autodiagnostico nuevoAutoD = new Autodiagnostico(rs.getInt("idAutodiagnostico"),
 						rs.getString("nroLegajo"), rs.getString("dni"), rs.getString("nombre"),
 						rs.getString("apellido"), rs.getString("telefono"), rs.getInt("idLugarAcceso"),
-						rs.getInt(("resultado")));
+						rs.getInt("resultado"));
 				nuevoAutoD.setEmpresa(rs.getString("empresa"));
 				nuevoAutoD.setEmailUsuario(rs.getString("emailUsuario"));
 				nuevoAutoD.setEmailLaboral(rs.getString("emailLaboral"));
@@ -58,7 +58,6 @@ public class BusquedaService {
 				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
 				nuevoAutoD.setModificadoEn(rs.getDate("modificadoEn"));
 				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
-				System.out.println(nuevoAutoD);
 				resultado.add(nuevoAutoD);
 			}
 

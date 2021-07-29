@@ -58,7 +58,7 @@ public class Autodiagnostico {
 	}
 
 	public Autodiagnostico(int id, String legajo, String dni, String nombre, String apellido, String telefono,
-			int lugarAcceso, int sintomas) {
+			int lugarAcceso, int resultado) {
 		idAutodiagnostico = id;
 //		version = vers;
 		nroLegajo = legajo;
@@ -67,7 +67,7 @@ public class Autodiagnostico {
 		this.apellido = apellido;
 		this.telefono = telefono;
 		this.idLugarAcceso = lugarAcceso;
-		this.estadoSintomas = sintomas;
+		this.resultado = resultado;
 
 	}
 
