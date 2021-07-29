@@ -12,7 +12,8 @@ public class Autodiagnostico {
 	private String apellido;
 	private String telefono;
 	private String empresa;
-	private String mail;
+	private String emailLaboral;
+	private String emailUsuario;
 	private int idLugarAcceso;
 	private String descripcionLugarAcceso;
 
@@ -31,9 +32,9 @@ public class Autodiagnostico {
 	}
 
 	public Autodiagnostico(int id, String legajo, String dni, String nombre, String apellido, String telefono,
-			int lugarAcceso, boolean sintomas, String mail, String empresa, boolean estadoContactoEstrecho,
-			boolean estadoAntecedentes, Date fecha_autodiagnostico, Date fecha_hasta_resultado, String comentario,
-			int modificadoPor, Date modificadoEn) {
+			int lugarAcceso, boolean sintomas, String emailUsuario, String emailLaboral, String empresa,
+			boolean estadoContactoEstrecho, boolean estadoAntecedentes, Date fecha_autodiagnostico,
+			Date fecha_hasta_resultado, String comentario, int modificadoPor, Date modificadoEn) {
 		idAutodiagnostico = id;
 //		version = vers;
 		nroLegajo = legajo;
@@ -43,7 +44,8 @@ public class Autodiagnostico {
 		this.telefono = telefono;
 		this.idLugarAcceso = lugarAcceso;
 		this.estadoSintomas = sintomas;
-		this.mail = mail;
+		this.emailUsuario = emailUsuario;
+		this.emailLaboral = emailLaboral;
 		this.empresa = empresa;
 		this.estadoContactoEstrecho = estadoContactoEstrecho;
 		this.estadoAntecedentes = estadoAntecedentes;
@@ -134,12 +136,20 @@ public class Autodiagnostico {
 		this.empresa = empresa;
 	}
 
-	public String getMail() {
-		return mail;
+	public String getEmailLaboral() {
+		return emailLaboral;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setEmailLaboral(String emailLaboral) {
+		this.emailLaboral = emailLaboral;
+	}
+
+	public String getEmailUsuario() {
+		return emailUsuario;
+	}
+
+	public void setEmailUsuario(String emailUsuario) {
+		this.emailUsuario = emailUsuario;
 	}
 
 	public int getIdLugarAcceso() {
@@ -234,11 +244,11 @@ public class Autodiagnostico {
 	public String toString() {
 		return "Legajo [idAutodiadnostico=" + idAutodiagnostico + ", version=" + version + ", nroLegajo=" + nroLegajo
 				+ ", dni=" + dni + ", nombre=" + nombre + ", apellido=" + apellido + ", telefono=" + telefono
-				+ ", empresa=" + empresa + ", mail=" + mail + ", idLugarAcceso=" + idLugarAcceso + ", estadoSintomas="
-				+ estadoSintomas + ", estadoContactoEstrecho=" + estadoContactoEstrecho + ", estadoAntecedentes="
-				+ estadoAntecedentes + ", resultado=" + resultado + ", fecha_autodiagnostico=" + fecha_autodiagnostico
-				+ ", fecha_hasta_resultado=" + fecha_hasta_resultado + ", comentario=" + comentario + ", modificadoPor="
-				+ modificadoPor + ", modificadoEn=" + modificadoEn + "]";
+				+ ", empresa=" + empresa + ", emailUsuario=" + emailUsuario + ", idLugarAcceso=" + idLugarAcceso
+				+ ", estadoSintomas=" + estadoSintomas + ", estadoContactoEstrecho=" + estadoContactoEstrecho
+				+ ", estadoAntecedentes=" + estadoAntecedentes + ", resultado=" + resultado + ", fecha_autodiagnostico="
+				+ fecha_autodiagnostico + ", fecha_hasta_resultado=" + fecha_hasta_resultado + ", comentario="
+				+ comentario + ", modificadoPor=" + modificadoPor + ", modificadoEn=" + modificadoEn + "]";
 	}
 
 	/*

@@ -47,7 +47,8 @@ public class BusquedaService {
 						rs.getString("apellido"), rs.getString("telefono"), rs.getInt("idLugarAcceso"),
 						rs.getBoolean(("resultado")));
 				nuevoAutoD.setEmpresa(rs.getString("empresa"));
-				nuevoAutoD.setMail(rs.getString("mail"));
+				nuevoAutoD.setEmailUsuario(rs.getString("emailUsuario"));
+				nuevoAutoD.setEmailLaboral(rs.getString("emailLaboral"));
 				nuevoAutoD.setEstadoContactoEstrecho(rs.getBoolean("estado_contacto_estrecho"));
 				nuevoAutoD.setEstadoAntecedentes(rs.getBoolean("antecedentes"));
 				nuevoAutoD.setFecha_autodiagnostico(rs.getDate("fecha_autodiagnostico"));
