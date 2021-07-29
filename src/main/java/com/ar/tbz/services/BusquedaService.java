@@ -49,14 +49,16 @@ public class BusquedaService {
 				nuevoAutoD.setEmpresa(rs.getString("empresa"));
 				nuevoAutoD.setEmailUsuario(rs.getString("emailUsuario"));
 				nuevoAutoD.setEmailLaboral(rs.getString("emailLaboral"));
-				nuevoAutoD.setEstadoContactoEstrecho(rs.getBoolean("estado_contacto_estrecho"));
-				nuevoAutoD.setEstadoAntecedentes(rs.getBoolean("antecedentes"));
+				nuevoAutoD.setEstadoSintomas(rs.getBoolean("estadoSintomas"));
+				nuevoAutoD.setEstadoContactoEstrecho(rs.getBoolean("estadoContactoEstrecho"));
+				nuevoAutoD.setEstadoAntecedentes(rs.getBoolean("estadoAntecedentes"));
 				nuevoAutoD.setFecha_autodiagnostico(rs.getDate("fecha_autodiagnostico"));
 				nuevoAutoD.setFecha_hasta_resultado(rs.getDate("fecha_hasta_resultado"));
 				nuevoAutoD.setComentario(rs.getString("comentario"));
 				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
 				nuevoAutoD.setModificadoEn(rs.getDate("modificadoEn"));
 				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
+				System.out.println(nuevoAutoD);
 				resultado.add(nuevoAutoD);
 			}
 
