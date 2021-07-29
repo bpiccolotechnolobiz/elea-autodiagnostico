@@ -32,9 +32,9 @@ public class BusquedaService {
 					if (entry.getKey().equals("nroLegajo") && entry.getValue().equals("-1")) {
 						sb.append(" and " + entry.getKey() + " > 0 ");
 					} else if (entry.getKey().equals("fecha_autodiagnostico")) {
-						sb.append(" and " + entry.getKey() + " between " + entry.getValue());
+						sb.append(" and " + entry.getKey() + " >= " + entry.getValue());
 					} else if (entry.getKey().equals("fecha_autodiagnostico_hasta")) {
-						sb.append(" and " + entry.getValue());
+						sb.append(" and fecha_autodiagnostico " + " <= " + entry.getValue());
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
