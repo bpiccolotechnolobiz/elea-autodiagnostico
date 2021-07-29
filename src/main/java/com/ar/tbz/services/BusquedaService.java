@@ -32,7 +32,7 @@ public class BusquedaService {
 					if (entry.getKey().equals("nroLegajo") && entry.getValue().equals("-1")) {
 						sb.append(" and " + entry.getKey() + " > 0 ");
 					} else {
-						sb.append(" and " + entry.getKey() + " = " + entry.getValue());
+						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
 				}
 			}
