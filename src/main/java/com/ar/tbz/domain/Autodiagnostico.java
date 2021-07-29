@@ -17,10 +17,10 @@ public class Autodiagnostico {
 	private int idLugarAcceso;
 	private String descripcionLugarAcceso;
 
-	private boolean estadoSintomas;
-	private boolean estadoContactoEstrecho;
-	private boolean estadoAntecedentes;
-	private boolean resultado;
+	private int estadoSintomas;
+	private int estadoContactoEstrecho;
+	private int estadoAntecedentes;
+	private int resultado;
 	private Date fecha_autodiagnostico;
 	private Date fecha_hasta_resultado;
 	private String comentario;
@@ -32,9 +32,9 @@ public class Autodiagnostico {
 	}
 
 	public Autodiagnostico(int id, String legajo, String dni, String nombre, String apellido, String telefono,
-			int lugarAcceso, boolean sintomas, String emailUsuario, String emailLaboral, String empresa,
-			boolean estadoContactoEstrecho, boolean estadoAntecedentes, Date fecha_autodiagnostico,
-			Date fecha_hasta_resultado, String comentario, int modificadoPor, Date modificadoEn) {
+			int lugarAcceso, int sintomas, String emailUsuario, String emailLaboral, String empresa,
+			int estadoContactoEstrecho, int estadoAntecedentes, Date fecha_autodiagnostico, Date fecha_hasta_resultado,
+			String comentario, int modificadoPor, Date modificadoEn) {
 		idAutodiagnostico = id;
 //		version = vers;
 		nroLegajo = legajo;
@@ -58,7 +58,7 @@ public class Autodiagnostico {
 	}
 
 	public Autodiagnostico(int id, String legajo, String dni, String nombre, String apellido, String telefono,
-			int lugarAcceso, boolean sintomas) {
+			int lugarAcceso, int sintomas) {
 		idAutodiagnostico = id;
 //		version = vers;
 		nroLegajo = legajo;
@@ -160,35 +160,35 @@ public class Autodiagnostico {
 		this.idLugarAcceso = idLugarAcceso;
 	}
 
-	public boolean isEstadoSintomas() {
+	public int getEstadoSintomas() {
 		return estadoSintomas;
 	}
 
-	public void setEstadoSintomas(boolean estadoSintomas) {
+	public void setEstadoSintomas(int estadoSintomas) {
 		this.estadoSintomas = estadoSintomas;
 	}
 
-	public boolean isEstadoContactoEstrecho() {
+	public int getEstadoContactoEstrecho() {
 		return estadoContactoEstrecho;
 	}
 
-	public void setEstadoContactoEstrecho(boolean estadoContactoEstrecho) {
+	public void setEstadoContactoEstrecho(int estadoContactoEstrecho) {
 		this.estadoContactoEstrecho = estadoContactoEstrecho;
 	}
 
-	public boolean isEstadoAntecedentes() {
+	public int getEstadoAntecedentes() {
 		return estadoAntecedentes;
 	}
 
-	public void setEstadoAntecedentes(boolean estadoAntecedentes) {
+	public void setEstadoAntecedentes(int estadoAntecedentes) {
 		this.estadoAntecedentes = estadoAntecedentes;
 	}
 
-	public boolean isResultado() {
+	public int getResultado() {
 		return resultado;
 	}
 
-	public void setResultado(boolean resultado) {
+	public void setResultado(int resultado) {
 		this.resultado = resultado;
 	}
 

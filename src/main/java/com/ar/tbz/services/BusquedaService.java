@@ -45,13 +45,13 @@ public class BusquedaService {
 				Autodiagnostico nuevoAutoD = new Autodiagnostico(rs.getInt("idAutodiagnostico"),
 						rs.getString("nroLegajo"), rs.getString("dni"), rs.getString("nombre"),
 						rs.getString("apellido"), rs.getString("telefono"), rs.getInt("idLugarAcceso"),
-						rs.getBoolean(("resultado")));
+						rs.getInt(("resultado")));
 				nuevoAutoD.setEmpresa(rs.getString("empresa"));
 				nuevoAutoD.setEmailUsuario(rs.getString("emailUsuario"));
 				nuevoAutoD.setEmailLaboral(rs.getString("emailLaboral"));
-				nuevoAutoD.setEstadoSintomas(rs.getBoolean("estadoSintomas"));
-				nuevoAutoD.setEstadoContactoEstrecho(rs.getBoolean("estadoContactoEstrecho"));
-				nuevoAutoD.setEstadoAntecedentes(rs.getBoolean("estadoAntecedentes"));
+				nuevoAutoD.setEstadoSintomas(rs.getInt("estadoSintomas"));
+				nuevoAutoD.setEstadoContactoEstrecho(rs.getInt("estadoContactoEstrecho"));
+				nuevoAutoD.setEstadoAntecedentes(rs.getInt("estadoAntecedentes"));
 				nuevoAutoD.setFecha_autodiagnostico(rs.getDate("fecha_autodiagnostico"));
 				nuevoAutoD.setFecha_hasta_resultado(rs.getDate("fecha_hasta_resultado"));
 				nuevoAutoD.setComentario(rs.getString("comentario"));
