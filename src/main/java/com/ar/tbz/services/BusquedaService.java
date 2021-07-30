@@ -20,9 +20,10 @@ public class BusquedaService {
 
 	private static Log log = LogFactory.getLog(BusquedaService.class);
 
-	public List<Autodiagnostico> buscarDiagnostico(Map<String, String> form) throws Exception {
+	public List<Autodiagnostico> buscarDiagnostico(Map<String, String> form, String min, String max) throws Exception {
 		String query = "SELECT a.*, l.* from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a, ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso l "
-				+ "  where 1 = 1 " + " and a.idLugarAcceso = l.idLugarAcceso ";
+				+ "  where 1=1 and a.idLugarAcceso = l.idLugarAcceso ";
+		// ROWNUM BETWEEN " + min + " AND " + max +
 		StringBuilder sb = new StringBuilder(query);
 		Connection conn = null;
 		List<Autodiagnostico> resultado = new ArrayList<Autodiagnostico>();
@@ -34,7 +35,7 @@ public class BusquedaService {
 					} else if (entry.getKey().equals("fecha_autodiagnostico")) {
 						sb.append(" and " + entry.getKey() + " >= " + entry.getValue());
 					} else if (entry.getKey().equals("fecha_autodiagnostico_hasta")) {
-						sb.append(" and fecha_autodiagnostico " + " <= " + entry.getValue());
+						sb.append(" and fecha_autodiagnostico <= " + entry.getValue());
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
@@ -56,11 +57,11 @@ public class BusquedaService {
 				nuevoAutoD.setEstadoSintomas(rs.getInt("estadoSintomas"));
 				nuevoAutoD.setEstadoContactoEstrecho(rs.getInt("estadoContactoEstrecho"));
 				nuevoAutoD.setEstadoAntecedentes(rs.getInt("estadoAntecedentes"));
-				nuevoAutoD.setFecha_autodiagnostico(rs.getDate("fecha_autodiagnostico"));
-				nuevoAutoD.setFecha_hasta_resultado(rs.getDate("fecha_hasta_resultado"));
+				nuevoAutoD.setFecha_autodiagnostico(rs.getTimestamp("fecha_autodiagnostico"));
+				nuevoAutoD.setFecha_hasta_resultado(rs.getTimestamp("fecha_hasta_resultado"));
 				nuevoAutoD.setComentario(rs.getString("comentario"));
 				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
-				nuevoAutoD.setModificadoEn(rs.getDate("modificadoEn"));
+				nuevoAutoD.setModificadoEn(rs.getTimestamp("modificadoEn"));
 				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
 				resultado.add(nuevoAutoD);
 			}

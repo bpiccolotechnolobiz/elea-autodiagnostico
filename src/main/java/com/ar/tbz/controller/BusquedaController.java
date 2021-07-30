@@ -19,6 +19,7 @@ import com.ar.tbz.services.BusquedaService;
 
 public class BusquedaController {
 
+	private static final int ROWS_PER_PAGE = 3500;
 	@Autowired
 	BusquedaService busquedaService;
 
@@ -26,7 +27,10 @@ public class BusquedaController {
 	public List<Autodiagnostico> buscarDiagnostico(@RequestParam Map<String, String> form, @RequestParam Integer pagina)
 			throws Exception {
 		System.out.println(pagina);
-		return busquedaService.buscarDiagnostico(form);
+		int comienzo = Integer.valueOf(pagina);
+		String min = String.valueOf((comienzo - 1) * ROWS_PER_PAGE);
+		String max = String.valueOf(comienzo * ROWS_PER_PAGE);
+		return busquedaService.buscarDiagnostico(form, min, max);
 	}
 
 }
