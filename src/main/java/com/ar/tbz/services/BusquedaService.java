@@ -36,6 +36,8 @@ public class BusquedaService {
 						sb.append(" and " + entry.getKey() + " >= " + entry.getValue());
 					} else if (entry.getKey().equals("fecha_autodiagnostico_hasta")) {
 						sb.append(" and fecha_autodiagnostico <= " + entry.getValue());
+					} else if (entry.getKey().equals("apellido")) {
+						sb.append(" and " + entry.getKey() + " LIKE '%" + entry.getValue() + "%' COLLATE Latin1_general_CI_AI");
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
