@@ -95,10 +95,10 @@ public class BusquedaService {
 		ResultSet rs = pstm.executeQuery();
 		while (rs.next()) {
 			Respuesta respuesta = new Respuesta();
-			respuesta.setIdAutodiagnostico(rs.getInt("r.idAutodiagnostico"));
-			respuesta.setIdPregunta(rs.getInt("r.idPregunta"));
-			respuesta.setRespuestaPregunta(rs.getString("r.respuestaPregunta"));
-			respuesta.setTextoPregunta(rs.getString("p.descripcionPregunta"));
+			respuesta.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
+			respuesta.setIdPregunta(rs.getInt("idPregunta"));
+			respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
+			respuesta.setTextoPregunta(rs.getString("descripcionPregunta"));
 			respuestas.add(respuesta);
 		}
 
