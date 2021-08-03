@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Autodiagnostico;
+import com.ar.tbz.domain.Respuesta;
 
 @Service
 public class BusquedaService {
@@ -37,7 +38,8 @@ public class BusquedaService {
 					} else if (entry.getKey().equals("fecha_autodiagnostico_hasta")) {
 						sb.append(" and fecha_autodiagnostico <= " + entry.getValue());
 					} else if (entry.getKey().equals("apellido")) {
-						sb.append(" and " + entry.getKey() + " LIKE '%" + entry.getValue() + "%' COLLATE Latin1_general_CI_AI");
+						sb.append(" and " + entry.getKey() + " LIKE '%" + entry.getValue()
+								+ "%' COLLATE Latin1_general_CI_AI");
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
@@ -81,5 +83,26 @@ public class BusquedaService {
 			}
 		}
 		return resultado;
+	}
+
+	public List<Respuesta> buscarRespuestas(Integer idAutodiagnostico) throws SQLException {
+		String query = "SELECT r.*, p.* from ELEA_AUTODIAGNOSTICO.dbo.respuestas r, ELEA_AUTODIAGNOSTICO.dbo.preguntas p "
+				+ "  where r.idPregunta = p.idPregunta and r.idAutodiagnostico = ? order by r.idPregunta";
+		List<Respuesta> respuestas = new ArrayList<Respuesta>();
+		Connection conn = Conexion.generarConexion();
+		PreparedStatement pstm = conn.prepareStatement(query);
+		pstm.setInt(1, idAutodiagnostico);
+		ResultSet rs = pstm.executeQuery();
+		while (rs.next()) {
+			Respuesta respuesta = new Respuesta();
+			respuesta.setIdAutodiagnostico(rs.getInt("r.idAutodiagnostico"));
+			respuesta.setIdPregunta(rs.getInt("r.idPregunta"));
+			respuesta.setRespuestaPregunta(rs.getString("r.respuestaPregunta"));
+			respuesta.setTextoPregunta(rs.getString("p.descripcionPregunta"));
+			respuestas.add(respuesta);
+		}
+
+		conn.close();
+		return respuestas;
 	}
 }

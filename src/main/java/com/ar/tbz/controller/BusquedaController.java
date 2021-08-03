@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.Autodiagnostico;
+import com.ar.tbz.domain.Respuesta;
 import com.ar.tbz.services.BusquedaService;
 
 @RestController
@@ -26,11 +27,15 @@ public class BusquedaController {
 	@GetMapping(value = "/buscar", produces = "application/json")
 	public List<Autodiagnostico> buscarDiagnostico(@RequestParam Map<String, String> form, @RequestParam Integer pagina)
 			throws Exception {
-		System.out.println(pagina);
 		int comienzo = Integer.valueOf(pagina);
 		String min = String.valueOf((comienzo - 1) * ROWS_PER_PAGE);
 		String max = String.valueOf(comienzo * ROWS_PER_PAGE);
 		return busquedaService.buscarDiagnostico(form, min, max);
+	}
+
+	@GetMapping(value = "/respuestas", produces = "application/json")
+	public List<Respuesta> getRespuestas(@RequestParam Integer idAutodiagnostico) throws Exception {
+		return busquedaService.buscarRespuestas(idAutodiagnostico);
 	}
 
 }
