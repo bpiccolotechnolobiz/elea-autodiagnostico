@@ -1,11 +1,10 @@
 package com.ar.tbz.services;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -19,6 +18,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
 
@@ -29,22 +29,31 @@ public class Mail {
 		System.out.println("Enviando mail");
 
 		// Sender's email ID needs to be mentioned
-		String from = "test.technolobiz@gmail.com";
-		String password = "test.0321";
+//		String from = "test.technolobiz@gmail.com";
+//		String password = "test.0321";
+
+		Properties propertiesFile = new Properties();
+		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
 
 		// Recipient's email ID needs to be mentioned.
 		String to = resultado.getLegajo().getEmailUsuario();
-		String to2 = "consultorio.medico@elea.com";
+//		String to2 = "consultorio.medico@elea.com";
+		String to2 = propertiesFile.getProperty("email.to");
 
 		// Assuming you are sending email from through gmails smtp
-		String host = "smtp.gmail.com";
+//		String host = "smtp.gmail.com";
+
+		String from = propertiesFile.getProperty("email.from");
+		String password = "";
+		// Assuming you are sending email from through gmails smtp
 
 		// Get system properties
 		Properties properties = System.getProperties();
 
 		// Setup mail server
-		properties.put("mail.smtp.host", host);
-		properties.put("mail.smtp.port", "465");
+		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
+//		properties.put("mail.smtp.port", "465");
+		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
 		properties.put("mail.smtp.ssl.enable", "true");
 		properties.put("mail.smtp.auth", "true");
 
@@ -80,53 +89,51 @@ public class Mail {
 			} else {
 				resultadoLeyenda = "No habilitado";
 			}
-			message.setSubject(resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido() + " - Resultado de Autodiagnóstico: " + resultadoLeyenda);
-			
+			message.setSubject(resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido()
+					+ " - Resultado de Autodiagnóstico: " + resultadoLeyenda);
+
 			// Hora del envio
 			message.setSentDate(new Date());
-			
 
 			// -------------------------------------------PREPARANDO CUERPO DEL MAIL
 			Multipart multipart = new MimeMultipart();
-			
+
 			// Imagenes
 //			String rutaImgElea = "..\\..\\..\\..\\..\\..\\..\\img\\elea-logo.png";
 //			String rutaImgTechnolobiz = "..\\..\\..\\..\\..\\..\\..\\img\\TechnoloBiz-logo.png";
-			
+
 			// Url del directorio donde estan las imagenes
 			String urlImagenes = "..\\\\..\\\\..\\\\..\\\\..\\\\..\\\\..\\\\img";
 			File directorio = new File(urlImagenes);
-			
+
 			// Obtener los nombres de las imagenes en el directorio
 			String[] imagenesDirectorio = directorio.list();
 
 			// Now set the actual message
 			cuerpoMail = crearCuerpoMailParaUsuario(resultado);
 //			message.setContent(cuerpoMail, "text/html");
-			
+
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
 			mimeBodyPart.setContent(cuerpoMail, "text/html");
-			
+
 			// Validar que el directorio si tenga las imagenes
 			if (imagenesDirectorio != null) {
-			    for (int i = 0; i < imagenesDirectorio.length; i++) {
-			 
-			    	MimeBodyPart imagePart = new MimeBodyPart();
-			    	imagePart.setHeader("Content-ID", "<"
-			    						+ imagenesDirectorio[i] + ">");
-			    	imagePart.setDisposition(MimeBodyPart.INLINE);
-			    	imagePart.attachFile(urlImagenes
-			    				+ imagenesDirectorio[i]);
-			    	multipart.addBodyPart(imagePart);
-			    }
+				for (int i = 0; i < imagenesDirectorio.length; i++) {
+
+					MimeBodyPart imagePart = new MimeBodyPart();
+					imagePart.setHeader("Content-ID", "<" + imagenesDirectorio[i] + ">");
+					imagePart.setDisposition(MimeBodyPart.INLINE);
+					imagePart.attachFile(urlImagenes + imagenesDirectorio[i]);
+					multipart.addBodyPart(imagePart);
+				}
 			} else {
 				System.out.println("No hay imagenes en el directorio");
 			}
-			
+
 			// Agregar la parte del mensaje HTML al multiPart
 			multipart.addBodyPart(mimeBodyPart);
-			
+
 			// Agregar el multipart al cuerpo del mensaje
 			message.setContent(multipart);
 
@@ -135,11 +142,12 @@ public class Mail {
 			// Send message
 			Transport.send(message);
 			System.out.println("Mail enviado a Usuario");
-			
+
 			// Enviando al Médico en caso No habilitado
 			if (!resultado.isResultado()) {
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(to2));
-				cuerpoMail = crearCuerpoMailParaMedico(resultado);
+//				cuerpoMail = crearCuerpoMailParaMedico(resultado);
+				cuerpoMail = crearCuerpoMailParaUsuario(resultado);
 				message.setContent(cuerpoMail, "text/html");
 
 				System.out.println("sending...");
@@ -157,10 +165,11 @@ public class Mail {
 	// MAIL PARA USUARIO
 	public static String crearCuerpoMailParaUsuario(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
-		
+
 		StringBuffer cuerpoMail = new StringBuffer();
-		
-		cuerpoMail.append("<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
+
+		cuerpoMail.append(
+				"<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
 
 		// Agregando header
 		cuerpoMail.append(headerMail());
@@ -174,13 +183,13 @@ public class Mail {
 		String estadoSintomasLeyenda = "";
 		String estadoContactoEstrechoLeyenda = "";
 		String estadoAntecedentesLeyenda = "";
-		
+
 		if (resultado.isResultado()) {
 			resultadoLeyenda = "<strong>Habilitado</strong>";
 		} else {
 			resultadoLeyenda = "<strong>No Habilitado</strong>";
 		}
-		
+
 		if (resultado.isEstadoSintomas()) {
 			estadoSintomasLeyenda = "padece síntomas";
 		} else {
@@ -198,24 +207,27 @@ public class Mail {
 		} else {
 			estadoAntecedentesLeyenda = "sin antecedentes médicos";
 		}
-		
-		cuerpoMail.append("<p style=\"margin-bottom: 0;\">Su resultado ha sido " + resultadoLeyenda + 
-					  " debido a que usted " + estadoSintomasLeyenda +  " y " + estadoContactoEstrechoLeyenda + ".</p>");
-		cuerpoMail.append("<p>A modo informativo, usted es una persona " + estadoAntecedentesLeyenda + " aunque lo previamente mencionado no impacta de ningún modo en el resultado.</p>");
+
+		cuerpoMail.append("<p style=\"margin-bottom: 0;\">Su resultado ha sido " + resultadoLeyenda
+				+ " debido a que usted " + estadoSintomasLeyenda + " y " + estadoContactoEstrechoLeyenda + ".</p>");
+		cuerpoMail.append("<p>A modo informativo, usted es una persona " + estadoAntecedentesLeyenda
+				+ " aunque lo previamente mencionado no impacta de ningún modo en el resultado.</p>");
 
 		cuerpoMail.append("<p>Esta es la declaración jurada que usted presentó:</p>");
 
 		cuerpoMail.append(tablaPreguntasRespuestasMail(resultado));
 		// fin informe
-		
+
 		cuerpoMail.append("<br>");
-		
-		// Habilitado: QR	-	No habilitado: Contacto médico
+
+		// Habilitado: QR - No habilitado: Contacto médico
 		if (resultado.isResultado()) {
-			cuerpoMail.append("<p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n" + 
-					"    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+			cuerpoMail.append(
+					"<p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
+							+ "    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		} else {
-			cuerpoMail.append("<p>Usted no está habilitado para concurrir al trabajo. Por favor, comuníquese con Servicio Médico por teléfono o Whatsapp al 011-3867-3669.</p>");
+			cuerpoMail.append(
+					"<p>Usted no está habilitado para concurrir al trabajo. Por favor, comuníquese con Servicio Médico por teléfono o Whatsapp al 011-3867-3669.</p>");
 		}
 
 		// Pie del mail
@@ -232,10 +244,11 @@ public class Mail {
 	// MAIL PARA MEDICO
 	public static String crearCuerpoMailParaMedico(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
-		
+
 		StringBuffer cuerpoMail = new StringBuffer();
 
-		cuerpoMail.append("<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
+		cuerpoMail.append(
+				"<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
 
 		// Agregando estilos
 //		cuerpoMail += stylesMail();
@@ -252,31 +265,23 @@ public class Mail {
 				+ " cuya información es:</p>");
 
 		cuerpoMail.append("<ul style=\"margin-top: .5em;\">");
-		
+
 		if (!legajo.getNroLegajo().equals("0")) {
-			cuerpoMail.append("<li aria-level=\"1\">\r\n" +
-					"        <strong>Número de legajo:</strong> "+ legajo.getNroLegajo() + "\r\n" 
-					+ "    </li>\r\n" 
-					+ "    <li aria-level=\"1\">\r\n"
-					+ "        <strong>Categoría:</strong> Empleado\r\n" 
-					+ "    </li>");
+			cuerpoMail.append(
+
+					"<li aria-level=\"1\">\r\n" + "        <strong>Número de legajo:</strong> " + legajo.getNroLegajo()
+							+ "\r\n" + "    </li>\r\n" + "    <li aria-level=\"1\">\r\n"
+							+ "        <strong>Categoría:</strong> Empleado\r\n" + "    </li>");
 		} else {
-			cuerpoMail.append("<li aria-level=\"1\">\r\n" 
-					+ "        <strong>Categoría:</strong> Visitante Externo\r\n"
-					+ "    </li>\r\n" 
-					+ "    <li aria-level=\"1\">\r\n" 
-					+ "        <strong>Empresa:</strong> " + legajo.getEmpresa() + "\r\n" 
-					+ "    </li>");
+			cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>Categoría:</strong> Visitante Externo\r\n"
+					+ "    </li>\r\n" + "    <li aria-level=\"1\">\r\n" + "        <strong>Empresa:</strong> "
+					+ legajo.getEmpresa() + "\r\n" + "    </li>");
 		}
 
-		cuerpoMail.append("<li aria-level=\"1\">\r\n" 
-				+ "        <strong>DNI:</strong> " + legajo.getDni() + "\r\n"
-				+ "    </li>\r\n" 
-				+ "    <li aria-level=\"1\">\r\n" 
-				+ "        <strong>Teléfono:</strong> " + legajo.getTelefono() + "\r\n" 
-				+ "    </li>\r\n" + "    <li aria-level=\"1\">\r\n"
-				+ "        <strong>Correo electrónico:</strong> " + legajo.getEmailUsuario() + "\r\n" 
-				+ "    </li>");
+		cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>DNI:</strong> " + legajo.getDni() + "\r\n"
+				+ "    </li>\r\n" + "    <li aria-level=\"1\">\r\n" + "        <strong>Teléfono:</strong> "
+				+ legajo.getTelefono() + "\r\n" + "    </li>\r\n" + "    <li aria-level=\"1\">\r\n"
+				+ "        <strong>Correo electrónico:</strong> " + legajo.getEmailUsuario() + "\r\n" + "    </li>");
 
 		String lugarAccesoStr = "";
 		try {
@@ -284,20 +289,19 @@ public class Mail {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		cuerpoMail.append("<li aria-level=\"1\">\r\n" 
-				+ "        <strong>Lugar de acceso:</strong> " + lugarAccesoStr + "\r\n" 
-				+ "    </li>");
+		cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>Lugar de acceso:</strong> " + lugarAccesoStr
+				+ "\r\n" + "    </li>");
 
 		String fechaAutodiagnostico = formatearFecha(resultado.getFecha_autodiagnostico());
 		String fechaHastaResultado = formatearFecha(resultado.getFecha_hasta_resultado());
-		
-		cuerpoMail.append("<li aria-level=\"1\">\r\n" 
-				+ "        <strong>Fecha de autodiagnóstico:</strong> " + fechaAutodiagnostico + "\r\n" 
-				+ "    </li>\r\n" 
-				+ "    <li aria-level=\"1\">\r\n"
-				+ "        <strong>Fecha hasta de no habilitación:</strong> " + fechaHastaResultado + "\r\n" 
-				+ "    </li>\r\n" 
-				+ "</ul>");
+
+		cuerpoMail.append(
+				"<li aria-level=\"1\" style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:24px>\r\n"
+						+ "        <strong>Fecha de autodiagnóstico:</strong> " + fechaAutodiagnostico + "\r\n"
+						+ "    </li>\r\n"
+						+ "    <li aria-level=\"1\" style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:24px>\r\n"
+						+ "        <strong>Fecha hasta de no habilitación:</strong> " + fechaHastaResultado + "\r\n"
+						+ "    </li>\r\n" + "</ul>");
 		// fin datos del usuario
 
 		// Informar si tiene sintomas y/o contacto estrecho
@@ -312,7 +316,8 @@ public class Mail {
 		}
 		cuerpoMail.append(" por lo tanto su resultado es <strong>No Habilitado</strong>.</p>");
 
-		cuerpoMail.append("<p>A continuación se presenta la declaración jurada que ingresó el usuario. Por supuesto esto se encuentra correctamente almacenado en la base de datos. Los datos son:</p>");
+		cuerpoMail.append(
+				"<p>A continuación se presenta la declaración jurada que ingresó el usuario. Por supuesto esto se encuentra correctamente almacenado en la base de datos. Los datos son:</p>");
 
 		cuerpoMail.append(tablaPreguntasRespuestasMail(resultado));
 		// fin informe
@@ -338,10 +343,8 @@ public class Mail {
 	// FOOTER
 	private static String footerMail() {
 		return "<br>\r\n" + "    <p>Este correo es automático, por favor no responder.</p>\r\n"
-				+ "    <p style=\"margin-top: 0;\">Gracias.<br>\r\n" 
-				+ "        Saludos.<br>\r\n" 
-				+ "        APP - Autodiagnóstico.<p>"
-				+ "    <div style=\"text-align:center;\">\r\n"
+				+ "    <p style=\"margin-top: 0;\">Gracias.<br>\r\n" + "        Saludos.<br>\r\n"
+				+ "        APP - Autodiagnóstico.<p>" + "    <div style=\"text-align:center;\">\r\n"
 				+ "        <div style=\"text-align:left;\"><img style=\"width:25%;max-width:175px;\" src=\"http://34.239.14.244/assets/elea-logo-v2@2x.png\" alt=\"elea-logo\"></div>\r\n"
 				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
 				+ "    </div>";
@@ -385,13 +388,14 @@ public class Mail {
 
 		return tabla;
 	}
-	
+
 	private static String formatearFecha(String fecha) {
 		String[] fechaSpliteadaDiaHora = fecha.split("T");
 		String[] diaSpliteado = fechaSpliteadaDiaHora[0].split("-");
-		
-		String fechaFormateada = diaSpliteado[2] + "/" + diaSpliteado[1] + "/" + diaSpliteado[0] + " " + fechaSpliteadaDiaHora[1];		
-		
+
+		String fechaFormateada = diaSpliteado[2] + "/" + diaSpliteado[1] + "/" + diaSpliteado[0] + " "
+				+ fechaSpliteadaDiaHora[1];
+
 		return fechaFormateada;
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Properties;
 
 public class Conexion {
 	private static final String SERVER_NAME = "172.16.0.50";
+	public static final String BACKEND_PROPERTIES_FILE = "/aplicaciones/autodiagnostico/autodiagnostico-back.properties";
 
 	public static Connection generarConexion() {
 
@@ -29,8 +30,7 @@ public class Conexion {
 			// PASSWORD);
 
 			Properties properties = new Properties();
-			properties.load(
-					new FileInputStream(new File("/aplicaciones/autodiagnostico/autodiagnostico-back.properties")));
+			properties.load(new FileInputStream(new File(BACKEND_PROPERTIES_FILE)));
 
 			String serverName = properties.getProperty("database.url");
 			String user = properties.getProperty("database.user");
