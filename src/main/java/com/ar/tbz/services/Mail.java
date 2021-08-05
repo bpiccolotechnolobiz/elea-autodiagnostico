@@ -31,6 +31,7 @@ public class Mail {
 		// Sender's email ID needs to be mentioned
 //		String from = "test.technolobiz@gmail.com";
 //		String password = "test.0321";
+//		String password = "test.0321";
 
 		Properties propertiesFile = new Properties();
 		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
@@ -44,7 +45,7 @@ public class Mail {
 //		String host = "smtp.gmail.com";
 
 		String from = propertiesFile.getProperty("email.from");
-		String password = "";
+		String password = propertiesFile.getProperty("email.password");
 		// Assuming you are sending email from through gmails smtp
 
 		// Get system properties
@@ -147,7 +148,7 @@ public class Mail {
 			if (!resultado.isResultado()) {
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(to2));
 //				cuerpoMail = crearCuerpoMailParaMedico(resultado);
-				cuerpoMail = crearCuerpoMailParaUsuario(resultado);
+				cuerpoMail = crearCuerpoMailParaMedico(resultado);
 				message.setContent(cuerpoMail, "text/html");
 
 				System.out.println("sending...");
