@@ -64,7 +64,11 @@ public class Mail {
 
 			protected PasswordAuthentication getPasswordAuthentication() {
 
-				return new PasswordAuthentication(from, password);
+				if (password == null || password.equals("")) {
+					return null;
+				} else {
+					return new PasswordAuthentication(from, password);
+				}
 
 			}
 
@@ -163,7 +167,7 @@ public class Mail {
 		}
 
 	}
-	
+
 	// CUERPO MAIL
 	public static String crearCuerpoMail(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
@@ -180,8 +184,9 @@ public class Mail {
 		cuerpoMail.append(headerMail());
 
 		// Datos del usuario
-		cuerpoMail.append("<p>Estimado/a,</p>" + 
-						  "<p style=\"margin-bottom:0;\">El resultado del autodiagnóstico realizado por<strong> " + legajo.getNombre() + " " + legajo.getApellido() + "</strong> es:</p>");
+		cuerpoMail.append("<p>Estimado/a,</p>"
+				+ "<p style=\"margin-bottom:0;\">El resultado del autodiagnóstico realizado por<strong> "
+				+ legajo.getNombre() + " " + legajo.getApellido() + "</strong> es:</p>");
 
 		cuerpoMail.append("<ul style=\"margin-top:0.5em; font-size: 1em;\">");
 
@@ -212,7 +217,7 @@ public class Mail {
 				+ "\r\n" + "    </li>");
 		cuerpoMail.append("</u><br>");
 		// fin datos del usuario
-		
+
 		// Datos del autodiagnostico
 		cuerpoMail.append("<p style=\"margin: 2px 0 8px; font-size: 40px;\">");
 		if (resultado.isResultado()) {
@@ -220,30 +225,31 @@ public class Mail {
 		} else {
 			cuerpoMail.append("<strong style=\"color: #dc3545;\">No habilitado</strong>");
 		}
-		cuerpoMail.append("</p>" + 
-						  "<ul style=\"list-style: none; margin:0 0 2em;\">");
-		
-		cuerpoMail.append("<li>"+ (resultado.isEstadoSintomas() ? "Con" : "Sin") + " síntomas</li>");
-		cuerpoMail.append("<li>"+ (resultado.isEstadoContactoEstrecho() ? "Con" : "Sin") + " contacto estrecho</li>");
-		cuerpoMail.append("<li>"+ (resultado.isEstadoAntecedentes() ? "Con" : "Sin") + " antecedentes</li>");
-		cuerpoMail.append("</ul>" + 
-						  "<div style=\"font-size: 16px;\">");		
-		
+		cuerpoMail.append("</p>" + "<ul style=\"list-style: none; margin:0 0 2em;\">");
+
+		cuerpoMail.append("<li>" + (resultado.isEstadoSintomas() ? "Con" : "Sin") + " síntomas</li>");
+		cuerpoMail.append("<li>" + (resultado.isEstadoContactoEstrecho() ? "Con" : "Sin") + " contacto estrecho</li>");
+		cuerpoMail.append("<li>" + (resultado.isEstadoAntecedentes() ? "Con" : "Sin") + " antecedentes</li>");
+		cuerpoMail.append("</ul>" + "<div style=\"font-size: 16px;\">");
+
 		String fechaAutodiagnostico = formatearFecha(resultado.getFecha_autodiagnostico());
 		String fechaHastaResultado = formatearFecha(resultado.getFecha_hasta_resultado());
-		
-		cuerpoMail.append("<p style=\"margin-bottom: 0;\"><strong style=\"color: #3f51b5;\">Fecha de autodiagnóstico:</strong><br>" + fechaAutodiagnostico + "</p>");
-		cuerpoMail.append("<p style=\"margin-bottom: 0;\"><strong style=\"color: #3f51b5;\">Fecha de vencimiento:</strong><br>" + fechaHastaResultado + "</p>" +
-						  "</div>");
+
+		cuerpoMail.append(
+				"<p style=\"margin-bottom: 0;\"><strong style=\"color: #3f51b5;\">Fecha de autodiagnóstico:</strong><br>"
+						+ fechaAutodiagnostico + "</p>");
+		cuerpoMail.append(
+				"<p style=\"margin-bottom: 0;\"><strong style=\"color: #3f51b5;\">Fecha de vencimiento:</strong><br>"
+						+ fechaHastaResultado + "</p>" + "</div>");
 		// fin datos del autodiagnostico
-		
+
 		// Habilitado -> QR
 		if (resultado.isResultado()) {
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
 							+ "    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		}
-		
+
 		// Respuestas
 		cuerpoMail.append("<p>A continuación se presenta la declaración jurada realizada:</p>");
 
