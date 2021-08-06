@@ -24,19 +24,19 @@ public class EstadisticaService {
 			conn = Conexion.generarConexion();
 
 			String queryActivos = "SELECT COUNT(idUsuario) AS cantidad FROM empleadosActivos ";
-			Integer empleadosActivos = getCount(conn, queryActivos);
+			int empleadosActivos = getCount(conn, queryActivos);
 			String queryAutodiag = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 ";
-			Integer autodiag = getCount(conn, queryAutodiag);
+			int autodiag = getCount(conn, queryAutodiag);
 			String queryEmpHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1";
-			Integer empHabilitados = getCount(conn, queryEmpHabilitados);
+			int empHabilitados = getCount(conn, queryEmpHabilitados);
 			String queryEmpNoHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0";
-			Integer empNoHabilitados = getCount(conn, queryEmpNoHabilitados);
+			int empNoHabilitados = getCount(conn, queryEmpNoHabilitados);
 			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1";
-			Integer empEstrechos = getCount(conn, queryEmpEstrechos);
+			int empEstrechos = getCount(conn, queryEmpEstrechos);
 			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1";
-			Integer empSintomas = getCount(conn, queryEmpSintomas);
+			int empSintomas = getCount(conn, queryEmpSintomas);
 			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
-			Integer pctAutodiagPorEmpAct = getCount(conn, queryPctAutodiagPorEmpAct);
+			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct);
 
 			estadistica = new Estadistica(empleadosActivos, autodiag, empHabilitados, empNoHabilitados, empEstrechos,
 					empSintomas, pctAutodiagPorEmpAct);
@@ -57,12 +57,22 @@ public class EstadisticaService {
 		return estadistica;
 	}
 
-	private Integer getCount(Connection conn, String query) throws SQLException {
+	private int getCount(Connection conn, String query) throws SQLException {
 		PreparedStatement pstm = conn.prepareStatement(query);
 		ResultSet rs = pstm.executeQuery();
 		int count = 0;
 		while (rs.next()) {
 			count = rs.getInt(1);
+		}
+		return count;
+	}
+
+	private double getCountDouble(Connection conn, String query) throws SQLException {
+		PreparedStatement pstm = conn.prepareStatement(query);
+		ResultSet rs = pstm.executeQuery();
+		double count = 0;
+		while (rs.next()) {
+			count = rs.getDouble(1);
 		}
 		return count;
 	}
