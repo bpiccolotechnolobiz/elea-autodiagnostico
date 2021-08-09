@@ -55,8 +55,8 @@ public class Mail {
 		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
 //		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
-		properties.put("mail.smtp.ssl.enable", "true");
-		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.ssl.enable", "false");
+		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
 		Session session = Session.getDefaultInstance(properties);
