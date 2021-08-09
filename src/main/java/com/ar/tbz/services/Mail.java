@@ -10,7 +10,6 @@ import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -60,19 +59,7 @@ public class Mail {
 		properties.put("mail.smtp.auth", "true");
 
 		// Get the Session object.// and pass username and password
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-
-			protected PasswordAuthentication getPasswordAuthentication() {
-
-				if (password == null || password.equals("")) {
-					return null;
-				} else {
-					return new PasswordAuthentication(from, password);
-				}
-
-			}
-
-		});
+		Session session = Session.getDefaultInstance(properties);
 
 		// Used to debug SMTP issues
 		session.setDebug(true);
