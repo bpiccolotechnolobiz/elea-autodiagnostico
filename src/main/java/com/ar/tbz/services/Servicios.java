@@ -16,6 +16,9 @@ import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.LugarAcceso;
@@ -27,6 +30,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 public class Servicios {
+
+	private static Log log = LogFactory.getLog(Servicios.class);
 
 	// grabar archivo
 	public static void grabarArchivo(String nombreFile, String archivo) {
@@ -715,91 +720,6 @@ public class Servicios {
 
 	} // END method grabar autodiagnosticos
 
-// '2012-06-18T10:34:09'
-	//
-	// getHours
-
-	/*
-	 * insert into [dbo].[autodiagnostico] (nroLegajo, dni, nombre, apellido,
-	 * telefono, empresa, emailLaboral, emailUsuario, estadoSintomas,
-	 * estadoContactoEstrecho, estadoAntecedentes, resultado, fecha_autodiagnostico,
-	 * fecha_hasta_resultado, comentario, modificadoPor, modificadoEn,
-	 * idLugarAcceso) values (12345678,
-	 * 12345678,'','','','','pepe@prueba.com',0,0,0,1,'2021-06-18T10:34:09','2021-06
-	 * -18T22:34:09', null,null,null,1)
-	 * 
-	 */
-	// ------------------------------------------- Grabar datos en Transacciones
-	/**
-	 * Genera las transacciones (una por cada pregunta) que el usuario contesta en
-	 * el FronEnd Ingresa como primer elemento el nro del nuevo AutoDiagnostico
-	 * asignado al comienzo del proceso
-	 * 
-	 * @param datos
-	 * @throws Exception
-	 */
-
-//	public synchronized void grabarTransacciones(List<String> datos) throws Exception {
-//
-//		Connection conn = null;
-//		PreparedStatement pstm = null;
-//		ResultSet rs = null;
-//
-//		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy hh-mm-ss");
-//		boolean status = false;
-//		try {
-//
-//			conn = Conexion.generarConexion();
-//
-//			String query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.transaccion values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"; // son
-//																																	// 14
-//																																	// sin
-//																																	// el
-//																																	// id
-//																																	// que
-//																																	// es
-//																																	// autoincremental
-//
-//			pstm = conn.prepareStatement(query);
-//
-//			for (int x = 0; x <= datos.size(); x++) {
-//				pstm.setObject(1, datos.get(x));
-//
-//				pstm.executeUpdate();
-//
-//			}
-//
-//			/*
-//			 * 
-//			 * 1 id int 2 idAutoDiagnostico int 3 respuestaPregunta int 1 4
-//			 * idSintomaAntecedente int 2 5 status boolean 1
-//			 * 
-//			 * 
-//			 */
-//
-//			pstm.executeUpdate();
-//
-//			// System.out.println(query);
-//
-//		} catch (Exception e) {
-//
-//			throw new Exception(e);
-//
-//		} finally {
-//			if (conn != null) {
-//				try {
-//					conn.close();
-//				} catch (Exception e2) {
-//					// TODO: handle exception
-//				}
-//			}
-//		}
-//
-//	} // END grabar transacciones
-
-	// ------------------------------------------------------------------ crear
-	// Autodiagnostico
-
 	public static void crearAutodiagnostico(Resultado resultado) {
 		// TODO Auto-generated method stub
 
@@ -811,6 +731,31 @@ public class Servicios {
 	public static void crearTransacciones(Resultado resultado) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public static int bloquear(Integer id, boolean bloqueado, String comentario, String fechaHora) {
+		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico SET comentario = ?, resultado = ?, "
+				+ "fecha_hasta_resultado = ? where idAutodiagnostico = ? ";
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy hh-mm-ss");
+		try {
+
+			conn = Conexion.generarConexion();
+
+			pstm = conn.prepareStatement(query);
+			pstm.setString(1, comentario);
+			pstm.setInt(2, bloqueado ? 1 : 0);
+			pstm.setDate(3, new java.sql.Date(sf.parse(fechaHora).getTime()));
+			pstm.setInt(4, id);
+			int result = pstm.executeUpdate();
+			return result;
+		} catch (Exception e) {
+			log.info("Exception bloquear: " + e.getMessage());
+		}
+		return 0;
 	}
 
 } // end class servicios

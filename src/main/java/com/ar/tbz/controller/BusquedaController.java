@@ -3,6 +3,8 @@ package com.ar.tbz.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,7 @@ import com.ar.tbz.services.BusquedaService;
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
 
 public class BusquedaController {
-
+	private static Log log = LogFactory.getLog(BusquedaController.class);
 	private static final int ROWS_PER_PAGE = 3500;
 	@Autowired
 	BusquedaService busquedaService;

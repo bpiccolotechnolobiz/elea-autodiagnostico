@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.Legajo;
@@ -133,40 +134,6 @@ public class LegajoController {
 
 		System.out.println("Entra al proceso autodiagnostico/{id} " + new Date() + "ID " + id);
 
-		// Resultado resultado = new Resultado();
-
-		/*
-		 * Resultado
-		 * 
-		 * private Legajo legajo; private String temperaturaLabel ; private String
-		 * sintemasLabel ; private String contactosEstrechoLabel ; private String
-		 * antecedentesLabel ; private String temperatura ; private String sintomas ;
-		 * // @@ idSintomaLabel, 0/1 @@............@@ private String antecedentes ;
-		 * // @@ idAntecedenteLabel, 0/1 @@............@@ ;
-		 * 
-		 * // --------------------------------------------- nuevo modelo
-		 * 
-		 * private boolean estadoSintomas; private boolean estadoContactoEstrecho;
-		 * private boolean estadoAntecedentes;
-		 * 
-		 * private boolean resultado; private Date fecha_autodiagnostico; private Date
-		 * fecha_hasta_resultado; private String comentario; private int modificadoPor;
-		 * private Date modificadoEn;
-		 * 
-		 * // -------------------------------------------------
-		 * 
-		 * 
-		 * 
-		 * Legajo
-		 * 
-		 * private Integer idAutodiagnostico; private Integer version;
-		 * 
-		 * private String nroLegajo; private String dni; private String nombre; private
-		 * String apellido; private String telefono; private String empresa; private
-		 * String mail; private int idLugarAcceso;
-		 * 
-		 */
-
 		// boolean createResults = false ;
 		Resultado resultTest = null;
 		if (createResults) {
@@ -187,54 +154,6 @@ public class LegajoController {
 		// Servicios.envioMail(resultado);
 
 	}
-
-	/*
-	 * private Legajo legajo; private String temperaturaLabel ; private String
-	 * sintomasLabel ; private String contactosEstrechoLabel ; private String
-	 * antecedentesLabel ; private String temperatura ; private String sintomas ;
-	 * // @@ idSintomaLabel, 0/1 @@............@@ private String antecedentes ;
-	 * // @@ idAntecedenteLabel, 0/1 @@............@@ ;
-	 * 
-	 * 
-	 * private boolean estadoSintomas; private boolean estadoContactoEstrecho;
-	 * private boolean estadoAntecedentes;
-	 * 
-	 * private boolean resultado; private String fecha_autodiagnostico; private
-	 * String fecha_hasta_resultado; private String comentario; private int
-	 * modificadoPor; private Date modificadoEn;
-	 * 
-	 * 
-	 */
-
-	/*
-	 * private Resultado createResultsToText() {
-	 * 
-	 * Resultado rt = new Resultado(); Legajo lg = new Legajo();
-	 * lg.setNroLegajo("87654321"); lg.setDni("87654321");
-	 * lg.setNombre("test-01-nombre"); lg.setApellido("test-01-apellido");
-	 * lg.setTelefono("876-543-21"); lg.setEmpresa("Empresa-test-01");
-	 * lg.setMail("test-01@gmail.com"); lg.setIdLugarAcceso(1);
-	 * 
-	 * rt.setLegajo(lg); rt.setTemperatura("Sin Temperatura");
-	 * rt.setSintomasLabel("Sin sintomas");
-	 * rt.setContactosEstrechoLabel("Sin contacto strecho");
-	 * rt.setAntecedentesLabel("Sin antecedentes"); rt.setTemperatura("37.00");
-	 * String sintomas =
-	 * "@@ 0,0 @@ 1,0 @@ 2,0 @@ 3,0 @@ 4,0 @@ 5,0 @@ 6,0 @@ 7,0 @@";
-	 * rt.setSintomas(sintomas); String antecedentes =
-	 * "@@ 0,0 @@ 1,0 @@ 2,0 @@ 3,0 @@ 4,0 @@ 5,0 @@ 6,0 @@ 7,0 @@";
-	 * rt.setAntecedentes(antecedentes); rt.setEstadoSintomas(false);
-	 * rt.setEstadoContactoEstrecho(false); rt.setEstadoAntecedentes(false);
-	 * rt.setResultado(false);
-	 * 
-	 * rt.setFecha_autodiagnostico("2021-06-12T12:34:09");
-	 * rt.setFecha_hasta_resultado("2021-07-12T12:34:09");
-	 * 
-	 * 
-	 * 
-	 * return rt; }
-	 * 
-	 */
 
 	// ---------------------------------------------------------------------------------------------
 
@@ -275,5 +194,11 @@ public class LegajoController {
 	}
 
 	// fin de createResult para usar como testeo mock de datos
+
+	@RequestMapping(value = "/bloquear/{id}", method = RequestMethod.POST, produces = "application/json")
+	public int bloquear(@PathVariable Integer id, @RequestParam boolean bloqueado, @RequestParam String comentario,
+			@RequestParam String fechaHora) throws Exception {
+		return Servicios.bloquear(id, bloqueado, comentario, fechaHora);
+	}
 
 }
