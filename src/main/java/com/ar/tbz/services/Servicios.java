@@ -733,9 +733,9 @@ public class Servicios {
 
 	}
 
-	public static int bloquear(Integer id, boolean bloqueado, String comentario, String fechaHora) {
-		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico SET comentario = ?, resultado = ?, "
-				+ "fecha_hasta_resultado = ? where idAutodiagnostico = ? ";
+	public static int bloquear(Integer id, String comentario, String fechaHora) {
+		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico SET comentario = ?, "
+				+ "modificadoEn = ?, fecha_hasta_resultado = ? where idAutodiagnostico = ? ";
 		Connection conn = null;
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
@@ -747,7 +747,7 @@ public class Servicios {
 
 			pstm = conn.prepareStatement(query);
 			pstm.setString(1, comentario);
-			pstm.setInt(2, bloqueado ? 1 : 0);
+			pstm.setDate(2, new java.sql.Date(System.currentTimeMillis()));
 			pstm.setDate(3, new java.sql.Date(sf.parse(fechaHora).getTime()));
 			pstm.setInt(4, id);
 			int result = pstm.executeUpdate();

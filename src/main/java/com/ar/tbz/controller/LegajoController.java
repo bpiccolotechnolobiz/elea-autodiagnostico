@@ -197,7 +197,7 @@ public class LegajoController {
 
 	@RequestMapping(value = "/bloquear/{id}", method = RequestMethod.POST, produces = "application/json")
 	public int bloquear(@PathVariable Integer id, @RequestBody BloquedoForm form) throws Exception {
-		return Servicios.bloquear(id, form.isBloqueado(), form.getComentario(), form.getFechaHora());
+		return Servicios.bloquear(id, form.getComentario(), form.getFechaHora());
 	}
 
 }

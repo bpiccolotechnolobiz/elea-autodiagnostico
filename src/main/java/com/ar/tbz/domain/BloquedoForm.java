@@ -3,7 +3,6 @@ package com.ar.tbz.domain;
 public class BloquedoForm {
 
 	private String comentario;
-	private boolean bloqueado;
 	private String fechaHora;
 
 	public String getComentario() {
@@ -12,14 +11,6 @@ public class BloquedoForm {
 
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
-	}
-
-	public boolean isBloqueado() {
-		return bloqueado;
-	}
-
-	public void setBloqueado(boolean bloqueado) {
-		this.bloqueado = bloqueado;
 	}
 
 	public String getFechaHora() {
