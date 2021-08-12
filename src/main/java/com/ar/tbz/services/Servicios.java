@@ -740,7 +740,7 @@ public class Servicios {
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
 
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy hh-mm-ss");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		try {
 
 			conn = Conexion.generarConexion();

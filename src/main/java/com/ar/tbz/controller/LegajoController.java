@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ar.tbz.domain.BloquedoForm;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.domain.Test;
@@ -196,9 +196,8 @@ public class LegajoController {
 	// fin de createResult para usar como testeo mock de datos
 
 	@RequestMapping(value = "/bloquear/{id}", method = RequestMethod.POST, produces = "application/json")
-	public int bloquear(@PathVariable Integer id, @RequestParam boolean bloqueado, @RequestParam String comentario,
-			@RequestParam String fechaHora) throws Exception {
-		return Servicios.bloquear(id, bloqueado, comentario, fechaHora);
+	public int bloquear(@PathVariable Integer id, @RequestBody BloquedoForm form) throws Exception {
+		return Servicios.bloquear(id, form.isBloqueado(), form.getComentario(), form.getFechaHora());
 	}
 
 }
