@@ -747,8 +747,8 @@ public class Servicios {
 
 			pstm = conn.prepareStatement(query);
 			pstm.setString(1, comentario);
-			pstm.setDate(2, new java.sql.Date(System.currentTimeMillis()));
-			pstm.setDate(3, new java.sql.Date(sf.parse(fechaHora).getTime()));
+			pstm.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+			pstm.setTimestamp(3, new java.sql.Timestamp(sf.parse(fechaHora).getTime()));
 			pstm.setInt(4, id);
 			int result = pstm.executeUpdate();
 			return result;
