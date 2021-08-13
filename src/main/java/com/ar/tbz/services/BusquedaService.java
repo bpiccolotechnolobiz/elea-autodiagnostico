@@ -46,6 +46,7 @@ public class BusquedaService {
 				}
 			}
 
+			sb.append(" order by fecha_autodiagnostico desc");
 			conn = Conexion.generarConexion();
 			log.info("Query_statement: " + sb.toString());
 			PreparedStatement pstm = conn.prepareStatement(sb.toString());
