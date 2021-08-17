@@ -144,7 +144,9 @@ public class EstadisticaService {
 			String query = "UPDATE Parametria SET  descripcionParametro = ? , valorParametro ? where idParametro = ?";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
-			pstm.setInt(1, param.getIdParametro());
+			pstm.setString(1, param.getDescripcionParametro());
+			pstm.setString(2, param.getValorParametro());
+			pstm.setInt(3, param.getIdParametro());
 			pstm.executeUpdate();
 
 		} catch (SQLException e) {
