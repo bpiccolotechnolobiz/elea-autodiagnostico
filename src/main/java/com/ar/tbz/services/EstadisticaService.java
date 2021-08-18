@@ -35,15 +35,17 @@ public class EstadisticaService {
 			int empHabilitados = getCount(conn, queryEmpHabilitados, fechaDesde, fechaHasta);
 			String queryEmpNoHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int empNoHabilitados = getCount(conn, queryEmpNoHabilitados, fechaDesde, fechaHasta);
-			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1 and estadoSintomas=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empEstrechos = getCount(conn, queryEmpEstrechos, fechaDesde, fechaHasta);
-			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empSintomas = getCount(conn, queryEmpSintomas, fechaDesde, fechaHasta);
+			String queryEmpSintomasContEstrecho = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			int empSintomasContEstrecho = getCount(conn, queryEmpSintomasContEstrecho, fechaDesde, fechaHasta);
 			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
 			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct);
 
 			estadistica = new Estadistica(empleadosActivos, autodiag, empHabilitados, empNoHabilitados, empEstrechos,
-					empSintomas, pctAutodiagPorEmpAct);
+					empSintomas, empSintomasContEstrecho, pctAutodiagPorEmpAct);
 
 		} catch (
 

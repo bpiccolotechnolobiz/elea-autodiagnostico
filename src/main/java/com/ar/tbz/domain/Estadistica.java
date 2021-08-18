@@ -8,6 +8,7 @@ public class Estadistica {
 	private int empleadosNoHabilitados;
 	private int empleadosContactoEstrecho;
 	private int empleadosSintomas;
+	private int empleadosSintomasYContactoEstrecho;
 	private double pctAutodiagnosticoSobreEmpleadosActivos;
 
 	public Estadistica() {
@@ -15,13 +16,14 @@ public class Estadistica {
 	}
 
 	public Estadistica(Integer empleadosActivos, Integer autodiag, Integer empHabilitados, Integer empNoHabilitados,
-			Integer empEstrechos, Integer empSintomas, double pctAutodiagPorEmpAct) {
+			Integer empEstrechos, Integer empSintomas, Integer empSintomasContEstrecho, double pctAutodiagPorEmpAct) {
 		this.empleadosActivos = empleadosActivos;
 		this.autodiagnosticosEmpleados = autodiag;
 		this.empleadosHabilitados = empHabilitados;
 		this.empleadosNoHabilitados = empNoHabilitados;
 		this.empleadosContactoEstrecho = empEstrechos;
 		this.empleadosSintomas = empSintomas;
+		this.empleadosSintomasYContactoEstrecho = empSintomasContEstrecho;
 		this.pctAutodiagnosticoSobreEmpleadosActivos = pctAutodiagPorEmpAct;
 	}
 
@@ -71,6 +73,14 @@ public class Estadistica {
 
 	public void setEmpleadosSintomas(int empleadosSintomas) {
 		this.empleadosSintomas = empleadosSintomas;
+	}
+
+	public int getEmpleadosSintomasYContactoEstrecho() {
+		return empleadosSintomasYContactoEstrecho;
+	}
+
+	public void setEmpleadosSintomasYContactoEstrecho(int empleadosSintomasYContactoEstrecho) {
+		this.empleadosSintomasYContactoEstrecho = empleadosSintomasYContactoEstrecho;
 	}
 
 	public double getPctAutodiagnosticoSobreEmpleadosActivos() {
