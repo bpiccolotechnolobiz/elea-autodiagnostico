@@ -141,7 +141,7 @@ public class EstadisticaService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "UPDATE Parametria SET  descripcionParametro = ? , valorParametro ? where idParametro = ?";
+			String query = "UPDATE Parametria SET  descripcionParametro = ? , valorParametro = ? where idParametro = ?";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, param.getDescripcionParametro());
