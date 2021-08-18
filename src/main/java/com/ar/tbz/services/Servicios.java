@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
-import com.ar.tbz.domain.LugarAcceso;
 import com.ar.tbz.domain.Resultado;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
@@ -268,91 +267,6 @@ public class Servicios {
 		return listPregRtas;
 
 	}
-
-	// ------------------------------------------- lugares de acceso
-	public synchronized static List<LugarAcceso> recuperarLugaresDeAcceso() throws Exception {
-
-		System.out.println("Entra recupera Lugares de Acceso ");
-
-		List<LugarAcceso> listLugaresAcceso = new ArrayList<LugarAcceso>();
-		LugarAcceso lugarAcceso = null;
-
-		Connection conn = null;
-		PreparedStatement pstm = null;
-		ResultSet rs = null;
-
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-		boolean status = false;
-		try {
-
-			conn = Conexion.generarConexion();
-
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso";
-			pstm = conn.prepareStatement(query);
-			rs = pstm.executeQuery();
-			while (rs.next()) {
-				lugarAcceso = new LugarAcceso();
-				lugarAcceso.setIdLugarAcceso(rs.getInt("idLugarAcceso"));
-				lugarAcceso.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
-
-				listLugaresAcceso.add(lugarAcceso);
-			}
-
-		} catch (Exception e) {
-			throw new Exception(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e2) {
-					// TODO: handle exception
-					throw new Exception(e2);
-				}
-			}
-		}
-
-		return listLugaresAcceso;
-
-	} // end method recuperarLugaresDeAcceso
-
-	public synchronized static String recuperarLugarDeAcceso(Integer idAcceso) throws Exception {
-
-		System.out.println("Entra recupera Lugar de Acceso ");
-
-		Connection conn = null;
-		PreparedStatement pstm = null;
-		ResultSet rs = null;
-
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-		boolean status = false;
-		try {
-
-			conn = Conexion.generarConexion();
-
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso  el  where  el.idLugarAcceso = ?";
-			pstm = conn.prepareStatement(query);
-			pstm.setInt(1, idAcceso);
-			rs = pstm.executeQuery();
-			while (rs.next()) {
-				return rs.getString("descripcionLugarAcceso");
-			}
-
-		} catch (Exception e) {
-			throw new Exception(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e2) {
-					// TODO: handle exception
-					throw new Exception(e2);
-				}
-			}
-		}
-
-		return null;
-
-	} // end method recuperarDniLegadjo
 
 	// ------------------------------------------- legajo by dni y legajo
 

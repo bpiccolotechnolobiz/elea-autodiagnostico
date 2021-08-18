@@ -17,14 +17,21 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
 
+@Component
 public class Mail {
 
+	@Autowired
+	LugarAccesoService lugarAccesoService;
+
 	// ENVIO MAIL
-	public static void envioMail(Resultado resultado) throws IOException {
+	public void envioMail(Resultado resultado) throws IOException {
 		System.out.println("Enviando mail");
 
 		// Sender's email ID needs to be mentioned
@@ -156,7 +163,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public static String crearCuerpoMail(Resultado resultado) {
+	public String crearCuerpoMail(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -196,7 +203,7 @@ public class Mail {
 
 		String lugarAccesoStr = "";
 		try {
-			lugarAccesoStr = Servicios.recuperarLugarDeAcceso(legajo.getIdLugarAcceso());
+			lugarAccesoStr = lugarAccesoService.recuperarLugarDeAcceso(legajo.getIdLugarAcceso());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
