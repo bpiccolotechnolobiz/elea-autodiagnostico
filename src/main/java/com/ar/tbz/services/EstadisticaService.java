@@ -41,11 +41,11 @@ public class EstadisticaService {
 			int empSintomas = getCount(conn, queryEmpSintomas, fechaDesde, fechaHasta);
 			String queryEmpSintomasContEstrecho = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empSintomasContEstrecho = getCount(conn, queryEmpSintomasContEstrecho, fechaDesde, fechaHasta);
-			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
-			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct);
+			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
+			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct, fechaDesde, fechaHasta);
 
 			estadistica = new Estadistica(empleadosActivos, autodiag, empHabilitados, empNoHabilitados, empEstrechos,
-					empSintomas, empSintomasContEstrecho, pctAutodiagPorEmpAct);
+					empSintomas, empSintomasContEstrecho, pctAutodiagPorEmpAct*100);
 
 		} catch (
 
@@ -77,8 +77,12 @@ public class EstadisticaService {
 		return count;
 	}
 
-	private double getCountDouble(Connection conn, String query) throws SQLException {
+	private double getCountDouble(Connection conn, String query, String fechaDesde, String fechaHasta) throws SQLException {
 		PreparedStatement pstm = conn.prepareStatement(query);
+		if (fechaDesde != null && fechaHasta != null) {
+			pstm.setString(1, fechaDesde);
+			pstm.setString(2, fechaHasta);
+		}
 		ResultSet rs = pstm.executeQuery();
 		double count = 0;
 		while (rs.next()) {
