@@ -20,24 +20,25 @@ public class EstadisticaService {
 
 	private static Log log = LogFactory.getLog(EstadisticaService.class);
 
-	public Estadistica obtenerEstadistica() throws Exception {
+	public Estadistica obtenerEstadistica(String fechaDesde, String fechaHasta) throws Exception {
 		Connection conn = null;
 		Estadistica estadistica = null;
 		try {
 			conn = Conexion.generarConexion();
 
+			log.info("querys estadisticas");
 			String queryActivos = "SELECT COUNT(idUsuario) AS cantidad FROM empleadosActivos ";
-			int empleadosActivos = getCount(conn, queryActivos);
-			String queryAutodiag = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 ";
-			int autodiag = getCount(conn, queryAutodiag);
-			String queryEmpHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1";
-			int empHabilitados = getCount(conn, queryEmpHabilitados);
-			String queryEmpNoHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0";
-			int empNoHabilitados = getCount(conn, queryEmpNoHabilitados);
-			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1";
-			int empEstrechos = getCount(conn, queryEmpEstrechos);
-			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1";
-			int empSintomas = getCount(conn, queryEmpSintomas);
+			int empleadosActivos = getCount(conn, queryActivos, null, null);
+			String queryAutodiag = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			int autodiag = getCount(conn, queryAutodiag, fechaDesde, fechaHasta);
+			String queryEmpHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			int empHabilitados = getCount(conn, queryEmpHabilitados, fechaDesde, fechaHasta);
+			String queryEmpNoHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			int empNoHabilitados = getCount(conn, queryEmpNoHabilitados, fechaDesde, fechaHasta);
+			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			int empEstrechos = getCount(conn, queryEmpEstrechos, fechaDesde, fechaHasta);
+			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			int empSintomas = getCount(conn, queryEmpSintomas, fechaDesde, fechaHasta);
 			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
 			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct);
 
@@ -60,8 +61,12 @@ public class EstadisticaService {
 		return estadistica;
 	}
 
-	private int getCount(Connection conn, String query) throws SQLException {
+	private int getCount(Connection conn, String query, String fechaDesde, String fechaHasta) throws SQLException {
 		PreparedStatement pstm = conn.prepareStatement(query);
+		if (fechaDesde != null && fechaHasta != null) {
+			pstm.setString(1, fechaDesde);
+			pstm.setString(2, fechaHasta);
+		}
 		ResultSet rs = pstm.executeQuery();
 		int count = 0;
 		while (rs.next()) {

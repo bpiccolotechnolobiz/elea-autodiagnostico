@@ -29,9 +29,10 @@ public class EstadisticaController {
 	EstadisticaService estadisticaService;
 
 	@GetMapping(value = "/estadistica", produces = "application/json")
-	public Estadistica buscarEstadisticas() throws Exception {
+	public Estadistica buscarEstadisticas(@RequestParam String fechaDesde, @RequestParam String fechaHasta)
+			throws Exception {
 		log.info("Obtener estadistica");
-		return estadisticaService.obtenerEstadistica();
+		return estadisticaService.obtenerEstadistica(fechaDesde, fechaHasta);
 	}
 
 	@GetMapping(value = "/parametros", produces = "application/json")
