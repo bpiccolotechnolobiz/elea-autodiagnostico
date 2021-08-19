@@ -54,7 +54,7 @@ public class LugarAccesoController {
 		return lugarAccesoService.recuperarLugaresDeAcceso();
 	}
 
-	@GetMapping(value = "/accesos/{id]", produces = "application/json")
+	@GetMapping(value = "/accesos/{idAcceso}", produces = "application/json")
 	public String buscarAcceso(@PathVariable int idAcceso) throws Exception {
 		log.info("Obtener accesos");
 		return lugarAccesoService.recuperarLugarDeAcceso(idAcceso);
