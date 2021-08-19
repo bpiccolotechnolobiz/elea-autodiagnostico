@@ -83,7 +83,8 @@ public class LugarAccesoService {
 			rs = pstm.executeQuery();
 			LugarAcceso lugarAcceso = null;
 			if (rs.next()) {
-				lugarAcceso = new LugarAcceso(rs.getString("descripcionLugarAcceso"), rs.getInt("estado"));
+				lugarAcceso = new LugarAcceso(rs.getInt("idLugarAcceso"), rs.getString("descripcionLugarAcceso"),
+						rs.getInt("estado"));
 			}
 			return lugarAcceso;
 

@@ -14,6 +14,12 @@ public class LugarAcceso {
 		// TODO Auto-generated constructor stub
 	}
 
+	public LugarAcceso(int id, String descripcionLugarAcceso, int estado) {
+		this.idLugarAcceso = id;
+		this.descripcionLugarAcceso = descripcionLugarAcceso;
+		this.estado = estado;
+	}
+
 	public Integer getIdLugarAcceso() {
 		return idLugarAcceso;
 	}
