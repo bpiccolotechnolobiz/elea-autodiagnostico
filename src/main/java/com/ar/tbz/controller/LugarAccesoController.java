@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +52,12 @@ public class LugarAccesoController {
 	public List<LugarAcceso> buscarAccesos() throws Exception {
 		log.info("Obtener accesos");
 		return lugarAccesoService.recuperarLugaresDeAcceso();
+	}
+
+	@GetMapping(value = "/accesos/{id]", produces = "application/json")
+	public String buscarAcceso(@PathVariable int idAcceso) throws Exception {
+		log.info("Obtener accesos");
+		return lugarAccesoService.recuperarLugarDeAcceso(idAcceso);
 	}
 
 	@PostMapping(value = "/accesos", produces = "application/json")
