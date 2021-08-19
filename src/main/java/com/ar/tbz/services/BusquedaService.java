@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Autodiagnostico;
 import com.ar.tbz.domain.Respuesta;
+import com.ar.tbz.util.DateUtil;
 
 @Service
 public class BusquedaService {
@@ -40,6 +41,9 @@ public class BusquedaService {
 					} else if (entry.getKey().equals("apellido")) {
 						sb.append(" and " + entry.getKey() + " LIKE '%" + entry.getValue()
 								+ "%' COLLATE Latin1_general_CI_AI");
+					} else if (entry.getKey().equals("bloqueado")) {
+						String now = DateUtil.currentDateStr();
+						sb.append(" and resultado=0 and fecha_hasta_resultado > " + now + " ");
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
@@ -47,6 +51,7 @@ public class BusquedaService {
 			}
 
 			sb.append(" order by fecha_autodiagnostico desc");
+
 			conn = Conexion.generarConexion();
 			log.info("Query_statement: " + sb.toString());
 			PreparedStatement pstm = conn.prepareStatement(sb.toString());

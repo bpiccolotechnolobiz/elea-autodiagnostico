@@ -129,11 +129,12 @@ public class LugarAccesoService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso SET  descripcionLugarAcceso = ?  where idLugarAcceso = ?";
+			String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso SET  descripcionLugarAcceso = ?, estado = ?  where idLugarAcceso = ?";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, lugar.getDescripcionLugarAcceso());
-			pstm.setInt(2, lugar.getIdLugarAcceso());
+			pstm.setInt(2, lugar.getEstado());
+			pstm.setInt(3, lugar.getIdLugarAcceso());
 			pstm.executeUpdate();
 
 		} catch (SQLException e) {
