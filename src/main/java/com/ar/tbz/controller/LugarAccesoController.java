@@ -55,7 +55,7 @@ public class LugarAccesoController {
 	}
 
 	@GetMapping(value = "/accesos/{idAcceso}", produces = "application/json")
-	public List<LugarAcceso> buscarAcceso(@PathVariable int idAcceso) throws Exception {
+	public LugarAcceso buscarAcceso(@PathVariable int idAcceso) throws Exception {
 		log.info("Obtener accesos");
 		return lugarAccesoService.recuperarLugarDeAcceso(idAcceso);
 	}

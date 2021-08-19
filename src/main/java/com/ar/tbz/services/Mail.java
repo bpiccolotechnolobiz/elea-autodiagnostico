@@ -203,7 +203,7 @@ public class Mail {
 
 		String lugarAccesoStr = "";
 		try {
-			lugarAccesoStr = lugarAccesoService.recuperarLugarDeAcceso(legajo.getIdLugarAcceso());
+			lugarAccesoStr = lugarAccesoService.recuperarLugarDeAcceso(legajo.getIdLugarAcceso()).getDescripcionLugarAcceso();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
