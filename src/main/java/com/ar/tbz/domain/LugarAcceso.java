@@ -5,6 +5,15 @@ public class LugarAcceso {
 	private String descripcionLugarAcceso;
 	private int estado;
 
+	public LugarAcceso(String descripcionLugarAcceso, int estado) {
+		this.descripcionLugarAcceso = descripcionLugarAcceso;
+		this.estado = estado;
+	}
+
+	public LugarAcceso() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Integer getIdLugarAcceso() {
 		return idLugarAcceso;
 	}

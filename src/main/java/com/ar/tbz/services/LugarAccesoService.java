@@ -66,15 +66,13 @@ public class LugarAccesoService {
 
 	} // end method recuperarLugaresDeAcceso
 
-	public String recuperarLugarDeAcceso(Integer idAcceso) throws Exception {
+	public LugarAcceso recuperarLugarDeAcceso(Integer idAcceso) throws Exception {
 
 		System.out.println("Entra recupera Lugar de Acceso ");
 
 		Connection conn = null;
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
-
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
 		boolean status = false;
 		try {
 			conn = Conexion.generarConexion();
@@ -83,9 +81,11 @@ public class LugarAccesoService {
 			pstm = conn.prepareStatement(query);
 			pstm.setInt(1, idAcceso);
 			rs = pstm.executeQuery();
-			while (rs.next()) {
-				return rs.getString("descripcionLugarAcceso");
+			LugarAcceso lugarAcceso = null;
+			if (rs.next()) {
+				lugarAcceso = new LugarAcceso(rs.getString("descripcionLugarAcceso"), rs.getInt("estado"));
 			}
+			return lugarAcceso;
 
 		} catch (Exception e) {
 			throw new Exception(e);
@@ -99,7 +99,6 @@ public class LugarAccesoService {
 				}
 			}
 		}
-		return null;
 
 	} // end method recuperarDniLegadjo
 
