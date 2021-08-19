@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
+import com.ar.tbz.util.DateUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
@@ -654,7 +655,7 @@ public class Servicios {
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
 
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat sf = new SimpleDateFormat(DateUtil.FULL_TIMESTAMP_PATTERN);
 		try {
 
 			conn = Conexion.generarConexion();

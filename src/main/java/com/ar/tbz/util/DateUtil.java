@@ -5,8 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtil {
+	public static final String FULL_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 	public static String PATTERN_Y4_M2_D2 = "yyyy-MM-dd";
-	public static String PATTERN_D2_M2_Y4_H_m2 = "dd/MM/yyyy HH:mm";
+	public static String PATTERN_D2_M2_Y4_H_m2 = "yyyy-MM-dd HH:mm";
 
 	public static String formatSdf(String pattern, Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
@@ -26,7 +27,7 @@ public class DateUtil {
 	}
 
 	public static String currentDateStr() {
-		SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_D2_M2_Y4_H_m2);
+		SimpleDateFormat sdf = new SimpleDateFormat(FULL_TIMESTAMP_PATTERN);
 		return sdf.format(new Date());
 	}
 }
