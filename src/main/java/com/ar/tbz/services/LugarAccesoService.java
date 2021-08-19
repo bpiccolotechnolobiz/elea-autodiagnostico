@@ -45,6 +45,7 @@ public class LugarAccesoService {
 				lugarAcceso = new LugarAcceso();
 				lugarAcceso.setIdLugarAcceso(rs.getInt("idLugarAcceso"));
 				lugarAcceso.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
+				lugarAcceso.setEstado(rs.getInt("estado"));
 
 				listLugaresAcceso.add(lugarAcceso);
 			}
