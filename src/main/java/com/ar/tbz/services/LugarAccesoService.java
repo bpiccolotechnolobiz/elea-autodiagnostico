@@ -106,7 +106,7 @@ public class LugarAccesoService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso (descripcionLugarAcceso) values ( ?)";
+			String query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso (descripcionLugarAcceso, estado) values ( ?, 1)";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, lugar.getDescripcionLugarAcceso());
@@ -153,7 +153,7 @@ public class LugarAccesoService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "DELETE FROM LEA_AUTODIAGNOSTICO.dbo.lugarAcceso where idLugarAcceso = ?";
+			String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso SET ESTADO = 0 where idLugarAcceso = ?";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setInt(1, idAcceso);
@@ -170,5 +170,10 @@ public class LugarAccesoService {
 				}
 			}
 		}
+	}
+
+	public List<LugarAcceso> getLugarDeAcceso(int idAcceso) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
