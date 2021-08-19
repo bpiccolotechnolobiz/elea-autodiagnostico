@@ -43,7 +43,7 @@ public class BusquedaService {
 								+ "%' COLLATE Latin1_general_CI_AI");
 					} else if (entry.getKey().equals("bloqueado")) {
 						String now = DateUtil.currentDateStr();
-						sb.append(" and resultado=0 and fecha_hasta_resultado > " + now + " ");
+						sb.append(" and resultado=0 and fecha_hasta_resultado > '" + now + "' ");
 					} else {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
