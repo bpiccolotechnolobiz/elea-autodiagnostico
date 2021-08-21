@@ -12,6 +12,7 @@ public class Resultado {
 	private String antecedentesLabel ;
 	private String temperatura ;
 	private String sintomas ;  // @@ idSintomaLabel, 0/1 @@............@@
+	private String contactoEstrecho ;  // @@ idcontactoEstrechoLabel, 0/1 @@............@@
 	private String antecedentes ;  // @@ idAntecedenteLabel, 0/1 @@............@@ ;
 	
 	// ---------------------------------------------   nuevo modelo 
@@ -62,6 +63,12 @@ public class Resultado {
 	}
 	public void setTemperatura(String temperatura) {
 		this.temperatura = temperatura;
+	}
+	public String getContactoEstrecho() {
+		return contactoEstrecho;
+	}
+	public void setContactoEstrecho(String contactoEstrecho) {
+		this.contactoEstrecho = contactoEstrecho;
 	}
 	public String getSintomas() {
 		return sintomas;

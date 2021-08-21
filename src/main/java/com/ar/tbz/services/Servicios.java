@@ -551,9 +551,9 @@ public class Servicios {
 
 			pstm = conn.prepareStatement(query);
 
-			pstm.setObject(1, idAutodiagnostico);
-			pstm.setObject(2, 1);
-			pstm.setObject(3, resultado.getTemperatura());
+			pstm.setObject(1, idAutodiagnostico); // idAutodiagnostico
+			pstm.setObject(2, 1); // idPregunta
+			pstm.setObject(3, resultado.getTemperatura()); // respuestaPregunta
 			pstm.executeUpdate();
 
 			System.out.println("Grabando respuesta temperatura: [" + query + "]");
@@ -584,6 +584,33 @@ public class Servicios {
 
 			if (totalTokens != contadorTokens) {
 				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Sintomas ");
+			}
+			
+			// Grabar respuestas PANTALLA CONTACTO ESTRECHO
+			token = new StringTokenizer(resultado.getContactoEstrecho(), "@@");
+			
+			totalTokens = token.countTokens();
+			contadorTokens = 0;
+
+			System.out.println("Total tokens Contacto Estrecho " + totalTokens);
+			
+			while (token.hasMoreTokens()) {
+				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+				
+				pstm = conn.prepareStatement(query);
+				
+				String[] datos = token.nextToken().split(",");
+				pstm.setObject(1, idAutodiagnostico);
+				pstm.setObject(2, datos[0]);
+				pstm.setObject(3, "" + datos[1]);
+				pstm.executeUpdate();
+				contadorTokens++;
+
+				System.out.println(query);
+			}
+
+			if (totalTokens != contadorTokens) {
+				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Contacto Estrecho");
 			}
 
 			// Grabar respuestas PANTALLA ANTECEDENTES
