@@ -20,7 +20,7 @@ public class PreguntaService {
 	private static Log log = LogFactory.getLog(PreguntaService.class);
 
 	public List<Pregunta> findAll() throws SQLException {
-		String query = "SELECT  p.*  ELEA_AUTODIAGNOSTICO.dbo.preguntas p order by p.idPregunta";
+		String query = "SELECT  p.* FROM ELEA_AUTODIAGNOSTICO.dbo.preguntas p order by p.idPregunta";
 		log.info("PreguntasService.findAll");
 		List<Pregunta> preguntas = new ArrayList<Pregunta>();
 		Connection conn = Conexion.generarConexion();
