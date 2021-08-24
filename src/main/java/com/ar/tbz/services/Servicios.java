@@ -614,6 +614,7 @@ public class Servicios {
 			}
 
 			// Grabar respuestas PANTALLA ANTECEDENTES
+			//antecedentes
 			token = new StringTokenizer(resultado.getAntecedentes(), "@@");
 
 			totalTokens = token.countTokens();
@@ -639,6 +640,34 @@ public class Servicios {
 
 			if (totalTokens != contadorTokens) {
 				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Antecedentes");
+			}
+			
+			//vacunas
+			token = new StringTokenizer(resultado.getVacunas(), "@@");
+
+			totalTokens = token.countTokens();
+			contadorTokens = 0;
+
+			System.out.println("Total tokens Vacunas " + totalTokens);
+
+			while (token.hasMoreTokens()) {
+
+				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+
+				pstm = conn.prepareStatement(query);
+
+				String[] datos = token.nextToken().split(",");
+				pstm.setObject(1, idAutodiagnostico);
+				pstm.setObject(2, datos[0]);
+				pstm.setObject(3, "" + datos[1]);
+				pstm.executeUpdate();
+				contadorTokens++;
+
+				System.out.println(query);
+			}
+
+			if (totalTokens != contadorTokens) {
+				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Vacunas");
 			}
 
 		} catch (Exception e) {

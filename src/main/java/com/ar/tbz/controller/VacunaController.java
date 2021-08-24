@@ -33,9 +33,9 @@ public class VacunaController {
 	VacunaService vacunaService;
 
 	// ---------------------------------------------------------------------------------------------
-	// recuperar vacunaes acceso
+	// recuperar vacunas
 	@RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
-	public List<Vacuna> showLugaresAcceso() {
+	public List<Vacuna> obtenerVacunas() {
 		List<Vacuna> vacunas;
 		try {
 			vacunas = vacunaService.findAll();
@@ -49,7 +49,7 @@ public class VacunaController {
 	}
 
 	@GetMapping(value = "/{idVacuna}", produces = "application/json")
-	public Vacuna buscarAcceso(@PathVariable int idVacuna) throws Exception {
+	public Vacuna buscarVacuna(@PathVariable int idVacuna) throws Exception {
 		log.info("Obtener vacuna");
 		return vacunaService.findById(idVacuna);
 	}
@@ -61,7 +61,7 @@ public class VacunaController {
 	}
 
 	@PutMapping(value = "/", produces = "application/json")
-	public void modificarAccesos(@RequestBody Vacuna vacuna) throws Exception {
+	public void modificarVacuna(@RequestBody Vacuna vacuna) throws Exception {
 		log.info("Modificar vacuna");
 		vacunaService.modificar(vacuna);
 	}

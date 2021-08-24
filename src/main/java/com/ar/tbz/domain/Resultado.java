@@ -12,8 +12,9 @@ public class Resultado {
 	private String antecedentesLabel ;
 	private String temperatura ;
 	private String sintomas ;  // @@ idSintomaLabel, 0/1 @@............@@
-	private String contactoEstrecho ;  // @@ idcontactoEstrechoLabel, 0/1 @@............@@
-	private String antecedentes ;  // @@ idAntecedenteLabel, 0/1 @@............@@ ;
+	private String contactoEstrecho ;  // @@ idContactoEstrechoLabel, 0/1 @@............@@
+	private String antecedentes ;  // @@ idAntecedenteLabel, 0/1 @@............@@
+	private String vacunas; // @@ idPregunta, ninguna/nombre de la vacuna @@..........@@
 	
 	// ---------------------------------------------   nuevo modelo 
 	
@@ -81,6 +82,12 @@ public class Resultado {
 	}
 	public void setAntecedentes(String antecedentes) {
 		this.antecedentes = antecedentes;
+	}
+	public String getVacunas() {
+		return vacunas;
+	}
+	public void setVacunas(String vacunas) {
+		this.vacunas = vacunas;
 	}
 	public boolean isEstadoSintomas() {
 		return estadoSintomas;

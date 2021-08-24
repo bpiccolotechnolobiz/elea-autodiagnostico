@@ -473,7 +473,8 @@ public class Mail {
 			} else if (respuestaValor.equals("1")) {
 				respuesta = "SI";
 			} else {
-				respuesta = respuestaValor + " °C";
+//				respuesta = respuestaValor + " °C";
+				respuesta = respuestaValor;
 			}
 
 			tabla += "<tr>\r\n"
