@@ -107,7 +107,6 @@ public class VacunaService {
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, vacuna.getDescripcionVacuna());
-			pstm.setInt(2, vacuna.getEstadoLogico());
 			pstm.executeUpdate();
 
 		} catch (SQLException e) {
