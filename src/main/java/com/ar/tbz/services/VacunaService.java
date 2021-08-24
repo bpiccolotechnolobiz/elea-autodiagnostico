@@ -103,7 +103,7 @@ public class VacunaService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso (descripcionVacuna, estadoLogico) values ( ?, 1)";
+			String query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.vacunas (descripcionVacuna, estadoLogico) values ( ?, 1)";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, vacuna.getDescripcionVacuna());
@@ -127,7 +127,7 @@ public class VacunaService {
 		Connection conn = null;
 		try {
 			conn = Conexion.generarConexion();
-			String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso SET  descripcionVacuna = ?, estadoLogico = ?  where idVacuna = ?";
+			String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.vacunas SET  descripcionVacuna = ?, estadoLogico = ?  where idVacuna = ?";
 
 			PreparedStatement pstm = conn.prepareStatement(query);
 			pstm.setString(1, lugar.getDescripcionVacuna());
