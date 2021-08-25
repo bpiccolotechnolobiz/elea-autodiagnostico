@@ -29,23 +29,23 @@ public class EstadisticaService {
 			log.info("querys estadisticas");
 			String queryActivos = "SELECT COUNT(idUsuario) AS cantidad FROM empleadosActivos ";
 			int empleadosActivos = getCount(conn, queryActivos, null, null);
-			String queryAutodiag = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			String queryAutodiag = "SELECT distinct COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int autodiag = getCount(conn, queryAutodiag, fechaDesde, fechaHasta);
-			String queryEmpHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			String queryEmpHabilitados = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int empHabilitados = getCount(conn, queryEmpHabilitados, fechaDesde, fechaHasta);
-			String queryEmpNoHabilitados = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			String queryEmpNoHabilitados = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int empNoHabilitados = getCount(conn, queryEmpNoHabilitados, fechaDesde, fechaHasta);
-			String queryEmpEstrechos = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1 and estadoSintomas=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			String queryEmpEstrechos = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoContactoEstrecho=1 and estadoSintomas=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empEstrechos = getCount(conn, queryEmpEstrechos, fechaDesde, fechaHasta);
-			String queryEmpSintomas = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			String queryEmpSintomas = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=0 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empSintomas = getCount(conn, queryEmpSintomas, fechaDesde, fechaHasta);
-			String queryEmpSintomasContEstrecho = "SELECT COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
+			String queryEmpSintomasContEstrecho = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND estadoSintomas=1 and estadoContactoEstrecho=1 and fecha_autodiagnostico BETWEEN  ? and ? ";
 			int empSintomasContEstrecho = getCount(conn, queryEmpSintomasContEstrecho, fechaDesde, fechaHasta);
 			String queryPctAutodiagPorEmpAct = "SELECT (CAST((SELECT COUNT (DISTINCT nroLegajo) FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?) AS DECIMAL) / CAST((SELECT COUNT (DISTINCT nroLegajo) FROM empleadosActivos) AS DECIMAL)) AS resultado;";
 			double pctAutodiagPorEmpAct = getCountDouble(conn, queryPctAutodiagPorEmpAct, fechaDesde, fechaHasta);
 
 			estadistica = new Estadistica(empleadosActivos, autodiag, empHabilitados, empNoHabilitados, empEstrechos,
-					empSintomas, empSintomasContEstrecho, pctAutodiagPorEmpAct*100);
+					empSintomas, empSintomasContEstrecho, pctAutodiagPorEmpAct * 100);
 
 		} catch (
 
@@ -77,7 +77,8 @@ public class EstadisticaService {
 		return count;
 	}
 
-	private double getCountDouble(Connection conn, String query, String fechaDesde, String fechaHasta) throws SQLException {
+	private double getCountDouble(Connection conn, String query, String fechaDesde, String fechaHasta)
+			throws SQLException {
 		PreparedStatement pstm = conn.prepareStatement(query);
 		if (fechaDesde != null && fechaHasta != null) {
 			pstm.setString(1, fechaDesde);
