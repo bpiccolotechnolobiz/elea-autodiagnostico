@@ -2,9 +2,9 @@ package com.ar.tbz.services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
+import com.ar.tbz.domain.Parametro;
 import com.ar.tbz.domain.Resultado;
 
 @Component
@@ -29,9 +30,11 @@ public class Mail {
 
 	@Autowired
 	LugarAccesoService lugarAccesoService;
+	@Autowired
+	EstadisticaService estadisticaService;
 
 	// ENVIO MAIL
-	public void envioMail(Resultado resultado) throws IOException {
+	public void envioMail(Resultado resultado) throws Exception {
 		System.out.println("Enviando mail");
 
 		// Sender's email ID needs to be mentioned
@@ -46,7 +49,12 @@ public class Mail {
 		String to = resultado.getLegajo().getEmailUsuario();
 //		String to2 = "consultorio.medico@elea.com";
 		String to2 = propertiesFile.getProperty("email.to");
+		Optional<Parametro> emailToConsultorio = estadisticaService.obtenerParametros().stream()
+				.filter(x -> x.getDescripcionParametro().contentEquals("Email del consultorio")).findAny();
 
+		if (emailToConsultorio.isPresent()) {
+			to2 = emailToConsultorio.get().getValorParametro();
+		}
 		// Assuming you are sending email from through gmails smtp
 //		String host = "smtp.gmail.com";
 
@@ -203,7 +211,8 @@ public class Mail {
 
 		String lugarAccesoStr = "";
 		try {
-			lugarAccesoStr = lugarAccesoService.recuperarLugarDeAcceso(legajo.getIdLugarAcceso()).getDescripcionLugarAcceso();
+			lugarAccesoStr = lugarAccesoService.recuperarLugarDeAcceso(legajo.getIdLugarAcceso())
+					.getDescripcionLugarAcceso();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

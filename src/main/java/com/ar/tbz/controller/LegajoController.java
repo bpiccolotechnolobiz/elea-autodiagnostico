@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.BloquedoForm;
@@ -73,7 +74,38 @@ public class LegajoController {
 		} else {
 			System.out.println("Entra al read base de datos " + new Date());
 
-			legajo = Servicios.recuperarDniLegajo("" + id);
+			legajo = Servicios.findByLegajo("" + id);
+
+			System.out.println("Sale del  read base de datos " + new Date());
+
+		}
+//		Servicios.crearMail(new Resultado());
+
+		System.out.println("Sale  del proceso legajo " + new Date() + "   " + legajo);
+
+		return legajo;
+
+	}
+
+	@RequestMapping(value = "/empleado/", method = RequestMethod.GET, produces = "application/json")
+	public Legajo findByDni(@RequestParam Integer dni, Model model) throws Exception {
+
+		System.out.println("Entra al proceso Legajo " + new Date());
+
+		Legajo legajo = new Legajo();
+
+		if (testLocalhost) {
+			legajo.setNroLegajo("12345678");
+			legajo.setDni("12345678");
+			legajo.setNombre("Juan empleado legajo 12345678");
+			legajo.setApellido("Perez empleado DNI 123678");
+			legajo.setTelefono("011-2345-6789");
+			legajo.setEmailLaboral("Juan.Perez@Elea.com.ar");
+			legajo.setEmailUsuario("Juan.Perez@gmail.com.ar");
+		} else {
+			System.out.println("Entra al read base de datos " + new Date());
+
+			legajo = Servicios.findByDni(String.valueOf(dni));
 
 			System.out.println("Sale del  read base de datos " + new Date());
 

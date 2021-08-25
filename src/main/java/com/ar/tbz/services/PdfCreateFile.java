@@ -40,7 +40,7 @@ public class PdfCreateFile {
 		// recupera datos de la tabla real
 		if (recuperarNroLegajoDeTabla) {
 		   dni = "34567891";
-		  legajo = Servicios.recuperarDniLegajo(""+nroLegajoRecuperaDNI); // ESTO FUNCIONA SOLO CON EMPLEADOS, VISITANTES NO
+		  legajo = Servicios.findByLegajo(""+nroLegajoRecuperaDNI); // ESTO FUNCIONA SOLO CON EMPLEADOS, VISITANTES NO
 		 
 		}
 		

@@ -101,7 +101,7 @@ public class SendMail {
 			// recupera datos de la tabla real
 			if (recuperarNroLegajoDeTabla) {
 				dni = "34567891";
-				legajo = Servicios.recuperarDniLegajo("" + nroLegajoRecuperaDNI);
+				legajo = Servicios.findByLegajo("" + nroLegajoRecuperaDNI);
 
 			}
 			String archivoNombre = "";

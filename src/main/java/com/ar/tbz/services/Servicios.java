@@ -112,7 +112,7 @@ public class Servicios {
 		// recupera datos de la tabla real
 		if (recuperarNroLegajoDeTabla) {
 			dni = "34567891";
-			legajo = Servicios.recuperarDniLegajo("" + nroLegajoRecuperaDNI);
+			legajo = Servicios.findByLegajo("" + nroLegajoRecuperaDNI);
 
 		} // end if recupertar
 
@@ -172,7 +172,7 @@ public class Servicios {
 				sb.append("\nResultado final:		 AUTORIZADO");
 			} else {
 				// recuperando datos de la tabla empleadosActivos
-				legajo = recuperarDniLegajo("34567891");
+				legajo = findByLegajo("34567891");
 				sb.append("\nELEA");
 				sb.append("\n");
 				sb.append("\nAutodiagnostico COVID-19");
@@ -280,54 +280,40 @@ public class Servicios {
 	 * @throws Exception
 	 */
 
-	public synchronized static Legajo recuperarDniLegajo(String nroLegajo) throws Exception {
+	public synchronized static Legajo findByLegajo(String nroLegajo) throws Exception {
+		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.empleadosActivos  lg  where  lg.nroLegajo = ?";
+		return findBy(nroLegajo, query);
+	} // end method recuperarDniLegadjo
 
+	public static Legajo findByDni(String dni) throws Exception {
+		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.empleadosActivos  lg  where  lg.dni = ?";
+		return findBy(dni, query);
+	}
+
+	private static Legajo findBy(String numero, String query) throws Exception {
 		System.out.println("Entra recuperarDniLegajo ");
-
 		List<Legajo> legajos = new ArrayList<Legajo>();
 		Legajo legajo = null;
-
 		Connection conn = null;
 		PreparedStatement pstm = null;
 		ResultSet rs = null;
-
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-		boolean status = false;
 		try {
-
-			System.out.println("Entra -->  recuperarDniLegajo :: generarConexion ");
-
 			conn = Conexion.generarConexion();
-
 			System.out.println("Sale -->  recuperarDniLegajo :: generarConexion ");
-
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.empleadosActivos  lg  where  lg.nroLegajo = ?";
-
 			pstm = conn.prepareStatement(query);
-			pstm.setString(1, nroLegajo);
-
-			System.out.println("Entra -->  recuperarDniLegajo :: ejecutaQuery ");
-
+			pstm.setString(1, numero);
 			rs = pstm.executeQuery();
-
 			System.out.println("Sale -->  recuperarDniLegajo :: ejecutaQuery ");
-
 			while (rs.next()) {
-				System.out.println("Entra -->  recuperarDniLegajo :: rs.next() ");
-
 				legajo = new Legajo();
-
 				legajo.setNroLegajo(rs.getString("nrolegajo"));
 				legajo.setDni(rs.getString("dni"));
 				legajo.setNombre(rs.getString("nombre"));
 				legajo.setApellido(rs.getString("apellido"));
 				legajo.setTelefono((String) rs.getString("telefono"));
 				legajo.setEmailLaboral((String) rs.getString("emailLaboral"));
-
 				legajos.add(legajo);
 			}
-			System.out.println("Sale -->  recuperarDniLegajo :: rs.next() ");
-			int xdebug1 = 0;
 		} catch (Exception e) {
 			throw new Exception(e);
 		} finally {
@@ -340,13 +326,11 @@ public class Servicios {
 				}
 			}
 		}
-
 		System.out.println("\n\n\n --------------------------------------------->  Retorna legajo recuperado  -->  "
 				+ " -- " + legajo);
-
 		return legajo;
 
-	} // end method recuperarDniLegadjo
+	}
 
 	// ------------------------------------------- Grabar datos en AutoDiagnostico
 
@@ -585,20 +569,20 @@ public class Servicios {
 			if (totalTokens != contadorTokens) {
 				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Sintomas ");
 			}
-			
+
 			// Grabar respuestas PANTALLA CONTACTO ESTRECHO
 			token = new StringTokenizer(resultado.getContactoEstrecho(), "@@");
-			
+
 			totalTokens = token.countTokens();
 			contadorTokens = 0;
 
 			System.out.println("Total tokens Contacto Estrecho " + totalTokens);
-			
+
 			while (token.hasMoreTokens()) {
 				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
-				
+
 				pstm = conn.prepareStatement(query);
-				
+
 				String[] datos = token.nextToken().split(",");
 				pstm.setObject(1, idAutodiagnostico);
 				pstm.setObject(2, datos[0]);
@@ -614,7 +598,7 @@ public class Servicios {
 			}
 
 			// Grabar respuestas PANTALLA ANTECEDENTES
-			//antecedentes
+			// antecedentes
 			token = new StringTokenizer(resultado.getAntecedentes(), "@@");
 
 			totalTokens = token.countTokens();
@@ -641,8 +625,8 @@ public class Servicios {
 			if (totalTokens != contadorTokens) {
 				System.out.println("Error en la generacion de las respuestas al autodiagnostico - Antecedentes");
 			}
-			
-			//vacunas
+
+			// vacunas
 			token = new StringTokenizer(resultado.getVacunas(), "@@");
 
 			totalTokens = token.countTokens();
