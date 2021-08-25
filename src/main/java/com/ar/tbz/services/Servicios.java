@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
@@ -29,12 +31,15 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+@Service
 public class Servicios {
 
+	@Autowired
+	Mail mail;
 	private static Log log = LogFactory.getLog(Servicios.class);
 
 	// grabar archivo
-	public static void grabarArchivo(String nombreFile, String archivo) {
+	public void grabarArchivo(String nombreFile, String archivo) {
 		System.out.println("Texto del Mail \n\n\n " + archivo);
 		try {
 			String ruta = nombreFile;
@@ -59,20 +64,20 @@ public class Servicios {
 	}
 
 	// crear datos mail ------------------------------------
-	public static void crearMail(Resultado resultado) throws Exception {
-		new Mail().envioMail(resultado);
+	public void crearMail(Resultado resultado) throws Exception {
+		mail.envioMail(resultado);
 //		Servicios.grabarArchivo("c://tmp//mail", textoMail);
 	}
 
 	// crear datos PDF ------------------------------------
-	public static void crearPDF(Resultado resultado) throws Exception {
+	public void crearPDF(Resultado resultado) throws Exception {
 		// TODO Auto-generated method stub
 		new PdfCreateFile().execute(resultado);
 
 	}
 
 	// crear codigo qr------------------------------------
-//	public static void generarQRCode(Resultado resultado) throws UnirestException {
+//	public  void generarQRCode(Resultado resultado) throws UnirestException {
 //		String body = "{\n" + 
 //				"\"data\":\"https://www.qrcode-monkey.com\",\n" + 
 //				"\"config\":{\n" + 
@@ -91,7 +96,7 @@ public class Servicios {
 //		  .asJson();
 //	}
 
-	public static void crearQRCode(Resultado resultado) throws Exception {
+	public void crearQRCode(Resultado resultado) throws Exception {
 
 		// se usa para no recuperar de la tabla (false)
 		boolean recuperarNroLegajoDeTabla = true;
@@ -285,7 +290,7 @@ public class Servicios {
 		return findBy(nroLegajo, query);
 	} // end method recuperarDniLegadjo
 
-	public static Legajo findByDni(String dni) throws Exception {
+	public Legajo findByDni(String dni) throws Exception {
 		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.empleadosActivos  lg  where  lg.dni = ?";
 		return findBy(dni, query);
 	}
@@ -675,7 +680,7 @@ public class Servicios {
 
 	} // END method grabar autodiagnosticos
 
-	public static void crearAutodiagnostico(Resultado resultado) {
+	public void crearAutodiagnostico(Resultado resultado) {
 		// TODO Auto-generated method stub
 
 	}
@@ -683,12 +688,12 @@ public class Servicios {
 	// ------------------------------------------------------------------ cfrear
 	// Transacciones
 
-	public static void crearTransacciones(Resultado resultado) {
+	public void crearTransacciones(Resultado resultado) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public static int bloquear(Integer id, String comentario, String fechaHora) {
+	public int bloquear(Integer id, String comentario, String fechaHora) {
 		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico SET comentario = ?, "
 				+ "modificadoEn = ?, fecha_hasta_resultado = ? where idAutodiagnostico = ? ";
 		Connection conn = null;

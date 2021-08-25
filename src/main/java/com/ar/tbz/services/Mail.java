@@ -50,7 +50,7 @@ public class Mail {
 		String to2 = propertiesFile.getProperty("email.to");
 		List<Parametro> parametros = estadisticaService.obtenerParametros();
 		for (Parametro param : parametros) {
-			if (param.getValorParametro().equals("Email del consultorio")) {
+			if (param.getDescripcionParametro().contains("Email del consultorio")) {
 				to2 = param.getValorParametro();
 			}
 		}

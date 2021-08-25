@@ -2,6 +2,7 @@ package com.ar.tbz.controller;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,9 @@ import com.ar.tbz.services.Servicios;
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
 
 public class LegajoController {
+
+	@Autowired
+	Servicios servicios;
 
 	// si es true se hace un test local si es false se hace una conexion a la base
 	// de datos SQLServer
@@ -105,7 +109,7 @@ public class LegajoController {
 		} else {
 			System.out.println("Entra al read base de datos " + new Date());
 
-			legajo = Servicios.findByDni(String.valueOf(dni));
+			legajo = servicios.findByDni(String.valueOf(dni));
 
 			System.out.println("Sale del  read base de datos " + new Date());
 
@@ -135,7 +139,7 @@ public class LegajoController {
 
 //			Servicios.crearTransacciones(resultado);
 
-			Servicios.crearMail(resultado);
+			servicios.crearMail(resultado);
 
 //			Servicios.crearPDF(resultado);
 //			Servicios.crearQRCode(resultado);
@@ -179,7 +183,7 @@ public class LegajoController {
 
 //		Servicios.crearTransacciones(resultado);
 
-		Servicios.crearMail(resultado);
+		servicios.crearMail(resultado);
 //		Servicios.crearPDF(resultado);
 //		Servicios.crearQRCode(resultado);
 
@@ -229,7 +233,7 @@ public class LegajoController {
 
 	@RequestMapping(value = "/bloquear/{id}", method = RequestMethod.POST, produces = "application/json")
 	public int bloquear(@PathVariable Integer id, @RequestBody BloquedoForm form) throws Exception {
-		return Servicios.bloquear(id, form.getComentario(), form.getFechaHora());
+		return servicios.bloquear(id, form.getComentario(), form.getFechaHora());
 	}
 
 }
