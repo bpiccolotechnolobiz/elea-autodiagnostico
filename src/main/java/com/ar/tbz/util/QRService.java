@@ -1,4 +1,4 @@
-package com.ar.tbz.services;
+package com.ar.tbz.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ar.tbz.services.BusquedaService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;

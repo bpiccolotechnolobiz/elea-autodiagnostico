@@ -16,6 +16,7 @@ import com.ar.tbz.domain.BloquedoForm;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.domain.Test;
+import com.ar.tbz.services.EmpleadoService;
 import com.ar.tbz.services.Servicios;
 
 @RestController
@@ -27,6 +28,9 @@ public class LegajoController {
 
 	@Autowired
 	Servicios servicios;
+
+	@Autowired
+	EmpleadoService empleadoService;
 
 	// si es true se hace un test local si es false se hace una conexion a la base
 	// de datos SQLServer
@@ -78,7 +82,7 @@ public class LegajoController {
 		} else {
 			System.out.println("Entra al read base de datos " + new Date());
 
-			legajo = Servicios.findByLegajo("" + id);
+			legajo = empleadoService.findByLegajo("" + id);
 
 			System.out.println("Sale del  read base de datos " + new Date());
 
@@ -109,7 +113,7 @@ public class LegajoController {
 		} else {
 			System.out.println("Entra al read base de datos " + new Date());
 
-			legajo = servicios.findByDni(String.valueOf(dni));
+			legajo = empleadoService.findByDni(String.valueOf(dni));
 
 			System.out.println("Sale del  read base de datos " + new Date());
 

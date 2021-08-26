@@ -1,4 +1,4 @@
-package com.ar.tbz.services;
+package com.ar.tbz.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +21,7 @@ import javax.mail.internet.MimeMultipart;
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
+import com.ar.tbz.services.Servicios;
 
 public class SendMail {
 

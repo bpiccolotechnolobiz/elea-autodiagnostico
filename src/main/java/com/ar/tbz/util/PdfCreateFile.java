@@ -1,4 +1,4 @@
-package com.ar.tbz.services;
+package com.ar.tbz.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,6 +7,7 @@ import java.io.OutputStream;
 
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
+import com.ar.tbz.services.Servicios;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -21,7 +22,7 @@ public class PdfCreateFile {
 //
 //	}// end main
 
-	public void execute(Resultado resultado) throws Exception {
+	public void buildPDFDocument(Resultado resultado) throws Exception {
 		// TODO Auto-generated method stub
 		
 		boolean recuperarNroLegajoDeTabla = true ;

@@ -39,4 +39,45 @@ public class PreguntaService {
 		conn.close();
 		return preguntas;
 	}
+
+	public List<String> recuperarPreguntas(Integer idAutodiagnostico) throws Exception {
+
+		System.out.println("Entra recuperar preguntas y respuestas según idAutodiagnostico");
+
+		Connection conn = null;
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+
+		List<String> listPregRtas = new ArrayList<String>();
+		String preguntasRespuestas = "";
+		try {
+			conn = Conexion.generarConexion();
+
+			String query = "SELECT A.descripcionPregunta, B.respuestaPregunta FROM preguntas A, respuestas B WHERE B.idPregunta=A.idPregunta AND B.idAutodiagnostico="
+					+ idAutodiagnostico + " ORDER BY A.idPregunta ASC;";
+			pstm = conn.prepareStatement(query);
+			rs = pstm.executeQuery();
+
+			while (rs.next()) {
+				preguntasRespuestas = rs.getString("descripcionPregunta") + "," + rs.getString("respuestaPregunta");
+				listPregRtas.add(preguntasRespuestas);
+			}
+
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					throw new Exception(e2);
+				}
+			}
+		}
+
+		return listPregRtas;
+
+	}
+
 }

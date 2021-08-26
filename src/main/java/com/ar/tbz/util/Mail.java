@@ -1,4 +1,4 @@
-package com.ar.tbz.services;
+package com.ar.tbz.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +23,9 @@ import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Parametro;
 import com.ar.tbz.domain.Resultado;
+import com.ar.tbz.services.EstadisticaService;
+import com.ar.tbz.services.LugarAccesoService;
+import com.ar.tbz.services.PreguntaService;
 
 @Component
 public class Mail {
@@ -31,6 +34,8 @@ public class Mail {
 	LugarAccesoService lugarAccesoService;
 	@Autowired
 	EstadisticaService estadisticaService;
+	@Autowired
+	PreguntaService preguntaService;
 
 	// ENVIO MAIL
 	public void envioMail(Resultado resultado) throws Exception {
@@ -458,13 +463,13 @@ public class Mail {
 	}
 
 	// TABLA PREGUNTAS Y RESPUESTAS
-	private static String tablaPreguntasRespuestasMail(Resultado resultado) {
+	private String tablaPreguntasRespuestasMail(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
 
 		List<String> preguntasRespuestas = null;
 
 		try {
-			preguntasRespuestas = Servicios.recuperarPreguntas(legajo.getIdAutodiagnostico());
+			preguntasRespuestas = preguntaService.recuperarPreguntas(legajo.getIdAutodiagnostico());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
