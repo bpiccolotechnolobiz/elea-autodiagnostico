@@ -29,7 +29,7 @@ public class EstadisticaService {
 			log.info("querys estadisticas");
 			String queryActivos = "SELECT COUNT(idUsuario) AS cantidad FROM empleadosActivos ";
 			int empleadosActivos = getCount(conn, queryActivos, null, null);
-			String queryAutodiag = "SELECT distinct COUNT(idAutodiagnostico) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
+			String queryAutodiag = "SELECT COUNT(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int autodiag = getCount(conn, queryAutodiag, fechaDesde, fechaHasta);
 			String queryEmpHabilitados = "SELECT count(distinct nroLegajo) AS cantidad FROM autodiagnostico WHERE nroLegajo!=0 AND resultado=1 and fecha_autodiagnostico BETWEEN  ? and ?  ";
 			int empHabilitados = getCount(conn, queryEmpHabilitados, fechaDesde, fechaHasta);
