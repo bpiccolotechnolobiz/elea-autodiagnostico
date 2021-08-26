@@ -1,11 +1,17 @@
 package com.ar.tbz.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -36,6 +42,8 @@ public class Mail {
 	EstadisticaService estadisticaService;
 	@Autowired
 	PreguntaService preguntaService;
+	@Autowired
+	PdfCreateFile pdfCreateFile;
 
 	// ENVIO MAIL
 	public void envioMail(Resultado resultado) throws Exception {
@@ -147,6 +155,34 @@ public class Mail {
 			// Agregar la parte del mensaje HTML al multiPart
 			multipart.addBodyPart(mimeBodyPart);
 
+			// PDF
+			MimeBodyPart pdfPart = new MimeBodyPart();
+//			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
+
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//			PdfWriter pdfWriter = PdfWriter.getInstance(pdf, byteArrayOutputStream); // Do this BEFORE document.open()
+
+			File file = new File("autodiagnostico.pdf");
+			OutputStream outputStream = new FileOutputStream(file);
+			byteArrayOutputStream.writeTo(outputStream);
+
+//			pdf.open();
+//			createPDF(pdf); // Whatever function that you use to create your PDF
+//			pdf.close();
+
+			// ByteArrayDataSource bds = new ByteArrayDataSource(pdf., "application/pdf");
+			// pdfPart.setHeader("Content-ID", "<" + imagenesDirectorio[i] + ">");
+//			pdfPart.setContent(mp);
+			pdfPart.attachFile(file);
+
+			DataSource source = new FileDataSource(file);
+			pdfPart.setDataHandler(new DataHandler(source));
+
+			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
+//			File file = File.createTempFile("autodiagnostico", "pdf");
+			multipart.addBodyPart(pdfPart);
+
+//			att.setDataHandler(new DataHandler(bds));
 			// Agregar el multipart al cuerpo del mensaje
 			message.setContent(multipart);
 
