@@ -18,12 +18,19 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
-import com.ar.tbz.services.Servicios;
+import com.ar.tbz.services.EmpleadoService;
 
+@Component
 public class SendMail {
+
+	@Autowired
+	EmpleadoService empleadoService;
 
 //    public static void main(String[] args) throws Exception {
 //    	Resultado resultado = new Resultado();
@@ -102,7 +109,7 @@ public class SendMail {
 			// recupera datos de la tabla real
 			if (recuperarNroLegajoDeTabla) {
 				dni = "34567891";
-				legajo = Servicios.findByLegajo("" + nroLegajoRecuperaDNI);
+				legajo = empleadoService.findByLegajo("" + nroLegajoRecuperaDNI);
 
 			}
 			String archivoNombre = "";

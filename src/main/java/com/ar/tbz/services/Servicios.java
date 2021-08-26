@@ -39,6 +39,8 @@ public class Servicios {
 
 	@Autowired
 	PdfCreateFile pdfBuilder;
+	@Autowired
+	EmpleadoService empleadoService;
 
 	private static Log log = LogFactory.getLog(Servicios.class);
 
@@ -120,7 +122,7 @@ public class Servicios {
 		// recupera datos de la tabla real
 		if (recuperarNroLegajoDeTabla) {
 			dni = "34567891";
-			legajo = Servicios.findByLegajo("" + nroLegajoRecuperaDNI);
+			legajo = empleadoService.findByLegajo("" + nroLegajoRecuperaDNI);
 
 		} // end if recupertar
 
@@ -180,7 +182,7 @@ public class Servicios {
 				sb.append("\nResultado final:		 AUTORIZADO");
 			} else {
 				// recuperando datos de la tabla empleadosActivos
-				legajo = findByLegajo("34567891");
+				legajo = empleadoService.findByLegajo("34567891");
 				sb.append("\nELEA");
 				sb.append("\n");
 				sb.append("\nAutodiagnostico COVID-19");

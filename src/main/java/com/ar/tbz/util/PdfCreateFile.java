@@ -5,11 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
-import com.ar.tbz.services.Servicios;
+import com.ar.tbz.services.EmpleadoService;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -17,6 +18,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 @Component
 public class PdfCreateFile {
 
+	@Autowired
+	EmpleadoService empleadoService;
 //	public static void main(String args[]) throws Exception {
 //		
 //		Resultado resultado = new Resultado();
@@ -44,8 +47,9 @@ public class PdfCreateFile {
 		// recupera datos de la tabla real
 		if (recuperarNroLegajoDeTabla) {
 			dni = "34567891";
-			legajo = Servicios.findByLegajo("" + nroLegajoRecuperaDNI); // ESTO FUNCIONA SOLO CON EMPLEADOS, VISITANTES
-																		// NO
+			legajo = empleadoService.findByLegajo("" + nroLegajoRecuperaDNI); // ESTO FUNCIONA SOLO CON EMPLEADOS,
+																				// VISITANTES
+			// NO
 
 		}
 
