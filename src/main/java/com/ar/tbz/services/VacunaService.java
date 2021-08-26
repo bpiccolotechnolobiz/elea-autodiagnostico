@@ -35,7 +35,7 @@ public class VacunaService {
 
 			conn = Conexion.generarConexion();
 
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.vacunas";
+			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.vacunas ORDER BY descripcionVacuna";
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
 			while (rs.next()) {

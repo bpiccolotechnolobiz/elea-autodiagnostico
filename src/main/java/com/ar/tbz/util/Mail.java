@@ -456,10 +456,11 @@ public class Mail {
 	private static String footerMail() {
 		return "<br>\r\n" + "    <p>Este correo es automático, por favor no responder.</p>\r\n"
 				+ "    <p style=\"margin-top: 0;\">Gracias.<br>\r\n" + "        Saludos.<br>\r\n"
-				+ "        APP - Autodiagnóstico.<p>" + "    <div style=\"text-align:center;\">\r\n"
-				+ "        <div style=\"text-align:left;\"><img style=\"width:25%;max-width:175px;\" src=\"http://34.239.14.244/assets/elea-logo-v2@2x.png\" alt=\"elea-logo\"></div>\r\n"
-				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
-				+ "    </div>";
+				+ "        APP - Autodiagnóstico.<p>";
+//				+ "    <div style=\"text-align:center;\">\r\n"
+//				+ "        <div style=\"text-align:left;\"><img style=\"width:25%;max-width:175px;\" src=\"http://34.239.14.244/assets/elea-logo-v2@2x.png\" alt=\"elea-logo\"></div>\r\n"
+//				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
+//				+ "    </div>";
 	}
 
 	// TABLA PREGUNTAS Y RESPUESTAS

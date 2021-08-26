@@ -38,7 +38,7 @@ public class LugarAccesoService {
 
 			conn = Conexion.generarConexion();
 
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso";
+			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso ORDER BY descripcionLugarAcceso";
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
 			while (rs.next()) {
