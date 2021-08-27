@@ -33,6 +33,7 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.EstadisticaService;
 import com.ar.tbz.services.LugarAccesoService;
 import com.ar.tbz.services.PreguntaService;
+import com.itextpdf.text.Document;
 
 @Component
 public class Mail {
@@ -170,13 +171,14 @@ public class Mail {
 			// PDF
 			MimeBodyPart pdfPart = new MimeBodyPart();
 //			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
+			pdfCreateFile.crearPDF(resultado);
 
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //			PdfWriter pdfWriter = PdfWriter.getInstance(pdf, byteArrayOutputStream); // Do this BEFORE document.open()
 
-			File file = new File("autodiagnostico.pdf");
-			OutputStream outputStream = new FileOutputStream(file);
-			byteArrayOutputStream.writeTo(outputStream);
+//			File file = new File("autodiagnostico.pdf");
+//			OutputStream outputStream = new FileOutputStream(file);
+//			byteArrayOutputStream.writeTo(outputStream);
 
 //			pdf.open();
 //			createPDF(pdf); // Whatever function that you use to create your PDF
@@ -185,10 +187,11 @@ public class Mail {
 			// ByteArrayDataSource bds = new ByteArrayDataSource(pdf., "application/pdf");
 			// pdfPart.setHeader("Content-ID", "<" + imagenesDirectorio[i] + ">");
 //			pdfPart.setContent(mp);
-			pdfPart.attachFile(file);
+//			pdfPart.attachFile(file);
 
-			DataSource source = new FileDataSource(file);
+			DataSource source = new FileDataSource("autodiagnostico.pdf"); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
 			pdfPart.setDataHandler(new DataHandler(source));
+			pdfPart.setFileName("nuevo-autodiagnostico.pdf"); // NOMBRE CON EL CUÁL SE VA A DESCARGAR
 
 			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
 //			File file = File.createTempFile("autodiagnostico", "pdf");
@@ -526,7 +529,7 @@ public class Mail {
 		String tabla = "<table style=\"border:1px solid black;border-collapse:collapse;background-color:#C5CAE9;margin:0 auto;width:90%;\">";
 
 		for (String preguntaRespuesta : preguntasRespuestas) {
-			String[] splitPregRta = preguntaRespuesta.split(",");
+			String[] splitPregRta = preguntaRespuesta.split("@@");
 			String pregunta = splitPregRta[0];
 			String respuestaValor = splitPregRta[1];
 			String respuesta = "";

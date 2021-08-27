@@ -59,7 +59,7 @@ public class PreguntaService {
 			rs = pstm.executeQuery();
 
 			while (rs.next()) {
-				preguntasRespuestas = rs.getString("descripcionPregunta") + "," + rs.getString("respuestaPregunta");
+				preguntasRespuestas = rs.getString("descripcionPregunta") + "@@" + rs.getString("respuestaPregunta");
 				listPregRtas.add(preguntasRespuestas);
 			}
 
