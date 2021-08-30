@@ -2,7 +2,6 @@ package com.ar.tbz.util;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -83,7 +82,7 @@ public class PdfCreateFile {
 			// File("c://Users//JulioMOliveira//tmp//"+archivoNombre+ ".pdf"));
 //			file = new FileOutputStream(new File("c://Users//asman//tmp//pdf//" + archivoNombre + ".pdf"));
 //			   file = new FileOutputStream(new File("c://tmp//pdf//"+archivoNombre+ ".pdf"));
-			 file = new FileOutputStream("autodiagnostico.pdf");
+			file = new FileOutputStream("autodiagnostico.pdf");
 			// File("c://Users//elea//tmp//pdf//"+archivoNombre+ ".pdf"));
 
 			// Create a new Document object
@@ -101,6 +100,7 @@ public class PdfCreateFile {
 			document.add(new Paragraph("Comentario: " + resultado.getComentario()));
 
 			BufferedImage image = qrService.generateQR();
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(image, "PNG", baos);
 
@@ -135,11 +135,11 @@ public class PdfCreateFile {
 		}
 		return document;
 	}
-	
+
 	public void crearPDF(Resultado resultado) throws Exception {
 		Document document = new Document();
 		FileOutputStream file = null;
-		
+
 		Legajo legajo = resultado.getLegajo();
 		String nroLegajo = "";
 		if (legajo != null) {
@@ -178,7 +178,8 @@ public class PdfCreateFile {
 
 			// si es true levanta los datos del cargaDatosMail
 			// Writing content
-			document.add(new Paragraph("Nombre: " + resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido()));
+			document.add(new Paragraph(
+					"Nombre: " + resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido()));
 			document.add(Chunk.NEWLINE);
 			document.add(new Paragraph("Resultado: " + (resultado.isResultado() ? "Habilitado" : "No habilitado")));
 			document.add(new Paragraph("Fecha generado: " + resultado.getFecha_autodiagnostico()));

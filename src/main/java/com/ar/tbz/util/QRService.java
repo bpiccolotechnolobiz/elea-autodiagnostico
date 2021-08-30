@@ -2,6 +2,7 @@ package com.ar.tbz.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 import java.util.Map;
@@ -89,6 +90,17 @@ public class QRService {
 			log.info("\nCongratulation.. You have successfully created QR Code.. \n" + "Check your code here: "
 //					+ filePath
 			);
+
+			int newW = 100;
+			int newH = 100;
+			Image tmp = eleaImage.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+			BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+			Graphics2D g2d = dimg.createGraphics();
+			g2d.drawImage(tmp, 0, 0, null);
+			g2d.dispose();
+
+			return dimg;
 		} catch (WriterException e) {
 			log.info("\nSorry.. Something went wrong...\n");
 			e.printStackTrace();
