@@ -10,7 +10,6 @@ import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -63,19 +62,20 @@ public class SendMail {
 		properties.put("mail.smtp.host", host);
 //        properties.put("mail.smtp.port", "465");  // 995 ' 587   465
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port")); // 995 ' 587 465
-		properties.put("mail.smtp.ssl.enable", "true");
-		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.ssl.enable", "false");
+		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-
-			protected PasswordAuthentication getPasswordAuthentication() {
-
-				return new PasswordAuthentication("autodiagnosticoElea@gmail.com", "Elea2021");
-
-			}
-
-		});
+		Session session = Session.getDefaultInstance(properties);
+//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+//
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//
+//				return new PasswordAuthentication("autodiagnosticoElea@gmail.com", "Elea2021");
+//
+//			}
+//
+//		});
 		// session.setDebug(true);
 		try {
 			// Create a default MimeMessage object.
