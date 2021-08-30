@@ -12,6 +12,7 @@ import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -84,22 +85,18 @@ public class Mail {
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
 //		properties.put("mail.smtp.ssl.enable", "false");
 //		properties.put("mail.smtp.auth", "false");
-//		properties.put("mail.smtp.ssl.enable", "true");
-//		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.ssl.enable", "false");
-		properties.put("mail.smtp.auth", "false");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
+//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
-		Session session = Session.getDefaultInstance(properties);
-//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-//
-//			protected PasswordAuthentication getPasswordAuthentication() {
-//
-//				return new PasswordAuthentication(from, password);
-//
-//			}
-//
-//		});
+//		Session session = Session.getDefaultInstance(properties);
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(from, password);
+			}
+		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
