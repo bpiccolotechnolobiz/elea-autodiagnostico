@@ -38,7 +38,7 @@ public class LugarAccesoService {
 
 			conn = Conexion.generarConexion();
 
-			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso ORDER BY descripcionLugarAcceso";
+			String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso ORDER BY idLugarAcceso";
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
 			while (rs.next()) {
@@ -174,8 +174,4 @@ public class LugarAccesoService {
 		}
 	}
 
-	public List<LugarAcceso> getLugarDeAcceso(int idAcceso) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
