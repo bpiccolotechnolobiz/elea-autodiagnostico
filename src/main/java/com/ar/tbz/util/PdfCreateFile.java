@@ -1,12 +1,8 @@
 package com.ar.tbz.util;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,8 +21,7 @@ public class PdfCreateFile {
 
 	@Autowired
 	EmpleadoService empleadoService;
-	@Autowired
-	QRService qrService;
+
 //	public static void main(String args[]) throws Exception {
 //		
 //		Resultado resultado = new Resultado();
@@ -35,7 +30,7 @@ public class PdfCreateFile {
 //
 //	}// end main
 
-	public Document buildPDFDocument(Resultado resultado) throws Exception {
+	public Document buildPDFDocument(Resultado resultado, Image img) throws Exception {
 		// TODO Auto-generated method stub
 		Document document = new Document();
 		boolean recuperarNroLegajoDeTabla = true;
@@ -99,12 +94,6 @@ public class PdfCreateFile {
 			document.add(new Paragraph("Fecha hasta: " + resultado.getFecha_hasta_resultado()));
 			document.add(new Paragraph("Comentario: " + resultado.getComentario()));
 
-			BufferedImage image = qrService.generateQR();
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(image, "PNG", baos);
-
-			Image img = Image.getInstance(baos.toByteArray());
 			document.add(img);
 
 			// document.add(new Paragraph(new Date(new
@@ -136,7 +125,7 @@ public class PdfCreateFile {
 		return document;
 	}
 
-	public void crearPDF(Resultado resultado) throws Exception {
+	public void crearPDF(Resultado resultado, Image img) throws Exception {
 		Document document = new Document();
 		FileOutputStream file = null;
 
@@ -185,11 +174,6 @@ public class PdfCreateFile {
 			document.add(new Paragraph("Fecha generado: " + resultado.getFecha_autodiagnostico()));
 			document.add(new Paragraph("Fecha vencimiento: " + resultado.getFecha_hasta_resultado()));
 
-			BufferedImage image = qrService.generateQR();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(image, "PNG", baos);
-
-			Image img = Image.getInstance(baos.toByteArray());
 			document.add(img);
 
 			// document.add(new Paragraph(new Date(new

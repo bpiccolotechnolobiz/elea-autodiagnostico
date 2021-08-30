@@ -29,6 +29,7 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.EstadisticaService;
 import com.ar.tbz.services.LugarAccesoService;
 import com.ar.tbz.services.PreguntaService;
+import com.itextpdf.text.Image;
 
 @Component
 public class Mail {
@@ -41,6 +42,8 @@ public class Mail {
 	PreguntaService preguntaService;
 	@Autowired
 	PdfCreateFile pdfCreateFile;
+	@Autowired
+	QRService qrService;
 
 	// ENVIO MAIL
 	public void envioMail(Resultado resultado) throws Exception {
@@ -168,7 +171,10 @@ public class Mail {
 			// PDF
 			MimeBodyPart pdfPart = new MimeBodyPart();
 //			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
-			pdfCreateFile.crearPDF(resultado);
+
+			Image image = qrService.generateQR();
+
+			pdfCreateFile.crearPDF(resultado, image);
 
 //			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //			PdfWriter pdfWriter = PdfWriter.getInstance(pdf, byteArrayOutputStream); // Do this BEFORE document.open()

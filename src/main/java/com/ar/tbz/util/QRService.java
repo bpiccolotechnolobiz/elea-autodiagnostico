@@ -4,8 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.EnumMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +23,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.itextpdf.text.BadElementException;
 
 @Component
 public class QRService {
@@ -28,13 +34,11 @@ public class QRService {
 //		new QRService().generateQR();
 //	}
 
-	public BufferedImage generateQR() {
+	public com.itextpdf.text.Image generateQR() throws BadElementException, MalformedURLException, IOException {
 		String myCodeText = "ELEA";
-//		String filePath = "c:\\aplicaciones\\autodiagnostico\\QRCode.png";
 		int size = 512;
-		String eleaFileType = "png";
-//		File eleaFile = new File(filePath);
 		BufferedImage eleaImage = null;
+		com.itextpdf.text.Image img = null;
 		try {
 
 			Map<EncodeHintType, Object> eleaHintType = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
@@ -100,11 +104,15 @@ public class QRService {
 			g2d.drawImage(tmp, 0, 0, null);
 			g2d.dispose();
 
-			return dimg;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(dimg, "PNG", baos);
+
+			img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
+			return img;
 		} catch (WriterException e) {
 			log.info("\nSorry.. Something went wrong...\n");
 			e.printStackTrace();
 		}
-		return eleaImage;
+		return img;
 	}
 }

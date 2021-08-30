@@ -25,11 +25,13 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.util.DateUtil;
 import com.ar.tbz.util.Mail;
 import com.ar.tbz.util.PdfCreateFile;
+import com.ar.tbz.util.QRService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.itextpdf.text.Image;
 
 @Service
 public class Servicios {
@@ -41,6 +43,8 @@ public class Servicios {
 	PdfCreateFile pdfBuilder;
 	@Autowired
 	EmpleadoService empleadoService;
+	@Autowired
+	QRService qrService;
 
 	private static Log log = LogFactory.getLog(Servicios.class);
 
@@ -76,9 +80,8 @@ public class Servicios {
 	}
 
 	public void crearPDF(Resultado resultado) throws Exception {
-		// TODO Auto-generated method stub
-		pdfBuilder.buildPDFDocument(resultado);
-
+		Image image = qrService.generateQR();
+		pdfBuilder.buildPDFDocument(resultado, image);
 	}
 
 	// crear codigo qr------------------------------------
