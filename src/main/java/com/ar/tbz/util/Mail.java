@@ -1,10 +1,7 @@
 package com.ar.tbz.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -15,7 +12,6 @@ import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -33,7 +29,6 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.EstadisticaService;
 import com.ar.tbz.services.LugarAccesoService;
 import com.ar.tbz.services.PreguntaService;
-import com.itextpdf.text.Document;
 
 @Component
 public class Mail {
@@ -86,23 +81,25 @@ public class Mail {
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
 //		properties.put("mail.smtp.ssl.enable", "false");
 //		properties.put("mail.smtp.auth", "false");
-		properties.put("mail.smtp.ssl.enable", "true");
-		properties.put("mail.smtp.auth", "true");
+//		properties.put("mail.smtp.ssl.enable", "true");
+//		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.ssl.enable", "false");
+		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
-//		Session session = Session.getDefaultInstance(properties);
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-
-			protected PasswordAuthentication getPasswordAuthentication() {
-
-				return new PasswordAuthentication(from, password);
-
-			}
-
-		});
+		Session session = Session.getDefaultInstance(properties);
+//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+//
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//
+//				return new PasswordAuthentication(from, password);
+//
+//			}
+//
+//		});
 
 		// Used to debug SMTP issues
-		session.setDebug(true);
+		session.setDebug(false);
 
 		String cuerpoMail = "";
 		try {
