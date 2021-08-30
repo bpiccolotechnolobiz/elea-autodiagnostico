@@ -1,5 +1,6 @@
 package com.ar.tbz.util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
@@ -138,10 +139,9 @@ public class Mail {
 
 			// Obtener los nombres de las imagenes en el directorio
 			String[] imagenesDirectorio = directorio.list();
-
+			Image qrImage = qrService.generateQR();
 			// Now set the actual message
-//			cuerpoMail = crearCuerpoMailParaUsuario(resultado);
-			cuerpoMail = crearCuerpoMail(resultado);
+			cuerpoMail = crearCuerpoMail(resultado, qrImage);
 //			message.setContent(cuerpoMail, "text/html");
 
 			// Creo la parte del mensaje HTML
@@ -169,9 +169,7 @@ public class Mail {
 			MimeBodyPart pdfPart = new MimeBodyPart();
 //			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
 
-			Image image = qrService.generateQR();
-
-			pdfCreateFile.crearPDF(resultado, image);
+			pdfCreateFile.crearPDF(resultado, qrImage);
 
 //			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //			PdfWriter pdfWriter = PdfWriter.getInstance(pdf, byteArrayOutputStream); // Do this BEFORE document.open()
@@ -226,7 +224,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado) {
+	public String crearCuerpoMail(Resultado resultado, Image qrImage) {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -303,9 +301,14 @@ public class Mail {
 
 		// Habilitado -> QR
 		if (resultado.isResultado()) {
+			BufferedImage bi = QRService.fromItextImage(qrImage);
+			String base64Img = QRService.imgToBase64String(bi);
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+							+ "    <div style=\"text-align:center;\">"
+//							+ "<img src=\"http://34.239.14.244/assets/qr-code.png\" "
+							+ "<img src=\"data:image/png;base64, " + base64Img + "\""
+							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		}
 
 		// Respuestas
@@ -324,177 +327,6 @@ public class Mail {
 
 		return cuerpoMail.toString();
 	}
-
-	// MAIL PARA USUARIO
-//	public static String crearCuerpoMailParaUsuario(Resultado resultado) {
-//		Legajo legajo = resultado.getLegajo();
-//
-//		StringBuffer cuerpoMail = new StringBuffer();
-//
-//		cuerpoMail.append(
-//				"<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
-//
-//		// Agregando header
-//		cuerpoMail.append(headerMail());
-//
-//		// Datos del usuario
-//		cuerpoMail.append("<h3>Estimado " + legajo.getNombre() + " " + legajo.getApellido() + "</h3>");
-//		// fin datos del usuario
-//
-//		// Informar si tiene sintomas y/o contacto estrecho
-//		String resultadoLeyenda = "";
-//		String estadoSintomasLeyenda = "";
-//		String estadoContactoEstrechoLeyenda = "";
-//		String estadoAntecedentesLeyenda = "";
-//
-//		if (resultado.isResultado()) {
-//			resultadoLeyenda = "<strong>Habilitado</strong>";
-//		} else {
-//			resultadoLeyenda = "<strong>No Habilitado</strong>";
-//		}
-//
-//		if (resultado.isEstadoSintomas()) {
-//			estadoSintomasLeyenda = "padece síntomas";
-//		} else {
-//			estadoSintomasLeyenda = "no padece síntomas";
-//		}
-//
-//		if (resultado.isEstadoContactoEstrecho()) {
-//			estadoContactoEstrechoLeyenda = "tuvo contacto estrecho";
-//		} else {
-//			estadoContactoEstrechoLeyenda = "no tuvo contacto estrecho";
-//		}
-//
-//		if (resultado.isEstadoAntecedentes()) {
-//			estadoAntecedentesLeyenda = "con antecedentes médicos";
-//		} else {
-//			estadoAntecedentesLeyenda = "sin antecedentes médicos";
-//		}
-//
-//		cuerpoMail.append("<p style=\"margin-bottom: 0;\">Su resultado ha sido " + resultadoLeyenda
-//				+ " debido a que usted " + estadoSintomasLeyenda + " y " + estadoContactoEstrechoLeyenda + ".</p>");
-//		cuerpoMail.append("<p>A modo informativo, usted es una persona " + estadoAntecedentesLeyenda
-//				+ " aunque lo previamente mencionado no impacta de ningún modo en el resultado.</p>");
-//
-//		cuerpoMail.append("<p>Esta es la declaración jurada que usted presentó:</p>");
-//
-//		cuerpoMail.append(tablaPreguntasRespuestasMail(resultado));
-//		// fin informe
-//
-//		cuerpoMail.append("<br>");
-//
-//		// Habilitado: QR - No habilitado: Contacto médico
-//		if (resultado.isResultado()) {
-//			cuerpoMail.append(
-//					"<p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-//							+ "    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
-//		} else {
-//			cuerpoMail.append(
-//					"<p>Usted no está habilitado para concurrir al trabajo. Por favor, comuníquese con Servicio Médico por teléfono o Whatsapp al 011-3867-3669.</p>");
-//		}
-//
-//		// Pie del mail
-//		cuerpoMail.append(footerMail());
-//		// fin del pie
-//
-//		cuerpoMail.append("</div>");
-//
-////		System.out.println(cuerpoMail);
-//
-//		return cuerpoMail.toString();
-//	}
-
-	// MAIL PARA MEDICO
-//	public static String crearCuerpoMailParaMedico(Resultado resultado) {
-//		Legajo legajo = resultado.getLegajo();
-//
-//		StringBuffer cuerpoMail = new StringBuffer();
-//
-//		cuerpoMail.append(
-//				"<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
-//
-//		// Agregando estilos
-////		cuerpoMail += stylesMail();
-//
-//		// Agregando header
-//		cuerpoMail.append(headerMail());
-//
-//		// Comienzo mail
-//		cuerpoMail.append("<h3>Estimados,</h3>");
-//		// fin comienzo
-//
-//		// Datos del usuario
-//		cuerpoMail.append("<p style=\"margin-bottom:0;\">El usuario " + legajo.getNombre() + " " + legajo.getApellido()
-//				+ " cuya información es:</p>");
-//
-//		cuerpoMail.append("<ul style=\"margin-top: .5em;\">");
-//
-//		if (!legajo.getNroLegajo().equals("0")) {
-//			cuerpoMail.append(
-//
-//					"<li aria-level=\"1\">\r\n" + "        <strong>Número de legajo:</strong> " + legajo.getNroLegajo()
-//							+ "\r\n" + "    </li>\r\n" + "    <li aria-level=\"1\">\r\n"
-//							+ "        <strong>Categoría:</strong> Empleado\r\n" + "    </li>");
-//		} else {
-//			cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>Categoría:</strong> Visitante Externo\r\n"
-//					+ "    </li>\r\n" + "    <li aria-level=\"1\">\r\n" + "        <strong>Empresa:</strong> "
-//					+ legajo.getEmpresa() + "\r\n" + "    </li>");
-//		}
-//
-//		cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>DNI:</strong> " + legajo.getDni() + "\r\n"
-//				+ "    </li>\r\n" + "    <li aria-level=\"1\">\r\n" + "        <strong>Teléfono:</strong> "
-//				+ legajo.getTelefono() + "\r\n" + "    </li>\r\n" + "    <li aria-level=\"1\">\r\n"
-//				+ "        <strong>Correo electrónico:</strong> " + legajo.getEmailUsuario() + "\r\n" + "    </li>");
-//
-//		String lugarAccesoStr = "";
-//		try {
-//			lugarAccesoStr = Servicios.recuperarLugarDeAcceso(legajo.getIdLugarAcceso());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		cuerpoMail.append("<li aria-level=\"1\">\r\n" + "        <strong>Lugar de acceso:</strong> " + lugarAccesoStr
-//				+ "\r\n" + "    </li>");
-//
-//		String fechaAutodiagnostico = formatearFecha(resultado.getFecha_autodiagnostico());
-//		String fechaHastaResultado = formatearFecha(resultado.getFecha_hasta_resultado());
-//
-//		cuerpoMail.append(
-//				"<li aria-level=\"1\" style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:24px>\r\n"
-//						+ "        <strong>Fecha de autodiagnóstico:</strong> " + fechaAutodiagnostico + "\r\n"
-//						+ "    </li>\r\n"
-//						+ "    <li aria-level=\"1\" style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:24px>\r\n"
-//						+ "        <strong>Fecha hasta de no habilitación:</strong> " + fechaHastaResultado + "\r\n"
-//						+ "    </li>\r\n" + "</ul>");
-//		// fin datos del usuario
-//
-//		// Informar si tiene sintomas y/o contacto estrecho
-//		cuerpoMail.append("<p style=\"margin-bottom: 2em;\">");
-//
-//		if (resultado.isEstadoSintomas() && resultado.isEstadoContactoEstrecho()) {
-//			cuerpoMail.append("Padece de síntomas y tuvo contacto estrecho");
-//		} else if (resultado.isEstadoSintomas()) {
-//			cuerpoMail.append("Padece de síntomas");
-//		} else {
-//			cuerpoMail.append("Tuvo contacto estrecho");
-//		}
-//		cuerpoMail.append(" por lo tanto su resultado es <strong>No Habilitado</strong>.</p>");
-//
-//		cuerpoMail.append(
-//				"<p>A continuación se presenta la declaración jurada que ingresó el usuario. Por supuesto esto se encuentra correctamente almacenado en la base de datos. Los datos son:</p>");
-//
-//		cuerpoMail.append(tablaPreguntasRespuestasMail(resultado));
-//		// fin informe
-//
-//		// Pie del mail
-//		cuerpoMail.append(footerMail());
-//		// fin del pie
-//
-//		cuerpoMail.append("</div>");
-//
-////		System.out.println(cuerpoMail);
-//
-//		return cuerpoMail.toString();
-//	}
 
 	private static String headerMail() {
 		return "<div style=\"text-align:center;\">\r\n"

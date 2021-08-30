@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.pdf.BarcodeQRCode;
 
 @Component
 public class QRService {
@@ -33,6 +36,42 @@ public class QRService {
 //	public static void main(String[] args) {
 //		new QRService().generateQR();
 //	}
+
+	public static String imgToBase64String(final RenderedImage img) {
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		try {
+			ImageIO.write(img, "png", os);
+			return java.util.Base64.getEncoder().encodeToString(os.toByteArray());
+		} catch (final IOException ioe) {
+			throw new UncheckedIOException(ioe);
+		}
+	}
+
+	public static BufferedImage toBufferedImage(Image img) {
+		if (img instanceof BufferedImage) {
+			return (BufferedImage) img;
+		}
+
+		// Create a buffered image with transparency
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+		// Draw the image on to the buffered image
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+
+		// Return the buffered image
+		return bimage;
+	}
+
+	public static BufferedImage fromItextImage(com.itextpdf.text.Image img) {
+		BarcodeQRCode qrcode = new BarcodeQRCode("testo testo testo", 1, 1, null);
+		Image image = qrcode.createAwtImage(Color.BLACK, Color.WHITE);
+
+		return new BufferedImage(image.getWidth(null), image.getWidth(null), BufferedImage.TYPE_4BYTE_ABGR);
+
+	}
 
 	public com.itextpdf.text.Image generateQR() throws BadElementException, MalformedURLException, IOException {
 		String myCodeText = "ELEA";
