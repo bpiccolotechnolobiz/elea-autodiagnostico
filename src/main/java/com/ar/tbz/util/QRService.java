@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.BusquedaService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -34,8 +35,9 @@ public class QRService {
 //		new QRService().generateQR();
 //	}
 
-	public com.itextpdf.text.Image generateQR() throws BadElementException, MalformedURLException, IOException {
-		String myCodeText = "ELEA";
+	public com.itextpdf.text.Image generateQR(Resultado resultado)
+			throws BadElementException, MalformedURLException, IOException {
+		String myCodeText = resultado.getFecha_autodiagnostico();
 		int size = 512;
 		BufferedImage eleaImage = null;
 		com.itextpdf.text.Image img = null;
