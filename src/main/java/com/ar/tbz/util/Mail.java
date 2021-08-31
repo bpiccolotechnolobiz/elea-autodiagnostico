@@ -172,7 +172,7 @@ public class Mail {
 			MimeBodyPart pdfPart = new MimeBodyPart();
 //			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
 
-			Image image = qrService.generateQR();
+			Image image = qrService.generateQR(resultado);
 
 			pdfCreateFile.crearPDF(resultado, image);
 
