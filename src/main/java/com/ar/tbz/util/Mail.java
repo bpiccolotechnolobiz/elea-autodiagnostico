@@ -194,7 +194,9 @@ public class Mail {
 
 			DataSource source = new FileDataSource("autodiagnostico.pdf"); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
 			pdfPart.setDataHandler(new DataHandler(source));
-			pdfPart.setFileName("nuevo-autodiagnostico.pdf"); // NOMBRE CON EL CUÁL SE VA A DESCARGAR
+			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
+			pdfPart.setFileName(resultado.getLegajo().getDni() + timestamp + ".pdf"); // NOMBRE CON EL CUÁL SE VA A
+																						// DESCARGAR
 
 			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
 //			File file = File.createTempFile("autodiagnostico", "pdf");
