@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import com.ar.tbz.domain.Legajo;
 import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.BusquedaService;
 import com.google.zxing.BarcodeFormat;
@@ -37,7 +38,9 @@ public class QRService {
 
 	public com.itextpdf.text.Image generateQR(Resultado resultado)
 			throws BadElementException, MalformedURLException, IOException {
-		String myCodeText = resultado.getFecha_autodiagnostico();
+		Legajo legajo = resultado.getLegajo();
+		String myCodeText = legajo.getNombre() + " " + legajo.getApellido() + ": (" + legajo.getDni() + ") "
+				+ resultado.getFecha_autodiagnostico();
 		int size = 512;
 		BufferedImage eleaImage = null;
 		com.itextpdf.text.Image img = null;
