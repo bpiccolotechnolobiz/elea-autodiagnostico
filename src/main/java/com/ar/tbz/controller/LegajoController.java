@@ -136,17 +136,10 @@ public class LegajoController {
 			System.out.println("Entra al proceso autodiagnostico " + new Date());
 
 			resultado.getLegajo().formatearLegajo();
-			Legajo legajo = resultado.getLegajo();
 
 			Servicios.grabarAutoDiagnostico(resultado);
 			idAutodiagnostico = resultado.getLegajo().getIdAutodiagnostico();
-
-//			Servicios.crearTransacciones(resultado);
-
 			servicios.crearMail(resultado);
-
-//			Servicios.crearPDF(resultado);
-//			Servicios.crearQRCode(resultado);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

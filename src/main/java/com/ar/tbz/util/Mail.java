@@ -2,6 +2,9 @@ package com.ar.tbz.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -192,11 +195,12 @@ public class Mail {
 //			pdfPart.setContent(mp);
 //			pdfPart.attachFile(file);
 
-			DataSource source = new FileDataSource("autodiagnostico.pdf"); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
-			pdfPart.setDataHandler(new DataHandler(source));
 			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
-			pdfPart.setFileName(resultado.getLegajo().getDni() + timestamp + ".pdf"); // NOMBRE CON EL CUÁL SE VA A
-																						// DESCARGAR
+			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
+			DataSource source = new FileDataSource(fileName); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
+			pdfPart.setDataHandler(new DataHandler(source));
+			pdfPart.setFileName(fileName); // NOMBRE CON EL CUÁL SE VA A
+											// DESCARGAR
 
 			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
 //			File file = File.createTempFile("autodiagnostico", "pdf");
@@ -224,6 +228,9 @@ public class Mail {
 				Transport.send(message);
 				System.out.println("Mail enviado a Consultorio Médico");
 			}
+
+			Path pathFilename = Paths.get(fileName);
+			Files.delete(pathFilename);
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
 		}
@@ -310,7 +317,9 @@ public class Mail {
 		if (resultado.isResultado()) {
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\"><img src=\"http://34.239.14.244/assets/qr-code.png\" alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+							+ "    <div style=\"text-align:center;\">"
+							+ "<img src=\"http://34.239.14.244/assets/qr-code.png\" "
+							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		}
 
 		// Respuestas

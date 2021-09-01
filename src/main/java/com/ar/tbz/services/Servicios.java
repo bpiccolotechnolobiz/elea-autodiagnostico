@@ -80,7 +80,7 @@ public class Servicios {
 	}
 
 	public void crearPDF(Resultado resultado) throws Exception {
-		Image image = qrService.generateQR();
+		Image image = qrService.generateQR(resultado);
 		pdfBuilder.buildPDFDocument(resultado, image);
 	}
 
