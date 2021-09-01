@@ -147,6 +147,8 @@ public class Mail {
 
 			// Now set the actual message
 //			cuerpoMail = crearCuerpoMailParaUsuario(resultado);
+			Image qrImage = qrService.generateQR(resultado);
+			pdfCreateFile.crearPDF(resultado, qrImage);
 			cuerpoMail = crearCuerpoMail(resultado);
 //			message.setContent(cuerpoMail, "text/html");
 
@@ -174,10 +176,6 @@ public class Mail {
 			// PDF
 			MimeBodyPart pdfPart = new MimeBodyPart();
 //			Document pdf = pdfCreateFile.buildPDFDocument(resultado);
-
-			Image image = qrService.generateQR(resultado);
-
-			pdfCreateFile.crearPDF(resultado, image);
 
 //			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //			PdfWriter pdfWriter = PdfWriter.getInstance(pdf, byteArrayOutputStream); // Do this BEFORE document.open()
