@@ -31,7 +31,6 @@ import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.itextpdf.text.Image;
 
 @Service
 public class Servicios {
@@ -80,7 +79,18 @@ public class Servicios {
 	}
 
 	public void crearPDF(Resultado resultado) throws Exception {
-		Image image = qrService.generateQR(resultado);
+		BufferedImage image = qrService.generateQR(resultado);
+
+//		Graphics2D g2d = dimg.createGraphics();
+//		g2d.drawImage(tmp, 0, 0, null);
+//		g2d.dispose();
+//
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		ImageIO.write(dimg, "PNG", baos);
+//
+//		img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
+//		
+
 		pdfBuilder.buildPDFDocument(resultado, image);
 	}
 

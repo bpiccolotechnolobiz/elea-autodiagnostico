@@ -1,8 +1,13 @@
 package com.ar.tbz.util;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +35,7 @@ public class PdfCreateFile {
 //
 //	}// end main
 
-	public Document buildPDFDocument(Resultado resultado, Image img) throws Exception {
+	public Document buildPDFDocument(Resultado resultado, BufferedImage bufferedImage) throws Exception {
 		// TODO Auto-generated method stub
 		Document document = new Document();
 		boolean recuperarNroLegajoDeTabla = true;
@@ -93,6 +98,15 @@ public class PdfCreateFile {
 			document.add(new Paragraph("Fecha test: " + resultado.getFecha_autodiagnostico()));
 			document.add(new Paragraph("Fecha hasta: " + resultado.getFecha_hasta_resultado()));
 			document.add(new Paragraph("Comentario: " + resultado.getComentario()));
+
+			Graphics2D g2d = bufferedImage.createGraphics();
+			g2d.drawImage(bufferedImage, 0, 0, null);
+			g2d.dispose();
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(bufferedImage, "PNG", baos);
+
+			Image img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 
 			document.add(img);
 

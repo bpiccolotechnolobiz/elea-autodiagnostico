@@ -23,8 +23,6 @@ public class Conexion {
 
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-			System.out.println("Sale Class.forName " + new Date());
-
 			// connect = DriverManager.getConnection("jdbc:mysql://"+ SERVER_NAME +":" +
 			// PORT_NUMBER + "/" + DB_NAME + "?user=" + USER_NAME + "&password=" +
 			// PASSWORD);
@@ -42,8 +40,6 @@ public class Conexion {
 			System.out.println("Entra al connect to base de datos " + new Date());
 
 			connect = DriverManager.getConnection(dbURL, user, pass);
-
-			System.out.println("Sale al connect to base de datos " + new Date());
 
 			if (connect == null) {
 
