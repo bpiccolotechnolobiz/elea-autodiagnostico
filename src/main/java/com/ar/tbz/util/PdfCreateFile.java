@@ -139,7 +139,7 @@ public class PdfCreateFile {
 		return document;
 	}
 
-	public void crearPDF(Resultado resultado, Image img) throws Exception {
+	public void crearPDF(Resultado resultado, Image img, String fileName) throws Exception {
 		Document document = new Document();
 		FileOutputStream file = null;
 
@@ -169,7 +169,8 @@ public class PdfCreateFile {
 
 			archivoNombre = archivoNombre.replace(":", "-"); // NO SE ESTÁ USANDO
 
-			file = new FileOutputStream("autodiagnostico.pdf"); // RUTA + archivoNombre
+//			file = new FileOutputStream("autodiagnostico.pdf"); // RUTA + archivoNombre
+			file = new FileOutputStream(fileName);
 
 			// Create a new Document object
 

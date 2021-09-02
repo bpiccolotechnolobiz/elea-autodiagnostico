@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -93,22 +94,22 @@ public class Mail {
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
 //		properties.put("mail.smtp.x.enable", "false");
 //		properties.put("mail.smtp.auth", "false");
-//		properties.put("mail.smtp.ssl.enable", "true");
-//		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.ssl.enable", "false");
-		properties.put("mail.smtp.auth", "false");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
+//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
-		Session session = Session.getDefaultInstance(properties);
-//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-//
-//			protected PasswordAuthentication getPasswordAuthentication() {
-//
-//				return new PasswordAuthentication(from, password);
-//
-//			}
-//
-//		});
+//		Session session = Session.getDefaultInstance(properties);
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+
+			protected PasswordAuthentication getPasswordAuthentication() {
+
+				return new PasswordAuthentication(from, password);
+
+			}
+
+		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
@@ -163,7 +164,11 @@ public class Mail {
 
 			Image img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 
-			pdfCreateFile.crearPDF(resultado, img);
+			// Nombre del pdf
+			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
+			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
+			
+			pdfCreateFile.crearPDF(resultado, img, fileName);
 			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
 			File outputfile = new File(qrFileName);
 			ImageIO.write(qrImage, "png", outputfile);
@@ -193,8 +198,9 @@ public class Mail {
 			// PDF
 			MimeBodyPart pdfPart = new MimeBodyPart();
 
-			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
-			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
+//			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
+//			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
+			
 			DataSource source = new FileDataSource(fileName); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
 			pdfPart.setDataHandler(new DataHandler(source));
 			pdfPart.setFileName(fileName); // NOMBRE CON EL CUÁL SE VA A
@@ -225,8 +231,8 @@ public class Mail {
 				System.out.println("Mail enviado a Consultorio Médico");
 			}
 
-//			Path pathFilename = Paths.get(fileName);
-//			Files.delete(pathFilename);
+			Path pathFilename = Paths.get(fileName);
+			Files.delete(pathFilename);
 			Path pathFilenameQR = Paths.get(qrFileName);
 			Files.delete(pathFilenameQR);
 		} catch (MessagingException mex) {
