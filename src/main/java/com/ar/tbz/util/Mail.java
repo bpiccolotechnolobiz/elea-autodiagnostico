@@ -42,6 +42,7 @@ import com.itextpdf.text.Image;
 @Component
 public class Mail {
 
+	private static final String QR_PNG = "qr.png";
 	@Autowired
 	LugarAccesoService lugarAccesoService;
 	@Autowired
@@ -90,7 +91,7 @@ public class Mail {
 		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
 //		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
-//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.x.enable", "false");
 //		properties.put("mail.smtp.auth", "false");
 //		properties.put("mail.smtp.ssl.enable", "true");
 //		properties.put("mail.smtp.auth", "true");
@@ -163,7 +164,8 @@ public class Mail {
 			Image img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 
 			pdfCreateFile.crearPDF(resultado, img);
-			File outputfile = new File("saved.png");
+			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
+			File outputfile = new File(qrFileName);
 			ImageIO.write(qrImage, "png", outputfile);
 			cuerpoMail = crearCuerpoMail(resultado);
 
@@ -225,7 +227,7 @@ public class Mail {
 
 //			Path pathFilename = Paths.get(fileName);
 //			Files.delete(pathFilename);
-			Path pathFilenameQR = Paths.get("saved.png");
+			Path pathFilenameQR = Paths.get(qrFileName);
 			Files.delete(pathFilenameQR);
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
@@ -313,10 +315,10 @@ public class Mail {
 		if (resultado.isResultado()) {
 
 			// tomar el archivo y luego borrarlo
-
+			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\">" + "<img src=\"saved.png\" "
+							+ "    <div style=\"text-align:center;\"><img src=\"" + qrFile + "\" "
 							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		}
 
