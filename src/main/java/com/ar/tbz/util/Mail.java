@@ -207,7 +207,18 @@ public class Mail {
 
 			// Enviando al Médico en caso No habilitado
 			if (!resultado.isResultado()) {
-				message.setRecipient(Message.RecipientType.TO, new InternetAddress(to2));
+				String[] toAddresses = to2.split(",");
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
+
+				if (toAddresses.length > 1) {
+					InternetAddress[] cc = new InternetAddress[toAddresses.length - 1];
+					for (int i = 1; i < toAddresses.length - 1; i++) {
+						cc[i - 1] = new InternetAddress(toAddresses[i]);
+					}
+
+					message.addRecipients(Message.RecipientType.CC, cc);
+				}
+
 				message.setContent(cuerpoMail, "text/html");
 
 				System.out.println("sending...");
