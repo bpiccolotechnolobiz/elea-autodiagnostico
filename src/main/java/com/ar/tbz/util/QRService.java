@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.EnumMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,15 +36,14 @@ public class QRService {
 //		new QRService().generateQR();
 //	}
 
-	public BufferedImage generateQR(Resultado resultado)
+	public com.itextpdf.text.Image generateQR(Resultado resultado)
 			throws BadElementException, MalformedURLException, IOException {
 		Legajo legajo = resultado.getLegajo();
 		String myCodeText = legajo.getNombre() + " " + legajo.getApellido() + ": (" + legajo.getDni() + ") "
 				+ resultado.getFecha_autodiagnostico();
 		int size = 512;
 		BufferedImage eleaImage = null;
-		BufferedImage dimg = null;
-
+		com.itextpdf.text.Image img = null;
 		try {
 
 			Map<EncodeHintType, Object> eleaHintType = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
@@ -101,13 +103,21 @@ public class QRService {
 			int newW = 100;
 			int newH = 100;
 			Image tmp = eleaImage.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-			dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
 
-			return dimg;
+			Graphics2D g2d = dimg.createGraphics();
+			g2d.drawImage(tmp, 0, 0, null);
+			g2d.dispose();
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(dimg, "PNG", baos);
+
+			img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
+			return img;
 		} catch (WriterException e) {
 			log.info("\nSorry.. Something went wrong...\n");
 			e.printStackTrace();
 		}
-		return dimg;
+		return img;
 	}
 }

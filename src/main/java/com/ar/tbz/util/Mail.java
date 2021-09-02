@@ -1,8 +1,5 @@
 package com.ar.tbz.util;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,7 +13,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -153,25 +149,15 @@ public class Mail {
 			String[] imagenesDirectorio = directorio.list();
 
 			// Now set the actual message
-			BufferedImage qrImage = qrService.generateQR(resultado);
-
-			Graphics2D g2d = qrImage.createGraphics();
-			g2d.drawImage(qrImage, 0, 0, null);
-			g2d.dispose();
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(qrImage, "PNG", baos);
-
-			Image img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
+			Image qrImage = qrService.generateQR(resultado);
 
 			// Nombre del pdf
 			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
 			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
-			
-			pdfCreateFile.crearPDF(resultado, img, fileName);
+
+			pdfCreateFile.crearPDF(resultado, qrImage, fileName);
 			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
-			File outputfile = new File(qrFileName);
-			ImageIO.write(qrImage, "png", outputfile);
+//			File outputfile = new File(qrFileName);
 			cuerpoMail = crearCuerpoMail(resultado);
 
 			// Creo la parte del mensaje HTML
@@ -200,7 +186,7 @@ public class Mail {
 
 //			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
 //			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
-			
+
 			DataSource source = new FileDataSource(fileName); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
 			pdfPart.setDataHandler(new DataHandler(source));
 			pdfPart.setFileName(fileName); // NOMBRE CON EL CUÁL SE VA A
