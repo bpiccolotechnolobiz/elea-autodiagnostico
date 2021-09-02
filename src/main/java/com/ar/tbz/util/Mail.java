@@ -207,12 +207,12 @@ public class Mail {
 
 			// Enviando al Médico en caso No habilitado
 			if (!resultado.isResultado()) {
-				String[] toAddresses = to2.split(",");
+				String[] toAddresses = to2.replace(" ","").split(",");
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
 
 				if (toAddresses.length > 1) {
 					InternetAddress[] cc = new InternetAddress[toAddresses.length - 1];
-					for (int i = 1; i < toAddresses.length - 1; i++) {
+					for (int i = 1; i <= toAddresses.length - 1; i++) {
 						cc[i - 1] = new InternetAddress(toAddresses[i]);
 					}
 
