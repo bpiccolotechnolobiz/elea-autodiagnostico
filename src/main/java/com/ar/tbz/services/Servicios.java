@@ -2,6 +2,7 @@ package com.ar.tbz.services;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -80,7 +81,9 @@ public class Servicios {
 	}
 
 	public void crearPDF(Resultado resultado) throws Exception {
-		Image image = qrService.generateQR(resultado);
+//		Image image = qrService.generateQR(resultado);
+		ByteArrayOutputStream baos = qrService.generateQR(resultado);
+		Image qrImage = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 
 //		Graphics2D g2d = dimg.createGraphics();
 //		g2d.drawImage(tmp, 0, 0, null);
@@ -92,7 +95,7 @@ public class Servicios {
 //		img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 //		
 
-		pdfBuilder.buildPDFDocument(resultado, image);
+		pdfBuilder.buildPDFDocument(resultado, qrImage);
 	}
 
 	// crear codigo qr------------------------------------
@@ -484,7 +487,7 @@ public class Servicios {
 
 			while (token.hasMoreTokens()) {
 
-				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+//				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
 
 				pstm = conn.prepareStatement(query);
 
@@ -511,7 +514,7 @@ public class Servicios {
 			System.out.println("Total tokens Contacto Estrecho " + totalTokens);
 
 			while (token.hasMoreTokens()) {
-				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+//				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
 
 				pstm = conn.prepareStatement(query);
 
@@ -540,7 +543,7 @@ public class Servicios {
 
 			while (token.hasMoreTokens()) {
 
-				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+//				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
 
 				pstm = conn.prepareStatement(query);
 
@@ -568,7 +571,7 @@ public class Servicios {
 
 			while (token.hasMoreTokens()) {
 
-				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
+//				query = "INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.respuestas values(?, ?, ? )";
 
 				pstm = conn.prepareStatement(query);
 

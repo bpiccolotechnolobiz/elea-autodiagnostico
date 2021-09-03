@@ -1,5 +1,8 @@
 package com.ar.tbz.util;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,6 +16,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -149,7 +153,9 @@ public class Mail {
 			String[] imagenesDirectorio = directorio.list();
 
 			// Now set the actual message
-			Image qrImage = qrService.generateQR(resultado);
+//			Image qrImage = qrService.generateQR(resultado);
+			ByteArrayOutputStream baos = qrService.generateQR(resultado);
+			Image qrImage = com.itextpdf.text.Image.getInstance(baos.toByteArray());
 
 			// Nombre del pdf
 			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
@@ -158,7 +164,7 @@ public class Mail {
 			pdfCreateFile.crearPDF(resultado, qrImage, fileName);
 			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
 //			File outputfile = new File(qrFileName);
-			cuerpoMail = crearCuerpoMail(resultado);
+			cuerpoMail = crearCuerpoMail(resultado, baos);
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -195,6 +201,24 @@ public class Mail {
 			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
 			multipart.addBodyPart(pdfPart);
 
+			byte[] imageBytes = baos.toByteArray();
+			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
+			ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
+			BufferedImage bImage2 = ImageIO.read(bis);
+			File outputFile = new File(qrFile);
+			ImageIO.write(bImage2, "png", outputFile);
+
+			String pathImg = new File(outputFile.toURI()).getAbsolutePath();
+
+			DataSource fds = new FileDataSource(pathImg);
+
+			MimeBodyPart messageBodyPartQR = new MimeBodyPart();
+			messageBodyPartQR.setDataHandler(new DataHandler(fds));
+			messageBodyPartQR.setHeader("Content-ID", "<image>");
+
+			// add image to the multipart
+			multipart.addBodyPart(messageBodyPartQR);
+
 //			att.setDataHandler(new DataHandler(bds));
 			// Agregar el multipart al cuerpo del mensaje
 			message.setContent(multipart);
@@ -207,7 +231,7 @@ public class Mail {
 
 			// Enviando al Médico en caso No habilitado
 			if (!resultado.isResultado()) {
-				String[] toAddresses = to2.replace(" ","").split(",");
+				String[] toAddresses = to2.replace(" ", "").split(",");
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
 
 				if (toAddresses.length > 1) {
@@ -230,7 +254,7 @@ public class Mail {
 
 			Path pathFilename = Paths.get(fileName);
 			Files.delete(pathFilename);
-			Path pathFilenameQR = Paths.get(qrFileName);
+			Path pathFilenameQR = Paths.get(pathImg);
 			Files.delete(pathFilenameQR);
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
@@ -239,7 +263,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado) throws IOException {
+	public String crearCuerpoMail(Resultado resultado, ByteArrayOutputStream baos) throws IOException {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -317,12 +341,10 @@ public class Mail {
 		// Habilitado -> QR
 		if (resultado.isResultado()) {
 
-			// tomar el archivo y luego borrarlo
-			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\"><img src=\"" + qrFile + "\" "
-							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+							+ "    <div style=\"text-align:center;\">" + "<img src=\"cid:image\""
+							+ " alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 		}
 
 		// Respuestas

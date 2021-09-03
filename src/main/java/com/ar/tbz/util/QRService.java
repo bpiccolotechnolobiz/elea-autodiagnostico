@@ -36,7 +36,7 @@ public class QRService {
 //		new QRService().generateQR();
 //	}
 
-	public com.itextpdf.text.Image generateQR(Resultado resultado)
+	public ByteArrayOutputStream generateQR(Resultado resultado)
 			throws BadElementException, MalformedURLException, IOException {
 		Legajo legajo = resultado.getLegajo();
 		String myCodeText = legajo.getNombre() + " " + legajo.getApellido() + ": (" + legajo.getDni() + ") "
@@ -112,12 +112,14 @@ public class QRService {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(dimg, "PNG", baos);
 
-			img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
-			return img;
+			return baos;
+//			img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
+//			return img;
 		} catch (WriterException e) {
 			log.info("\nSorry.. Something went wrong...\n");
 			e.printStackTrace();
 		}
-		return img;
+//		return img;
+		return null;
 	}
 }
