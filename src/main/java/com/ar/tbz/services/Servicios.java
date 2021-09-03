@@ -76,7 +76,8 @@ public class Servicios {
 
 	// crear datos mail ------------------------------------
 	public void crearMail(Resultado resultado) throws Exception {
-		mail.envioMail(resultado);
+//		mail.envioMail(resultado);
+		mail.envioMail2(resultado);
 //		Servicios.grabarArchivo("c://tmp//mail", textoMail);
 	}
 

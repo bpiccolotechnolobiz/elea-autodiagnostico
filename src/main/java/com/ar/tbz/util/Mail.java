@@ -10,8 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -54,6 +57,201 @@ public class Mail {
 	PdfCreateFile pdfCreateFile;
 	@Autowired
 	QRService qrService;
+	
+	public void envioMail2(Resultado resultado) throws Exception {
+		System.out.println("Enviando mail");
+		
+		Properties propertiesFile = new Properties();
+		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
+
+		// ---------------------------------------------CONFIG ENVIO MAIL
+		
+		// Sender's email ID needs to be mentioned
+		String from = propertiesFile.getProperty("email.from");
+		String password = propertiesFile.getProperty("email.password");
+		String nameFrom = propertiesFile.getProperty("email.name");
+		
+		// Get system properties
+		Properties properties = System.getProperties();
+
+		// Setup mail server
+		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
+		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
+//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.auth", "false");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
+
+		// Get the Session object.// and pass username and password
+//		Session session = Session.getDefaultInstance(properties);
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(from, password);
+			}
+		});
+
+		// Used to debug SMTP issues
+		session.setDebug(false);
+		
+
+		// Recipient's email ID needs to be mentioned.
+		String toUsuario = resultado.getLegajo().getEmailUsuario();
+		String toConsultorio = propertiesFile.getProperty("email.to");
+		List<Parametro> parametros = estadisticaService.obtenerParametros();
+		for (Parametro param : parametros) {
+			if (param.getDescripcionParametro().contains("Email del consultorio")) {
+				toConsultorio = param.getValorParametro();
+			}
+		}
+		
+
+
+		// ---------------------------------------------CONFIG CONTENIDO MAIL
+		String cuerpoMail = "";
+
+		// Nombre del archivo PDF
+		String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
+		String fileNamePDF = resultado.getLegajo().getDni() + timestamp + ".pdf";
+		// Nombre de la imagen QR
+		String fileNameQR = resultado.getLegajo().getDni() + QR_PNG;
+
+		// CID imgs
+		String cidKeyQR = "QR";
+		Map<String, String> inlineImages = new HashMap<String, String>();
+		if(resultado.isResultado()) {
+			inlineImages.put(cidKeyQR, fileNameQR);
+		}
+		
+		try {
+			// Create a default MimeMessage object.
+			MimeMessage message = new MimeMessage(session);
+
+			// Set From: header field of the header.
+			message.setFrom(new InternetAddress(from, nameFrom));
+
+			// Set To: header field of the header.
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(toUsuario));
+
+			// Set Subject: header field
+			String resultadoLeyenda = "";
+			if (resultado.isResultado()) {
+				resultadoLeyenda = "Habilitado";
+			} else {
+				resultadoLeyenda = "No habilitado";
+			}
+			message.setSubject(resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido()
+					+ " - Resultado de Autodiagnóstico: " + resultadoLeyenda);
+
+			// Hora del envio
+			message.setSentDate(new Date());
+			
+			
+
+
+			Multipart multipart = new MimeMultipart();
+			
+			
+			if (resultado.isResultado()) {
+				// ---------------QR
+				qrService.generarQR(fileNameQR, resultado);
+				
+
+				//---------------PDF
+				pdfCreateFile.generarPDF(fileNamePDF, fileNameQR, resultado);
+				
+				MimeBodyPart pdfPart = new MimeBodyPart();
+				
+				DataSource source = new FileDataSource(fileNamePDF); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
+				pdfPart.setDataHandler(new DataHandler(source));
+				pdfPart.setFileName(fileNamePDF); // NOMBRE CON EL CUÁL SE VA A DESCARGAR
+
+				pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
+				multipart.addBodyPart(pdfPart);
+			}
+			
+			
+			
+			// ---------------CUERPO MAIL
+			cuerpoMail = crearCuerpoMail(resultado, cidKeyQR);
+			
+			// Creo la parte del mensaje HTML
+			MimeBodyPart mimeBodyPart = new MimeBodyPart();
+			mimeBodyPart.setContent(cuerpoMail, "text/html; charset=utf-8");
+
+			
+			// Agregar la parte del mensaje HTML al multiPart
+			multipart.addBodyPart(mimeBodyPart);
+			
+			
+			
+			// ---------------AGREGAR IMAGENES AL MULITPART
+			if (inlineImages != null && inlineImages.size() > 0) {
+	            Set<String> setImageID = inlineImages.keySet();
+	             
+	            for (String contentId : setImageID) {
+	                MimeBodyPart imagePart = new MimeBodyPart();
+	                imagePart.setHeader("Content-ID", "<" + contentId + ">");
+	                imagePart.setDisposition(MimeBodyPart.INLINE);
+	                 
+	                String imageFilePath = inlineImages.get(contentId);
+	                try {
+	                    imagePart.attachFile(imageFilePath);
+	                } catch (IOException ex) {
+	                    ex.printStackTrace();
+	                }
+	 
+	                multipart.addBodyPart(imagePart);
+	            }
+	        }
+			
+			
+			
+			// Agregar el multipart al cuerpo del mensaje
+			message.setContent(multipart);
+
+			System.out.println("sending...");
+
+			// Send message
+			Transport.send(message);
+			System.out.println("Mail enviado a Usuario");
+			
+			
+			
+			// Enviando al Médico en caso No habilitado
+			if (!resultado.isResultado()) {
+				String[] toAddresses = toConsultorio.replace(" ","").split(",");
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
+
+				if (toAddresses.length > 1) {
+					InternetAddress[] cc = new InternetAddress[toAddresses.length - 1];
+					for (int i = 1; i <= toAddresses.length - 1; i++) {
+						cc[i - 1] = new InternetAddress(toAddresses[i]);
+					}
+
+					message.addRecipients(Message.RecipientType.CC, cc);
+				}
+
+				message.setContent(cuerpoMail, "text/html; charset=utf-8");
+
+				System.out.println("sending...");
+
+				// Send message
+				Transport.send(message);
+				System.out.println("Mail enviado a Consultorio Médico");
+			}
+
+			
+			// Eliminar PDF y QR
+			if (resultado.isResultado()) {
+				Path pathFileNamePDF = Paths.get(fileNamePDF);
+				Files.delete(pathFileNamePDF);
+				Path pathFileNameQR = Paths.get(fileNameQR);
+				Files.delete(pathFileNameQR);
+			}
+		} catch (Exception e) {
+			 e.printStackTrace();
+		}
+	}
 
 	// ENVIO MAIL
 	public void envioMail(Resultado resultado) throws Exception {
@@ -164,7 +362,12 @@ public class Mail {
 			pdfCreateFile.crearPDF(resultado, qrImage, fileName);
 			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
 //			File outputfile = new File(qrFileName);
-			cuerpoMail = crearCuerpoMail(resultado, baos);
+//<<<<<<< Updated upstream
+//			cuerpoMail = crearCuerpoMail(resultado, baos);
+//=======
+//			cuerpoMail = crearCuerpoMail(resultado);
+			cuerpoMail = crearCuerpoMail(resultado, "");
+//>>>>>>> Stashed changes
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -263,7 +466,12 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado, ByteArrayOutputStream baos) throws IOException {
+//<<<<<<< Updated upstream
+//	public String crearCuerpoMail(Resultado resultado, ByteArrayOutputStream baos) throws IOException {
+//=======
+//	public String crearCuerpoMail(Resultado resultado) throws IOException {
+	public String crearCuerpoMail(Resultado resultado, String cidKeyQR) throws IOException {
+//>>>>>>> Stashed changes
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -341,10 +549,20 @@ public class Mail {
 		// Habilitado -> QR
 		if (resultado.isResultado()) {
 
+//<<<<<<< Updated upstream
+//			cuerpoMail.append(
+//					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
+//							+ "    <div style=\"text-align:center;\">" + "<img src=\"cid:image\""
+//							+ " alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+//=======
+			// tomar el archivo y luego borrarlo
+//			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\">" + "<img src=\"cid:image\""
-							+ " alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+//							+ "    <div style=\"text-align:center;\"><img src=\"" + qrFile + "\" "
+							+ "    <div style=\"text-align:center;\"><img src=\"cid:" + cidKeyQR + "\" "
+							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
+//>>>>>>> Stashed changes
 		}
 
 		// Respuestas

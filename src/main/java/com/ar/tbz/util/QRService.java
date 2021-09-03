@@ -5,9 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.EnumMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -35,6 +39,68 @@ public class QRService {
 //	public static void main(String[] args) {
 //		new QRService().generateQR();
 //	}
+	public void generarQR(String fileNameQR, Resultado resultado) throws ParseException {
+		int width=150, height=150;
+		
+		Date fecha_autodiagnostico = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN, resultado.getFecha_autodiagnostico());
+		Date fecha_hasta_resultado = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN, resultado.getFecha_hasta_resultado());
+		
+		String pattern = "dd/MM/yyyy HH:mm:ss";
+		
+		String datos = "Elea te cuida\n\n"
+						+ "Nombre y apellido: " + resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido() + "\n"
+						+ "DNI: " + resultado.getLegajo().getDni() + "\n\n"
+						+ "Fecha generación: " + DateUtil.formatSdf(pattern, fecha_autodiagnostico) + "\n"
+						+ "Fecha vencimiento: " + DateUtil.formatSdf(pattern, fecha_hasta_resultado);
+		
+		
+		try {
+			Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
+			hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+			hintMap.put(EncodeHintType.MARGIN, 1);
+
+			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix byteMatrix = qrCodeWriter.encode(datos, BarcodeFormat.QR_CODE, width, height, hintMap);
+
+			// The BufferedImage subclass describes an Image with an accessible buffer of
+			// crunchifyImage data.
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			// Creates a Graphics2D, which can be used to draw into this BufferedImage.
+			image.createGraphics();
+
+			// This Graphics2D class extends the Graphics class to provide more
+			// sophisticated control over geometry, coordinate transformations, color
+			// management, and text layout.
+			// This is the fundamental class for rendering 2-dimensional shapes, text and
+			// images on the Java(tm) platform.
+			Graphics2D graphics = (Graphics2D) image.getGraphics();
+			// setColor() sets this graphics context's current color to the specified color.
+			// All subsequent graphics operations using this graphics context use this
+			// specified color.
+			graphics.setColor(Color.WHITE);
+			// fillRect() fills the specified rectangle. The left and right edges of the
+			// rectangle are at x and x + width - 1.
+			graphics.fillRect(0, 0, width, height);
+			graphics.setColor(Color.BLUE);
+
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					if (byteMatrix.get(i, j)) {
+						graphics.fillRect(i, j, 1, 1);
+					}
+				}
+			}
+			
+			FileOutputStream qrCode = new FileOutputStream(fileNameQR);
+			ImageIO.write(image, "png", qrCode);
+			System.out.println("Listo!");
+			qrCode.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error getting QR Code");
+		}
+	}
 
 	public ByteArrayOutputStream generateQR(Resultado resultado)
 			throws BadElementException, MalformedURLException, IOException {
