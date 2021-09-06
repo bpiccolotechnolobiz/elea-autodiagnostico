@@ -57,20 +57,20 @@ public class Mail {
 	PdfCreateFile pdfCreateFile;
 	@Autowired
 	QRService qrService;
-	
+
 	public void envioMail2(Resultado resultado) throws Exception {
 		System.out.println("Enviando mail");
-		
+
 		Properties propertiesFile = new Properties();
 		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
 
 		// ---------------------------------------------CONFIG ENVIO MAIL
-		
+
 		// Sender's email ID needs to be mentioned
 		String from = propertiesFile.getProperty("email.from");
 		String password = propertiesFile.getProperty("email.password");
 		String nameFrom = propertiesFile.getProperty("email.name");
-		
+
 		// Get system properties
 		Properties properties = System.getProperties();
 
@@ -92,7 +92,6 @@ public class Mail {
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
-		
 
 		// Recipient's email ID needs to be mentioned.
 		String toUsuario = resultado.getLegajo().getEmailUsuario();
@@ -103,8 +102,6 @@ public class Mail {
 				toConsultorio = param.getValorParametro();
 			}
 		}
-		
-
 
 		// ---------------------------------------------CONFIG CONTENIDO MAIL
 		String cuerpoMail = "";
@@ -118,10 +115,10 @@ public class Mail {
 		// CID imgs
 		String cidKeyQR = "QR";
 		Map<String, String> inlineImages = new HashMap<String, String>();
-		if(resultado.isResultado()) {
+		if (resultado.isResultado()) {
 			inlineImages.put(cidKeyQR, fileNameQR);
 		}
-		
+
 		try {
 			// Create a default MimeMessage object.
 			MimeMessage message = new MimeMessage(session);
@@ -144,23 +141,18 @@ public class Mail {
 
 			// Hora del envio
 			message.setSentDate(new Date());
-			
-			
-
 
 			Multipart multipart = new MimeMultipart();
-			
-			
+
 			if (resultado.isResultado()) {
 				// ---------------QR
 				qrService.generarQR(fileNameQR, resultado);
-				
 
-				//---------------PDF
+				// ---------------PDF
 				pdfCreateFile.generarPDF(fileNamePDF, fileNameQR, resultado);
-				
+
 				MimeBodyPart pdfPart = new MimeBodyPart();
-				
+
 				DataSource source = new FileDataSource(fileNamePDF); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
 				pdfPart.setDataHandler(new DataHandler(source));
 				pdfPart.setFileName(fileNamePDF); // NOMBRE CON EL CUÁL SE VA A DESCARGAR
@@ -168,44 +160,37 @@ public class Mail {
 				pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
 				multipart.addBodyPart(pdfPart);
 			}
-			
-			
-			
+
 			// ---------------CUERPO MAIL
 			cuerpoMail = crearCuerpoMail(resultado, cidKeyQR);
-			
+
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
 			mimeBodyPart.setContent(cuerpoMail, "text/html; charset=utf-8");
 
-			
 			// Agregar la parte del mensaje HTML al multiPart
 			multipart.addBodyPart(mimeBodyPart);
-			
-			
-			
+
 			// ---------------AGREGAR IMAGENES AL MULITPART
 			if (inlineImages != null && inlineImages.size() > 0) {
-	            Set<String> setImageID = inlineImages.keySet();
-	             
-	            for (String contentId : setImageID) {
-	                MimeBodyPart imagePart = new MimeBodyPart();
-	                imagePart.setHeader("Content-ID", "<" + contentId + ">");
-	                imagePart.setDisposition(MimeBodyPart.INLINE);
-	                 
-	                String imageFilePath = inlineImages.get(contentId);
-	                try {
-	                    imagePart.attachFile(imageFilePath);
-	                } catch (IOException ex) {
-	                    ex.printStackTrace();
-	                }
-	 
-	                multipart.addBodyPart(imagePart);
-	            }
-	        }
-			
-			
-			
+				Set<String> setImageID = inlineImages.keySet();
+
+				for (String contentId : setImageID) {
+					MimeBodyPart imagePart = new MimeBodyPart();
+					imagePart.setHeader("Content-ID", "<" + contentId + ">");
+					imagePart.setDisposition(MimeBodyPart.INLINE);
+
+					String imageFilePath = inlineImages.get(contentId);
+					try {
+						imagePart.attachFile(imageFilePath);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+
+					multipart.addBodyPart(imagePart);
+				}
+			}
+
 			// Agregar el multipart al cuerpo del mensaje
 			message.setContent(multipart);
 
@@ -214,12 +199,10 @@ public class Mail {
 			// Send message
 			Transport.send(message);
 			System.out.println("Mail enviado a Usuario");
-			
-			
-			
+
 			// Enviando al Médico en caso No habilitado
 			if (!resultado.isResultado()) {
-				String[] toAddresses = toConsultorio.replace(" ","").split(",");
+				String[] toAddresses = toConsultorio.replace(" ", "").split(",");
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
 
 				if (toAddresses.length > 1) {
@@ -240,7 +223,6 @@ public class Mail {
 				System.out.println("Mail enviado a Consultorio Médico");
 			}
 
-			
 			// Eliminar PDF y QR
 			if (resultado.isResultado()) {
 				Path pathFileNamePDF = Paths.get(fileNamePDF);
@@ -249,7 +231,7 @@ public class Mail {
 				Files.delete(pathFileNameQR);
 			}
 		} catch (Exception e) {
-			 e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
