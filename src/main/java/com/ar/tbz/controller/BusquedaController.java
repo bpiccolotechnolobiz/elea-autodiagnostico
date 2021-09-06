@@ -18,7 +18,8 @@ import com.ar.tbz.services.BusquedaService;
 @RestController
 
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
-		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
+		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
+		"https://autodiagnosticotestqas.elea.com:2810", "https://autodiagnosticotestqas.elea.com:2809", })
 
 public class BusquedaController {
 	private static Log log = LogFactory.getLog(BusquedaController.class);
