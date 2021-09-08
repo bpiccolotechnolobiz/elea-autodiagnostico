@@ -1,12 +1,14 @@
 package com.ar.tbz.controller;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.Pregunta;
@@ -22,10 +24,22 @@ public class PreguntaController {
 	@Autowired
 	PreguntaService preguntaService;
 
-	@GetMapping(value = "/pregunta", produces = "application/json")
-	public List<Pregunta> buscarPreguntas() throws Exception {
-		log.info("buscarPreguntas");
-		return preguntaService.findAll();
+	@PostMapping(value = "/pregunta", produces = "application/json")
+	public void insertarPreguntas(@RequestBody Pregunta pregunta) throws Exception {
+		log.info("insertar Preguntas");
+		preguntaService.insertPregunta(pregunta);
+	}
+
+	@PutMapping(value = "/pregunta", produces = "application/json")
+	public void modificarPreguntas(@RequestBody Pregunta pregunta) throws Exception {
+		log.info("modificar Preguntas");
+		preguntaService.updatePregunta(pregunta);
+	}
+
+	@DeleteMapping(value = "/pregunta", produces = "application/json")
+	public void eliminarPreguntas(@RequestParam int idPregunta) throws Exception {
+		log.info("borrar Preguntas");
+		preguntaService.deletePregunta(idPregunta);
 	}
 
 }

@@ -80,4 +80,47 @@ public class PreguntaService {
 
 	}
 
+	public void deletePregunta(int id) throws SQLException {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+
+		String query = "Delete from pregunta where id = " + id;
+		pstm = conn.prepareStatement(query);
+		pstm.executeUpdate();
+	}
+
+	public void insertPregunta(Pregunta pregunta) throws SQLException {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+
+		String query = "Insert into pregunta values (idOrdenEnPantalla, idPantalla, descripcionPregunta, estadoLogico) values "
+				+ "(? , ? , ? , ? )";
+		pstm = conn.prepareStatement(query);
+		pstm.setInt(1, pregunta.getIdOrdenEnPantalla());
+		pstm.setInt(2, pregunta.getIdPantalla());
+		pstm.setString(3, pregunta.getDescripcionPregunta());
+		pstm.setInt(4, pregunta.getEstadoLogico());
+		pstm.executeUpdate();
+	}
+
+	public void updatePregunta(Pregunta pregunta) throws SQLException {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+
+		String query = "UPDATE pregunta SET idOrdenEnPantalla = ?, idPantalla= ?, descripcionPregunta =?, estadoLogico = ? "
+				+ " WHERE idPregunta = ? ";
+		pstm = conn.prepareStatement(query);
+		pstm.setInt(1, pregunta.getIdOrdenEnPantalla());
+		pstm.setInt(2, pregunta.getIdPantalla());
+		pstm.setString(3, pregunta.getDescripcionPregunta());
+		pstm.setInt(4, pregunta.getEstadoLogico());
+		pstm.setInt(5, pregunta.getIdPregunta());
+		pstm.executeUpdate();
+	}
 }
