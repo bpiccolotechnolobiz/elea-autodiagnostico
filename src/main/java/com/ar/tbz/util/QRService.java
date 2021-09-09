@@ -40,20 +40,20 @@ public class QRService {
 //		new QRService().generateQR();
 //	}
 	public void generarQR(String fileNameQR, Resultado resultado) throws ParseException {
-		int width=150, height=150;
-		
-		Date fecha_autodiagnostico = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN, resultado.getFecha_autodiagnostico());
-		Date fecha_hasta_resultado = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN, resultado.getFecha_hasta_resultado());
-		
+		int width = 150, height = 150;
+
+		Date fecha_autodiagnostico = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN,
+				resultado.getFecha_autodiagnostico());
+		Date fecha_hasta_resultado = DateUtil.formatParse(DateUtil.FULL_TIMESTAMP_PATTERN,
+				resultado.getFecha_hasta_resultado());
+
 		String pattern = "dd/MM/yyyy HH:mm:ss";
-		
-		String datos = "Elea te cuida\n\n"
-						+ "Nombre y apellido: " + resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido() + "\n"
-						+ "DNI: " + resultado.getLegajo().getDni() + "\n\n"
-						+ "Fecha generación: " + DateUtil.formatSdf(pattern, fecha_autodiagnostico) + "\n"
-						+ "Fecha vencimiento: " + DateUtil.formatSdf(pattern, fecha_hasta_resultado);
-		
-		
+
+		String datos = "Elea te cuida\n\n" + "Nombre y apellido: " + resultado.getLegajo().getNombre() + " "
+				+ resultado.getLegajo().getApellido() + "\n" + "DNI: " + resultado.getLegajo().getDni() + "\n\n"
+				+ "Fecha generación: " + DateUtil.formatSdf(pattern, fecha_autodiagnostico) + "\n"
+				+ "Fecha vencimiento: " + DateUtil.formatSdf(pattern, fecha_hasta_resultado);
+
 		try {
 			Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 			hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -91,7 +91,7 @@ public class QRService {
 					}
 				}
 			}
-			
+
 			FileOutputStream qrCode = new FileOutputStream(fileNameQR);
 			ImageIO.write(image, "png", qrCode);
 			System.out.println("Listo!");
@@ -109,7 +109,6 @@ public class QRService {
 				+ resultado.getFecha_autodiagnostico();
 		int size = 512;
 		BufferedImage eleaImage = null;
-		com.itextpdf.text.Image img = null;
 		try {
 
 			Map<EncodeHintType, Object> eleaHintType = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
