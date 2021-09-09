@@ -1,5 +1,7 @@
 package com.ar.tbz.controller;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +27,12 @@ public class PreguntaController {
 	private static Log log = LogFactory.getLog(PreguntaController.class);
 	@Autowired
 	PreguntaService preguntaService;
+
+	@RequestMapping(value = "/pregunta", method = RequestMethod.GET, produces = "application/json")
+	public List<Pregunta> obtenerPreguntas() throws Exception {
+		log.info("obtener Preguntas");
+		return preguntaService.findAll();
+	}
 
 	@PostMapping(value = "/pregunta", produces = "application/json")
 	public void insertarPreguntas(@RequestBody Pregunta pregunta) throws Exception {
