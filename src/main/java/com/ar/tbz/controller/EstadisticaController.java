@@ -22,7 +22,8 @@ import com.ar.tbz.services.EstadisticaService;
 
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
-		"https://autodiagnosticoqas.elea.com:3810" })
+		"https://autodiagnosticoqas.elea.com:3810",
+		"http://autodiagadminqas.elea.com:8810", "http://autodiagadmin.elea.com:8810" })
 public class EstadisticaController {
 	private static Log log = LogFactory.getLog(EstadisticaController.class);
 	@Autowired
