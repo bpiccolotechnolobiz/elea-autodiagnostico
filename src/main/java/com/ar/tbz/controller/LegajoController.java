@@ -1,5 +1,6 @@
 package com.ar.tbz.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.domain.Test;
 import com.ar.tbz.services.EmpleadoService;
 import com.ar.tbz.services.Servicios;
+import com.ar.tbz.util.QRService;
 
 @RestController
 @RequestMapping("/legajo")
@@ -32,6 +34,9 @@ public class LegajoController {
 
 	@Autowired
 	EmpleadoService empleadoService;
+
+	@Autowired
+	QRService qrService;
 
 	// si es true se hace un test local si es false se hace una conexion a la base
 	// de datos SQLServer
@@ -234,4 +239,8 @@ public class LegajoController {
 		return servicios.bloquear(id, form.getComentario(), form.getFechaHora());
 	}
 
+	@RequestMapping(value = "/qrimage", method = RequestMethod.POST, produces = "application/json")
+	public ByteArrayOutputStream getQRImage(@RequestBody Resultado resultado) throws Exception {
+		return qrService.generateQR(resultado);
+	}
 }
