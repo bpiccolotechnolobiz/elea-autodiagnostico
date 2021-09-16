@@ -515,11 +515,16 @@ public class Mail {
 		cuerpoMail.append("<li>" + (resultado.isEstadoSintomas() ? "Con" : "Sin") + " síntomas</li>");
 		cuerpoMail.append("<li>" + (resultado.isEstadoContactoEstrecho() ? "Con" : "Sin") + " contacto estrecho</li>");
 		cuerpoMail.append("<li>" + (resultado.isEstadoAntecedentes() ? "Con" : "Sin") + " antecedentes</li>");
-		cuerpoMail.append("</ul>" + "<div style=\"font-size: 16px;\">");
+
+		// TODO: Agregar vacunas en esta parte
+		cuerpoMail.append(this.respuestasVacunacionMail(resultado));
+		
+		cuerpoMail.append("</ul>");
 
 		String fechaAutodiagnostico = formatearFecha(resultado.getFecha_autodiagnostico());
 		String fechaHastaResultado = formatearFecha(resultado.getFecha_hasta_resultado());
 
+		cuerpoMail.append("<div style=\"font-size: 16px;\">");
 		cuerpoMail.append(
 				"<p style=\"margin-bottom: 0;\"><strong style=\"color: #3f51b5;\">Fecha de autodiagnóstico:</strong><br>"
 						+ fechaAutodiagnostico + "</p>");
@@ -581,6 +586,31 @@ public class Mail {
 //				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
 //				+ "    </div>";
 	}
+	
+	// RESPUESTAS VACUNACION
+	private String respuestasVacunacionMail(Resultado resultado) {
+		Legajo legajo = resultado.getLegajo();
+		
+		List<String> preguntasRespuestas = null;
+
+		try {
+			preguntasRespuestas = preguntaService.recuperarPreguntasRespuestas(legajo.getIdAutodiagnostico(), false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String html = "";
+		
+		for (String preguntaRespuesta : preguntasRespuestas ) {
+			String[] splitPregRta = preguntaRespuesta.split("@@");
+			String pregunta = splitPregRta[0];
+			String respuestaValor = splitPregRta[1];
+			
+			html += "<li>" + pregunta.replace(".", "") + ": " + respuestaValor + "</li>";
+		}
+		
+		return html;
+	}
 
 	// TABLA PREGUNTAS Y RESPUESTAS
 	private String tablaPreguntasRespuestasMail(Resultado resultado) {
@@ -589,7 +619,7 @@ public class Mail {
 		List<String> preguntasRespuestas = null;
 
 		try {
-			preguntasRespuestas = preguntaService.recuperarPreguntas(legajo.getIdAutodiagnostico());
+			preguntasRespuestas = preguntaService.recuperarPreguntasRespuestas(legajo.getIdAutodiagnostico(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
