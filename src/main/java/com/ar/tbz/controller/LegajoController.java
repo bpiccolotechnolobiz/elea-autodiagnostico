@@ -26,7 +26,7 @@ import com.ar.tbz.util.QRService;
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
 		"https://autodiagnosticoqas.elea.com:3810",
-		"http://autodiagadminqas.elea.com:8810", "http://autodiagadmin.elea.com:8810" })
+		"http://autodiagadminqas.elea.com:8810", "http://autodiagadmin.elea.com:8809" })
 public class LegajoController {
 
 	@Autowired
