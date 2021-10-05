@@ -25,7 +25,7 @@ import com.ar.tbz.services.LugarAccesoService;
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
 		"https://autodiagnosticoqas.elea.com:3810",
-		"http://autodiagadminqas.elea.com:8810", "http://autodiagadmin.elea.com:8809" })
+		"http://autodiagadminqas.elea.com:8810", "https://autodiagadmin.elea.com:8809" })
 public class LugarAccesoController {
 
 	private static Log log = LogFactory.getLog(LugarAccesoController.class);
