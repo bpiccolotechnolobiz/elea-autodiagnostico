@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +22,11 @@ import com.ar.tbz.services.EstadisticaService;
 @RestController
 
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
-		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809" })
+		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
+		"https://autodiagnosticoqas.elea.com:3810", "http://autodiagadminqas.elea.com:8810",
+		"http://autodiagadmin.elea.com:8809" })
 
+@RequestMapping("/v1/")
 public class EstadisticaController {
 	private static Log log = LogFactory.getLog(EstadisticaController.class);
 	@Autowired
