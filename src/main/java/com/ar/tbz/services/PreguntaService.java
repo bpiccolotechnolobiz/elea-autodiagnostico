@@ -20,7 +20,7 @@ public class PreguntaService {
 	private static Log log = LogFactory.getLog(PreguntaService.class);
 
 	public List<Pregunta> findAll() throws SQLException {
-		String query = "SELECT  p.* FROM ELEA_AUTODIAGNOSTICO.dbo.preguntas p order by p.idPregunta";
+		String query = "SELECT  p.* FROM ELEA_AUTODIAGNOSTICO.dbo.preguntas p order by p.idPantalla, p.idOrdenEnPantalla, p.idPregunta";
 		log.info("PreguntasService.findAll");
 		List<Pregunta> preguntas = new ArrayList<Pregunta>();
 		Connection conn = Conexion.generarConexion();
@@ -97,9 +97,14 @@ public class PreguntaService {
 
 		conn = Conexion.generarConexion();
 
-		String query = "Delete from pregunta where id = " + id;
+//		String query = "Delete from pregunta where id = " + id;
+		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.preguntas SET estadoLogico = 0 where idPregunta = " + id;
 		pstm = conn.prepareStatement(query);
 		pstm.executeUpdate();
+		
+		if(conn != null) {
+			conn.close();
+		}
 	}
 
 	public void insertPregunta(Pregunta pregunta) throws SQLException {
@@ -107,8 +112,21 @@ public class PreguntaService {
 		PreparedStatement pstm = null;
 
 		conn = Conexion.generarConexion();
+		
+		// obtengo el ultimo idOrdenEnPantalla que posee la pantalla a la cual pertenece la pregunta
+		String query = "SELECT TOP 1 idOrdenEnPantalla FROM preguntas WHERE idPantalla = ? ORDER BY idOrdenEnPantalla DESC;";
+		pstm = conn.prepareStatement(query);
+		pstm.setInt(1, pregunta.getIdPantalla());
+		ResultSet rs = pstm.executeQuery();
+//		int ultIdOrdenEnPantalla = 0;
+		while (rs.next()) {
+//			ultIdOrdenEnPantalla = rs.getInt("idOrdenEnPantalla");
+			// setteo el idOrdenEnPantalla de la pregunta a insertar
+			pregunta.setIdOrdenEnPantalla(rs.getInt("idOrdenEnPantalla")+1);
+		}
+//		pregunta.setIdOrdenEnPantalla(ultIdOrdenEnPantalla+1);
 
-		String query = "Insert into pregunta values (idOrdenEnPantalla, idPantalla, descripcionPregunta, estadoLogico) values "
+		query = "Insert into preguntas (idOrdenEnPantalla, idPantalla, descripcionPregunta, estadoLogico) values "
 				+ "(? , ? , ? , ? )";
 		pstm = conn.prepareStatement(query);
 		pstm.setInt(1, pregunta.getIdOrdenEnPantalla());
@@ -116,6 +134,10 @@ public class PreguntaService {
 		pstm.setString(3, pregunta.getDescripcionPregunta());
 		pstm.setInt(4, pregunta.getEstadoLogico());
 		pstm.executeUpdate();
+		
+		if(conn != null) {
+			conn.close();
+		}
 	}
 
 	public void updatePregunta(Pregunta pregunta) throws SQLException {
@@ -124,7 +146,7 @@ public class PreguntaService {
 
 		conn = Conexion.generarConexion();
 
-		String query = "UPDATE pregunta SET idOrdenEnPantalla = ?, idPantalla= ?, descripcionPregunta =?, estadoLogico = ? "
+		String query = "UPDATE preguntas SET idOrdenEnPantalla = ?, idPantalla= ?, descripcionPregunta =?, estadoLogico = ? "
 				+ " WHERE idPregunta = ? ";
 		pstm = conn.prepareStatement(query);
 		pstm.setInt(1, pregunta.getIdOrdenEnPantalla());
@@ -133,6 +155,10 @@ public class PreguntaService {
 		pstm.setInt(4, pregunta.getEstadoLogico());
 		pstm.setInt(5, pregunta.getIdPregunta());
 		pstm.executeUpdate();
+		
+		if(conn != null) {
+			conn.close();
+		}
 	}
 
 }

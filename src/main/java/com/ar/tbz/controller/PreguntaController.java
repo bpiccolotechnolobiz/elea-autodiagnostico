@@ -56,16 +56,16 @@ public class PreguntaController {
 		preguntaService.deletePregunta(idPregunta);
 	}
 
-	@DeleteMapping(value = "/pregunta/{id}", produces = "application/json")
-	public void borrarPreguntas(@PathVariable int id) throws Exception {
-		log.info("borrarPreguntas");
-		preguntaService.deletePregunta(id);
-	}
+//	@DeleteMapping(value = "/pregunta/{id}", produces = "application/json")
+//	public void borrarPreguntas(@PathVariable int id) throws Exception {
+//		log.info("borrarPreguntas");
+//		preguntaService.deletePregunta(id);
+//	}
 
-	@PutMapping(value = "/pregunta", produces = "application/json")
-	public void updatePregunta(@RequestBody Pregunta pregunta) throws Exception {
-		log.info("updatePregunta");
-		preguntaService.updatePregunta(pregunta);
-	}
+//	@PutMapping(value = "/pregunta", produces = "application/json")
+//	public void updatePregunta(@RequestBody Pregunta pregunta) throws Exception {
+//		log.info("updatePregunta");
+//		preguntaService.updatePregunta(pregunta);
+//	}
 
 }
