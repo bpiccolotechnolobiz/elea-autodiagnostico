@@ -80,4 +80,61 @@ public class PreguntaService {
 
 	}
 
+	public void deleteById(int id) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		try {
+			conn = Conexion.generarConexion();
+
+			String query = "DELETE FROM preguntas A WHERE A.idPregunta = ?";
+			pstm = conn.prepareStatement(query);
+			pstm.setInt(1, id);
+			pstm.executeUpdate();
+
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					throw new Exception(e2);
+				}
+			}
+		}
+
+	}
+
+	public void update(Pregunta pregunta) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		try {
+			conn = Conexion.generarConexion();
+
+			String query = "UPDATE preguntas A SET idOrdenEnPantalla = ?, idPantalla = ?, "
+					+ "descripcionPregunta = ?, estadoLogico = ?" + "WHERE A.idPregunta = ?";
+			pstm = conn.prepareStatement(query);
+			pstm.setInt(1, pregunta.getIdOrdenEnPantalla());
+			pstm.setInt(2, pregunta.getIdPantalla());
+			pstm.setString(3, pregunta.getDescripcionPregunta());
+			pstm.setInt(4, pregunta.getEstadoLogico());
+			pstm.setInt(5, pregunta.getIdPregunta());
+			pstm.executeUpdate();
+
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					throw new Exception(e2);
+				}
+			}
+		}
+
+	}
+
 }

@@ -6,7 +6,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +34,18 @@ public class PreguntaController {
 	public List<Pregunta> buscarPreguntas() throws Exception {
 		log.info("buscarPreguntas");
 		return preguntaService.findAll();
+	}
+
+	@DeleteMapping(value = "/pregunta/{id}", produces = "application/json")
+	public void borrarPreguntas(@PathVariable int id) throws Exception {
+		log.info("borrarPreguntas");
+		preguntaService.deleteById(id);
+	}
+
+	@PutMapping(value = "/pregunta", produces = "application/json")
+	public void updatePregunta(@RequestBody Pregunta pregunta) throws Exception {
+		log.info("updatePregunta");
+		preguntaService.update(pregunta);
 	}
 
 }
