@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  */
 
-@RequestMapping("/")
+@RequestMapping("/v1/")
 public class IndexController {
 
 	@RequestMapping(method = RequestMethod.GET)

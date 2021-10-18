@@ -279,16 +279,12 @@ public class Mail {
 		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
-		Session session = Session.getDefaultInstance(properties);
-//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-//
-//			protected PasswordAuthentication getPasswordAuthentication() {
-//
-//				return new PasswordAuthentication(from, password);
-//
-//			}
-//
-//		});
+//		Session session = Session.getDefaultInstance(properties);
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(from, password);
+			}
+		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
@@ -330,7 +326,7 @@ public class Mail {
 
 			// Obtener los nombres de las imagenes en el directorio
 			String[] imagenesDirectorio = directorio.list();
-
+			
 			// Now set the actual message
 //			Image qrImage = qrService.generateQR(resultado);
 			ByteArrayOutputStream baos = qrService.generateQR(resultado);
@@ -343,12 +339,7 @@ public class Mail {
 			pdfCreateFile.crearPDF(resultado, qrImage, fileName);
 			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
 //			File outputfile = new File(qrFileName);
-//<<<<<<< Updated upstream
-//			cuerpoMail = crearCuerpoMail(resultado, baos);
-//=======
-//			cuerpoMail = crearCuerpoMail(resultado);
 			cuerpoMail = crearCuerpoMail(resultado, "");
-//>>>>>>> Stashed changes
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -447,12 +438,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-//<<<<<<< Updated upstream
-//	public String crearCuerpoMail(Resultado resultado, ByteArrayOutputStream baos) throws IOException {
-//=======
-//	public String crearCuerpoMail(Resultado resultado) throws IOException {
 	public String crearCuerpoMail(Resultado resultado, String cidKeyQR) throws IOException {
-//>>>>>>> Stashed changes
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -535,20 +521,11 @@ public class Mail {
 		// Habilitado -> QR
 		if (resultado.isResultado()) {
 
-//<<<<<<< Updated upstream
-//			cuerpoMail.append(
-//					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-//							+ "    <div style=\"text-align:center;\">" + "<img src=\"cid:image\""
-//							+ " alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
-//=======
-			// tomar el archivo y luego borrarlo
-//			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-//							+ "    <div style=\"text-align:center;\"><img src=\"" + qrFile + "\" "
 							+ "    <div style=\"text-align:center;\"><img src=\"cid:" + cidKeyQR + "\" "
 							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
-//>>>>>>> Stashed changes
+
 		}
 
 		// Respuestas

@@ -21,11 +21,11 @@ import com.ar.tbz.domain.Vacuna;
 import com.ar.tbz.services.VacunaService;
 
 @RestController
-@RequestMapping("/vacuna")
+@RequestMapping("/v1/vacuna")
 @CrossOrigin(origins = { "http://localhost:4200", "http://34.239.14.244:4200", "http://34.239.14.244",
 		"https://autodiagnosticotest.elea.com:2810", "https://autodiagnostico.elea.com:2809",
-		"https://autodiagnosticoqas.elea.com:3810",
-		"http://autodiagadminqas.elea.com:8810", "https://autodiagadmin.elea.com:8809" })
+		"https://autodiagnosticoqas.elea.com:3810", "http://autodiagadminqas.elea.com:8810",
+		"https://autodiagadmin.elea.com:8809" })
 public class VacunaController {
 
 	private static Log log = LogFactory.getLog(VacunaController.class);

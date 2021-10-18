@@ -107,6 +107,7 @@ public class QRService {
 		Legajo legajo = resultado.getLegajo();
 		String myCodeText = legajo.getNombre() + " " + legajo.getApellido() + ": (" + legajo.getDni() + ") "
 				+ resultado.getFecha_autodiagnostico();
+
 		int size = 512;
 		BufferedImage eleaImage = null;
 		try {

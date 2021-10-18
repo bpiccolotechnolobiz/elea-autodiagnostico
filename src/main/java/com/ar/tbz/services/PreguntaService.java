@@ -41,7 +41,8 @@ public class PreguntaService {
 	}
 
 	// RECUPERAR LISTA DE PREGUNTAS+RESPUESTAS -> pregunta@@respuesta
-	public List<String> recuperarPreguntasRespuestas(Integer idAutodiagnostico, boolean sinVacunacion) throws Exception {
+	public List<String> recuperarPreguntasRespuestas(Integer idAutodiagnostico, boolean sinVacunacion)
+			throws Exception {
 
 		System.out.println("Entra recuperar preguntas y respuestas según idAutodiagnostico");
 
@@ -56,15 +57,15 @@ public class PreguntaService {
 
 			String query = "SELECT A.descripcionPregunta, B.respuestaPregunta FROM preguntas A, respuestas B WHERE B.idPregunta=A.idPregunta AND B.idAutodiagnostico="
 					+ idAutodiagnostico + " ";
-			
-			if(sinVacunacion) {
+
+			if (sinVacunacion) {
 				query += "AND A.idPantalla<>5";
 			} else { // para que retorne solo las de Vacunacion
-				query +="AND A.idPantalla=5";
+				query += "AND A.idPantalla=5";
 			}
-			
+
 			query += " ORDER BY A.idPregunta ASC;";
-			
+
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
 
@@ -133,4 +134,5 @@ public class PreguntaService {
 		pstm.setInt(5, pregunta.getIdPregunta());
 		pstm.executeUpdate();
 	}
+
 }
