@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ar.tbz.conexion.Conexion;
 import com.ar.tbz.domain.Pregunta;
+import com.ar.tbz.domain.Respuesta;
 
 @Service
 public class PreguntaService {
@@ -101,8 +105,8 @@ public class PreguntaService {
 		String query = "UPDATE ELEA_AUTODIAGNOSTICO.dbo.preguntas SET estadoLogico = 0 where idPregunta = " + id;
 		pstm = conn.prepareStatement(query);
 		pstm.executeUpdate();
-		
-		if(conn != null) {
+
+		if (conn != null) {
 			conn.close();
 		}
 	}
@@ -112,8 +116,9 @@ public class PreguntaService {
 		PreparedStatement pstm = null;
 
 		conn = Conexion.generarConexion();
-		
-		// obtengo el ultimo idOrdenEnPantalla que posee la pantalla a la cual pertenece la pregunta
+
+		// obtengo el ultimo idOrdenEnPantalla que posee la pantalla a la cual pertenece
+		// la pregunta
 		String query = "SELECT TOP 1 idOrdenEnPantalla FROM preguntas WHERE idPantalla = ? ORDER BY idOrdenEnPantalla DESC;";
 		pstm = conn.prepareStatement(query);
 		pstm.setInt(1, pregunta.getIdPantalla());
@@ -122,7 +127,7 @@ public class PreguntaService {
 		while (rs.next()) {
 //			ultIdOrdenEnPantalla = rs.getInt("idOrdenEnPantalla");
 			// setteo el idOrdenEnPantalla de la pregunta a insertar
-			pregunta.setIdOrdenEnPantalla(rs.getInt("idOrdenEnPantalla")+1);
+			pregunta.setIdOrdenEnPantalla(rs.getInt("idOrdenEnPantalla") + 1);
 		}
 //		pregunta.setIdOrdenEnPantalla(ultIdOrdenEnPantalla+1);
 
@@ -134,8 +139,8 @@ public class PreguntaService {
 		pstm.setString(3, pregunta.getDescripcionPregunta());
 		pstm.setInt(4, pregunta.getEstadoLogico());
 		pstm.executeUpdate();
-		
-		if(conn != null) {
+
+		if (conn != null) {
 			conn.close();
 		}
 	}
@@ -155,10 +160,48 @@ public class PreguntaService {
 		pstm.setInt(4, pregunta.getEstadoLogico());
 		pstm.setInt(5, pregunta.getIdPregunta());
 		pstm.executeUpdate();
-		
-		if(conn != null) {
+
+		if (conn != null) {
 			conn.close();
 		}
+	}
+
+	public List<Respuesta> getRespuestas(String legajo, int idPantalla) throws SQLException {
+		String query = "select * from pregunta p, respuesta r, autodiagnostico a   where p.idPantalla = ? "
+				+ "and p.idPregunta = r.idPregunta  and r.idAutodiagnostico = a.idAutodiagnostico "
+				+ "and a.legajo = ? order by a.fecha_autodiagnostico desc";
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+		pstm = conn.prepareStatement(query);
+		pstm.setInt(1, idPantalla);
+		pstm.setString(2, legajo);
+
+		ResultSet rs = pstm.executeQuery();
+		List<Respuesta> respuestas = new ArrayList<>();
+		Map<Integer, Respuesta> respuestasMap = new HashMap<>();
+		int idPregunta = 0;
+		while (rs.next()) {
+			idPregunta = rs.getInt("idPregunta");
+			if (respuestasMap.get(idPregunta) == null) {
+
+				Respuesta respuesta = new Respuesta();
+				respuesta.setVersion(rs.getInt("version"));
+				respuesta.setTextoPregunta(rs.getString("textoPregunta"));
+				respuesta.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
+				respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
+				respuesta.setIdPregunta(rs.getInt("idPregunta"));
+				respuestasMap.put(idPregunta, respuesta);
+			}
+		}
+		respuestas = respuestasMap.values().stream().collect(Collectors.toList());
+
+		if (conn != null) {
+			conn.close();
+		}
+		return respuestas;
+
 	}
 
 }

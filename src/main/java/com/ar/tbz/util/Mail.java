@@ -23,7 +23,6 @@ import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -273,18 +272,18 @@ public class Mail {
 //		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
 
-//		properties.put("mail.smtp.ssl.enable", "true");
-//		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.ssl.enable", "false");
-		properties.put("mail.smtp.auth", "false");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
+//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.auth", "false");
 
 		// Get the Session object.// and pass username and password
-//		Session session = Session.getDefaultInstance(properties);
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, password);
-			}
-		});
+		Session session = Session.getDefaultInstance(properties);
+//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//				return new PasswordAuthentication(from, password);
+//			}
+//		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
@@ -326,7 +325,7 @@ public class Mail {
 
 			// Obtener los nombres de las imagenes en el directorio
 			String[] imagenesDirectorio = directorio.list();
-			
+
 			// Now set the actual message
 //			Image qrImage = qrService.generateQR(resultado);
 			ByteArrayOutputStream baos = qrService.generateQR(resultado);
@@ -503,7 +502,7 @@ public class Mail {
 
 		// TODO: Agregar vacunas en esta parte
 		cuerpoMail.append(this.respuestasVacunacionMail(resultado));
-		
+
 		cuerpoMail.append("</ul>");
 
 		String fechaAutodiagnostico = formatearFecha(resultado.getFecha_autodiagnostico());
@@ -562,11 +561,11 @@ public class Mail {
 //				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
 //				+ "    </div>";
 	}
-	
+
 	// RESPUESTAS VACUNACION
 	private String respuestasVacunacionMail(Resultado resultado) {
 		Legajo legajo = resultado.getLegajo();
-		
+
 		List<String> preguntasRespuestas = null;
 
 		try {
@@ -574,17 +573,17 @@ public class Mail {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		String html = "";
-		
-		for (String preguntaRespuesta : preguntasRespuestas ) {
+
+		for (String preguntaRespuesta : preguntasRespuestas) {
 			String[] splitPregRta = preguntaRespuesta.split("@@");
 			String pregunta = splitPregRta[0];
 			String respuestaValor = splitPregRta[1];
-			
+
 			html += "<li>" + pregunta.replace(".", "") + ": " + respuestaValor + "</li>";
 		}
-		
+
 		return html;
 	}
 

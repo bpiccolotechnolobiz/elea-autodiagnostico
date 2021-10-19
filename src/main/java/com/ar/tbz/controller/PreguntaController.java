@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.Pregunta;
+import com.ar.tbz.domain.Respuesta;
 import com.ar.tbz.services.PreguntaService;
 
 @RestController
@@ -56,16 +56,11 @@ public class PreguntaController {
 		preguntaService.deletePregunta(idPregunta);
 	}
 
-//	@DeleteMapping(value = "/pregunta/{id}", produces = "application/json")
-//	public void borrarPreguntas(@PathVariable int id) throws Exception {
-//		log.info("borrarPreguntas");
-//		preguntaService.deletePregunta(id);
-//	}
-
-//	@PutMapping(value = "/pregunta", produces = "application/json")
-//	public void updatePregunta(@RequestBody Pregunta pregunta) throws Exception {
-//		log.info("updatePregunta");
-//		preguntaService.updatePregunta(pregunta);
-//	}
+	@RequestMapping(value = "/respuestas", method = RequestMethod.GET, produces = "application/json")
+	public List<Respuesta> obtenerRespuestas(@RequestParam int idPantalla, @RequestParam String nroLegajo)
+			throws Exception {
+		log.info("obtenerRespuestas");
+		return preguntaService.getRespuestas(nroLegajo, idPantalla);
+	}
 
 }
