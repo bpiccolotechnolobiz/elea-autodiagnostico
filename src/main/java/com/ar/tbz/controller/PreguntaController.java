@@ -1,6 +1,9 @@
 package com.ar.tbz.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ar.tbz.domain.Pregunta;
+import com.ar.tbz.domain.PreguntaRespuesta;
 import com.ar.tbz.domain.Respuesta;
 import com.ar.tbz.services.PreguntaService;
 
@@ -57,10 +61,27 @@ public class PreguntaController {
 	}
 
 	@RequestMapping(value = "/pregunta/respuestas", method = RequestMethod.GET, produces = "application/json")
-	public List<Respuesta> obtenerRespuestas(@RequestParam int idPantalla, @RequestParam String nroLegajo)
+	public List<PreguntaRespuesta> obtenerRespuestas(@RequestParam int idPantalla, @RequestParam String nroLegajo)
 			throws Exception {
 		log.info("obtenerRespuestas");
-		return preguntaService.getRespuestas(nroLegajo, idPantalla);
+
+		List<Pregunta> preguntas = preguntaService.findAll();
+		List<Pregunta> preguntasActivas = preguntas.stream()
+				.filter(x -> x.getEstadoLogico() == 1 && x.getIdPantalla() == idPantalla).collect(Collectors.toList());
+		List<Respuesta> respuestas = preguntaService.getRespuestas(nroLegajo, idPantalla);
+		List<PreguntaRespuesta> list = new ArrayList<PreguntaRespuesta>();
+		for (Pregunta preg : preguntasActivas) {
+			PreguntaRespuesta pr = new PreguntaRespuesta();
+			Optional<Respuesta> respuestaOpt = respuestas.stream()
+					.filter(x -> x.getIdPregunta() == preg.getIdPregunta()).findAny();
+			if (respuestaOpt.isPresent()) {
+				pr.setRespuesta(respuestaOpt.get());
+			}
+			pr.setPregunta(preg);
+			list.add(pr);
+		}
+
+		return list;
 	}
 
 }
