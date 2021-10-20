@@ -111,4 +111,50 @@ public class BusquedaService {
 		conn.close();
 		return respuestas;
 	}
+
+	public Autodiagnostico buscarAutodiagnostico(int nroLegajo) throws Exception {
+		String query = "SELECT a.*, l.* from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a "
+				+ "  where a.nroLegajo = ? order by idAutodiagnostico desc";
+		StringBuilder sb = new StringBuilder(query);
+		Connection conn = null;
+		Autodiagnostico nuevoAutoD = null;
+		try {
+
+			conn = Conexion.generarConexion();
+			log.info("Query_statement: " + sb.toString());
+			PreparedStatement pstm = conn.prepareStatement(sb.toString());
+			pstm.setInt(1, nroLegajo);
+			ResultSet rs = pstm.executeQuery();
+			if (rs.next()) {
+				nuevoAutoD = new Autodiagnostico(rs.getInt("idAutodiagnostico"), rs.getString("nroLegajo"),
+						rs.getString("dni"), rs.getString("nombre"), rs.getString("apellido"), rs.getString("telefono"),
+						rs.getInt("idLugarAcceso"), rs.getInt("resultado"));
+				nuevoAutoD.setEmpresa(rs.getString("empresa"));
+				nuevoAutoD.setEmailUsuario(rs.getString("emailUsuario"));
+				nuevoAutoD.setEmailLaboral(rs.getString("emailLaboral"));
+				nuevoAutoD.setEstadoSintomas(rs.getInt("estadoSintomas"));
+				nuevoAutoD.setEstadoContactoEstrecho(rs.getInt("estadoContactoEstrecho"));
+				nuevoAutoD.setEstadoAntecedentes(rs.getInt("estadoAntecedentes"));
+				nuevoAutoD.setFecha_autodiagnostico(rs.getTimestamp("fecha_autodiagnostico"));
+				nuevoAutoD.setFecha_hasta_resultado(rs.getTimestamp("fecha_hasta_resultado"));
+				nuevoAutoD.setComentario(rs.getString("comentario"));
+				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
+				nuevoAutoD.setModificadoEn(rs.getTimestamp("modificadoEn"));
+				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
+			}
+
+		} catch (SQLException e) {
+			throw new Exception(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					throw new Exception(e2);
+				}
+			}
+		}
+		return nuevoAutoD;
+	}
 }
