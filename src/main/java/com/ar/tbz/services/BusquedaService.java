@@ -113,8 +113,8 @@ public class BusquedaService {
 	}
 
 	public Autodiagnostico buscarAutodiagnostico(int nroLegajo) throws Exception {
-		String query = "SELECT a.*, l.* from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a "
-				+ "  where a.nroLegajo = ? order by idAutodiagnostico desc";
+		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a "
+				+ "  where a.nroLegajo = ? order by a.idAutodiagnostico desc";
 		StringBuilder sb = new StringBuilder(query);
 		Connection conn = null;
 		Autodiagnostico nuevoAutoD = null;
