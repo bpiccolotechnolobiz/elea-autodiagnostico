@@ -2,12 +2,21 @@ package com.ar.tbz.domain;
 
 public class Respuesta {
 
+	private Integer id;
 	private Integer idAutodiagnostico;
 	private Integer version;
 
 	private int idPregunta;
 	private String textoPregunta;
 	private String respuestaPregunta;
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public Integer getIdAutodiagnostico() {
 		return idAutodiagnostico;

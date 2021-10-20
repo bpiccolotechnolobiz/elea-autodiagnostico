@@ -56,7 +56,7 @@ public class PreguntaController {
 		preguntaService.deletePregunta(idPregunta);
 	}
 
-	@RequestMapping(value = "/respuestas", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/pregunta/respuestas", method = RequestMethod.GET, produces = "application/json")
 	public List<Respuesta> obtenerRespuestas(@RequestParam int idPantalla, @RequestParam String nroLegajo)
 			throws Exception {
 		log.info("obtenerRespuestas");

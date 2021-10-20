@@ -167,9 +167,16 @@ public class PreguntaService {
 	}
 
 	public List<Respuesta> getRespuestas(String legajo, int idPantalla) throws SQLException {
-		String query = "select * from pregunta p, respuesta r, autodiagnostico a   where p.idPantalla = ? "
-				+ "and p.idPregunta = r.idPregunta  and r.idAutodiagnostico = a.idAutodiagnostico "
-				+ "and a.legajo = ? order by a.fecha_autodiagnostico desc";
+//		String query = "select * from preguntas p, respuestas r, autodiagnostico a   where p.idPantalla = ? "
+//				+ "and p.idPregunta = r.idPregunta  and r.idAutodiagnostico = a.idAutodiagnostico "
+//				+ "and a.nroLegajo = ? order by a.fecha_autodiagnostico desc";
+		String query = "SELECT r.*, p.descripcionPregunta FROM preguntas p "
+				+ "LEFT JOIN respuestas r ON p.idPregunta = r.idPregunta " 
+				+ "WHERE p.idPantalla = ? " 
+				+ "AND r.idAutodiagnostico IN (SELECT MAX(ad.idAutodiagnostico) FROM autodiagnostico ad " 
+				+ " WHERE ad.nroLegajo = ?) "
+				+ "AND p.estadoLogico = 1 "
+				+ "ORDER BY p.idPregunta";
 		Connection conn = null;
 		PreparedStatement pstm = null;
 
@@ -180,22 +187,23 @@ public class PreguntaService {
 
 		ResultSet rs = pstm.executeQuery();
 		List<Respuesta> respuestas = new ArrayList<>();
-		Map<Integer, Respuesta> respuestasMap = new HashMap<>();
+//		Map<Integer, Respuesta> respuestasMap = new HashMap<>();
 		int idPregunta = 0;
 		while (rs.next()) {
-			idPregunta = rs.getInt("idPregunta");
-			if (respuestasMap.get(idPregunta) == null) {
+//			idPregunta = rs.getInt("idPregunta");
+//			if (respuestasMap.get(idPregunta) == null) {
 
 				Respuesta respuesta = new Respuesta();
-				respuesta.setVersion(rs.getInt("version"));
-				respuesta.setTextoPregunta(rs.getString("textoPregunta"));
+//				respuesta.setVersion(rs.getInt("version"));
+				respuesta.setTextoPregunta(rs.getString("descripcionPregunta"));
 				respuesta.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
 				respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
 				respuesta.setIdPregunta(rs.getInt("idPregunta"));
-				respuestasMap.put(idPregunta, respuesta);
-			}
+//				respuestasMap.put(idPregunta, respuesta);
+				respuestas.add(respuesta);
+//			}
 		}
-		respuestas = respuestasMap.values().stream().collect(Collectors.toList());
+//		respuestas = respuestasMap.values().stream().collect(Collectors.toList());
 
 		if (conn != null) {
 			conn.close();
