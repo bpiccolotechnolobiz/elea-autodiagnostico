@@ -68,7 +68,7 @@ public class PreguntaService {
 				query += "AND A.idPantalla=5";
 			}
 
-			query += " ORDER BY A.idPregunta ASC;";
+			query += " ORDER BY A.idPantalla ASC, A.idPregunta ASC;";
 
 			pstm = conn.prepareStatement(query);
 			rs = pstm.executeQuery();
