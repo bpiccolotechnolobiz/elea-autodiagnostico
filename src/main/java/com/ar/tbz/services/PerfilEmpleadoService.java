@@ -25,6 +25,8 @@ public class PerfilEmpleadoService {
 	private static Log log = LogFactory.getLog(PreguntaService.class);
 	@Autowired
 	PreguntaService preguntaService;
+	@Autowired
+	RespuestaService respuestaService;
 
 	public PerfilEmpleado getPerfilEmpleadoByNroLegajo(String nroLegajo) throws Exception {
 
@@ -100,6 +102,19 @@ public class PerfilEmpleadoService {
 		pstm.setString(2, perfil.getEmailUsuario());
 		pstm.setInt(3, perfil.getEstadoLogico());
 		pstm.executeUpdate();
+
+		List<Respuesta> respuestas = perfil.getPreguntasRespuestas().stream().map(x -> x.getRespuesta())
+				.collect(Collectors.toList());
+
+		respuestas.forEach(res -> {
+			try {
+				respuestaService.insert(res);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		conn.close();
 		conn.close();
 	}
 
@@ -115,6 +130,19 @@ public class PerfilEmpleadoService {
 		pstm.setInt(2, perfil.getEstadoLogico());
 		pstm.setString(3, perfil.getNroLegajo());
 		pstm.executeUpdate();
+
+		List<Respuesta> respuestas = perfil.getPreguntasRespuestas().stream().map(x -> x.getRespuesta())
+				.collect(Collectors.toList());
+
+		respuestas.forEach(res -> {
+			try {
+				respuestaService.update(res);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 		conn.close();
 	}
+
 }
