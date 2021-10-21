@@ -50,24 +50,27 @@ public class PerfilEmpleadoService {
 				perfil.setEstadoLogico(rs.getInt("estadoLogico"));
 			}
 			
-			List<Pregunta> preguntas = preguntaService.findAll();
-			List<Pregunta> preguntasActivas = preguntas.stream()
-					.filter(x -> x.getEstadoLogico() == 1 && (x.getIdPantalla() == 4 || x.getIdPantalla() == 5)).collect(Collectors.toList());
-			
-			List<Respuesta> respuestasPerfilEmpleado = preguntaService.getRespuestasPerfilEmpleado(nroLegajo);
-			
-			List<PreguntaRespuesta> list = new ArrayList<PreguntaRespuesta>();
-			for (Pregunta preg : preguntasActivas) {
-				PreguntaRespuesta pr = new PreguntaRespuesta();
-				Optional<Respuesta> respuestaOpt = respuestasPerfilEmpleado.stream()
-						.filter(x -> x.getIdPregunta() == preg.getIdPregunta()).findAny();
-				if (respuestaOpt.isPresent()) {
-					pr.setRespuesta(respuestaOpt.get());
+			if (perfil != null) {
+				List<Pregunta> preguntas = preguntaService.findAll();
+				List<Pregunta> preguntasActivas = preguntas.stream()
+						.filter(x -> x.getEstadoLogico() == 1 && (x.getIdPantalla() == 4 || x.getIdPantalla() == 5)).collect(Collectors.toList());
+				
+				List<Respuesta> respuestasPerfilEmpleado = preguntaService.getRespuestasPerfilEmpleado(nroLegajo);
+				
+				List<PreguntaRespuesta> list = new ArrayList<PreguntaRespuesta>();
+				for (Pregunta preg : preguntasActivas) {
+					PreguntaRespuesta pr = new PreguntaRespuesta();
+					Optional<Respuesta> respuestaOpt = respuestasPerfilEmpleado.stream()
+							.filter(x -> x.getIdPregunta() == preg.getIdPregunta()).findAny();
+					if (respuestaOpt.isPresent()) {
+						pr.setRespuesta(respuestaOpt.get());
+					}
+					pr.setPregunta(preg);
+					list.add(pr);
 				}
-				pr.setPregunta(preg);
-				list.add(pr);
+				perfil.setPreguntasRespuestas(list);
 			}
-			perfil.setPreguntasRespuestas(list);
+			
 			
 			return perfil;
 		} catch (Exception e) {
