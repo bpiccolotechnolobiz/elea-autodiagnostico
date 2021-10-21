@@ -140,7 +140,7 @@ public class BusquedaService {
 				nuevoAutoD.setComentario(rs.getString("comentario"));
 				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
 				nuevoAutoD.setModificadoEn(rs.getTimestamp("modificadoEn"));
-				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
+//				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
 			}
 
 		} catch (SQLException e) {

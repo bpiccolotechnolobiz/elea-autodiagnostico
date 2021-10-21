@@ -211,5 +211,37 @@ public class PreguntaService {
 		return respuestas;
 
 	}
+	
+	public List<Respuesta> getRespuestasPerfilEmpleado(String legajo) throws SQLException {
+		String query = "SELECT r.*, p.descripcionPregunta FROM preguntas p "
+				+ "LEFT JOIN respuestasPerfilEmpleado r ON p.idPregunta = r.idPregunta " 
+				+ "WHERE (p.idPantalla = 4 OR p.idPantalla = 5) " 
+				+ "AND r.nroLegajo = ? "
+				+ "AND p.estadoLogico = 1 "
+				+ "ORDER BY p.idPregunta";
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+		pstm = conn.prepareStatement(query);
+		pstm.setString(1, legajo);
+
+		ResultSet rs = pstm.executeQuery();
+		List<Respuesta> respuestas = new ArrayList<>();
+		while (rs.next()) {
+
+			Respuesta respuesta = new Respuesta();
+			respuesta.setTextoPregunta(rs.getString("descripcionPregunta"));
+			respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
+			respuesta.setIdPregunta(rs.getInt("idPregunta"));
+			respuestas.add(respuesta);
+		}
+
+		if (conn != null) {
+			conn.close();
+		}
+		return respuestas;
+
+	}
 
 }
