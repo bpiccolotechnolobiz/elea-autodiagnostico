@@ -108,13 +108,12 @@ public class PerfilEmpleadoService {
 
 		respuestas.forEach(res -> {
 			try {
-				respuestaService.insert(res);
+				respuestaService.insertRespuestaPerfil(res, perfil.getNroLegajo());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
-		conn.close();
 		conn.close();
 	}
 
@@ -130,13 +129,13 @@ public class PerfilEmpleadoService {
 		pstm.setInt(2, perfil.getEstadoLogico());
 		pstm.setString(3, perfil.getNroLegajo());
 		pstm.executeUpdate();
-
+		
 		List<Respuesta> respuestas = perfil.getPreguntasRespuestas().stream().map(x -> x.getRespuesta())
 				.collect(Collectors.toList());
 
 		respuestas.forEach(res -> {
 			try {
-				respuestaService.update(res);
+				respuestaService.updateRespuestaPerfil(res, perfil.getNroLegajo());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
