@@ -27,13 +27,13 @@ public class PerfilEmpleadoController {
 	@Autowired
 	PerfilEmpleadoService perfilEmpleadoService;
 
-	@PostMapping(produces = "application/json")
+	@PostMapping(value = "/", produces = "application/json")
 	public void insert(@RequestBody PerfilEmpleado perfil) throws Exception {
 		log.info("insert perfil de empleado");
 		perfilEmpleadoService.insert(perfil);
 	}
 
-	@PutMapping(produces = "application/json")
+	@PutMapping(value = "/", produces = "application/json")
 	public void update(@RequestBody PerfilEmpleado perfil) throws Exception {
 		log.info("update perfil de empleado");
 		perfilEmpleadoService.update(perfil);

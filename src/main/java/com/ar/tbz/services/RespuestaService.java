@@ -73,8 +73,8 @@ public class RespuestaService {
 
 		conn = Conexion.generarConexion();
 
-		Respuesta resDB = findById(respuesta.getId());
-
+		Respuesta resDB = findRespuestaPerfilEmpleadoByNroLegajoIdPregunta(nroLegajo, respuesta.getIdPregunta());
+		
 		if (resDB == null) {
 
 			String insert = "INSERT INTO respuestasPerfilEmpleado(nroLegajo, idPregunta, respuestaPregunta) values"
@@ -89,32 +89,50 @@ public class RespuestaService {
 			String update = "UPDATE respuestasPerfilEmpleado SET respuestaPregunta = ? where nroLegajo = ? and idPregunta = ?";
 			pstm = conn.prepareStatement(update);
 			pstm.setString(1, respuesta.getRespuestaPregunta());
-			pstm.setInt(2, respuesta.getIdPregunta());
-			pstm.setString(3, nroLegajo);
+			pstm.setString(2, nroLegajo);
+			pstm.setInt(3, respuesta.getIdPregunta());
 		}
 
 		pstm.executeUpdate();
 		conn.close();
 	}
 
-	public Respuesta findById(int id) throws SQLException {
+	public Respuesta findRespuestaPerfilEmpleadoById(int id) throws SQLException {
 		Connection conn = null;
 		PreparedStatement pstm = null;
 
 		conn = Conexion.generarConexion();
-		String findById = "select * from respuesta where id = ?";
+		String findById = "select * from respuestasPerfilEmpleado where idRespuestaPerfil = ?";
 		pstm = conn.prepareStatement(findById);
 		pstm.setInt(1, id);
 		ResultSet rs = pstm.executeQuery();
 		Respuesta res = null;
 		if (rs.next()) {
 			res = new Respuesta();
-			res.setId(rs.getInt("id"));
-			res.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
+			res.setId(rs.getInt("idRespuestaPerfil"));
 			res.setIdPregunta(rs.getInt("idPregunta"));
 			res.setRespuestaPregunta(rs.getString("respuestaPregunta"));
-			res.setTextoPregunta(rs.getString("textoPregunta"));
-			res.setVersion(rs.getInt("version"));
+		}
+		conn.close();
+		return res;
+	}
+	
+	public Respuesta findRespuestaPerfilEmpleadoByNroLegajoIdPregunta(String nroLegajo, int idPregunta) throws SQLException {
+		Connection conn = null;
+		PreparedStatement pstm = null;
+
+		conn = Conexion.generarConexion();
+		String findById = "select * from respuestasPerfilEmpleado where nroLegajo = ? and idPregunta = ?";
+		pstm = conn.prepareStatement(findById);
+		pstm.setString(1, nroLegajo);
+		pstm.setInt(2, idPregunta);
+		ResultSet rs = pstm.executeQuery();
+		Respuesta res = null;
+		if (rs.next()) {
+			res = new Respuesta();
+			res.setId(rs.getInt("idRespuestaPerfil"));
+			res.setIdPregunta(rs.getInt("idPregunta"));
+			res.setRespuestaPregunta(rs.getString("respuestaPregunta"));
 		}
 		conn.close();
 		return res;

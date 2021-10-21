@@ -96,7 +96,7 @@ public class PerfilEmpleadoService {
 		PreparedStatement pstm = null;
 
 		conn = Conexion.generarConexion();
-		String insert = "INSERT INTO perfilEmpleados(nroLegajo, emailUsuario, estadoLogico) values" + "(?, ?)";
+		String insert = "INSERT INTO perfilEmpleados(nroLegajo, emailUsuario, estadoLogico) values" + "(?, ?, ?)";
 		pstm = conn.prepareStatement(insert);
 		pstm.setString(1, perfil.getNroLegajo());
 		pstm.setString(2, perfil.getEmailUsuario());
@@ -125,7 +125,7 @@ public class PerfilEmpleadoService {
 		conn = Conexion.generarConexion();
 		String insert = "UPDATE perfilEmpleados SET emailUsuario = ?, estadoLogico = ? where nroLegajo = ?";
 		pstm = conn.prepareStatement(insert);
-		pstm.setString(1, perfil.getNroLegajo());
+		pstm.setString(1, perfil.getEmailUsuario());
 		pstm.setInt(2, perfil.getEstadoLogico());
 		pstm.setString(3, perfil.getNroLegajo());
 		pstm.executeUpdate();
