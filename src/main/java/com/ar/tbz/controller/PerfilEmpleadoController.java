@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +26,19 @@ public class PerfilEmpleadoController {
 	private static Log log = LogFactory.getLog(PreguntaController.class);
 	@Autowired
 	PerfilEmpleadoService perfilEmpleadoService;
-	
+
+	@PostMapping(produces = "application/json")
+	public void insert(@RequestBody PerfilEmpleado perfil) throws Exception {
+		log.info("insert perfil de empleado");
+		perfilEmpleadoService.insert(perfil);
+	}
+
+	@PutMapping(produces = "application/json")
+	public void update(@RequestBody PerfilEmpleado perfil) throws Exception {
+		log.info("update perfil de empleado");
+		perfilEmpleadoService.update(perfil);
+	}
+
 	@GetMapping(value = "/{nroLegajo}", produces = "application/json")
 	public PerfilEmpleado getPerfilEmpleadoByNroLegajo(@PathVariable String nroLegajo) throws Exception {
 		log.info("Obtener perfil de empleado");
