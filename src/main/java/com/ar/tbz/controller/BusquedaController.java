@@ -38,6 +38,15 @@ public class BusquedaController {
 		String max = String.valueOf(comienzo * ROWS_PER_PAGE);
 		return busquedaService.buscarDiagnostico(form, min, max);
 	}
+	
+	@GetMapping(value = "/buscarConRespuestas", produces = "application/json")
+	public List<Autodiagnostico> buscarDiagnosticoConRespuestas(@RequestParam Map<String, String> form, @RequestParam Integer pagina)
+			throws Exception {
+		int comienzo = Integer.valueOf(pagina);
+		String min = String.valueOf((comienzo - 1) * ROWS_PER_PAGE);
+		String max = String.valueOf(comienzo * ROWS_PER_PAGE);
+		return busquedaService.buscarDiagnosticoConRespuestas(form, min, max);
+	}
 
 	@GetMapping(value = "/autodiagnostico", produces = "application/json")
 	public Autodiagnostico buscarAutodiagnostico(@RequestParam int nroLegajo) throws Exception {

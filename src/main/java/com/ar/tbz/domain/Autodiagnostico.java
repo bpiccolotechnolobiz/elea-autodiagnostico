@@ -1,6 +1,7 @@
 package com.ar.tbz.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class Autodiagnostico {
 
@@ -26,6 +27,8 @@ public class Autodiagnostico {
 	private String comentario;
 	private int modificadoPor;
 	private Date modificadoEn;
+	
+	private List<Respuesta> respuestas;
 
 	public Autodiagnostico() {
 
@@ -238,6 +241,14 @@ public class Autodiagnostico {
 
 	public void setDescripcionLugarAcceso(String descripcionLugarAcceso) {
 		this.descripcionLugarAcceso = descripcionLugarAcceso;
+	}
+	
+	public List<Respuesta> getRespuestas() {
+		return respuestas;
+	}
+	
+	public void setRespuestas(List<Respuesta> respuestas) {
+		this.respuestas = respuestas;
 	}
 
 	@Override
