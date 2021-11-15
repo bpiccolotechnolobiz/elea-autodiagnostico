@@ -112,9 +112,10 @@ public class BusquedaService {
 		return respuestas;
 	}
 
-	public Autodiagnostico buscarAutodiagnostico(int nroLegajo) throws Exception {
+	public Autodiagnostico buscarAutodiagnostico(String nroLegajo, String dni) throws Exception {
 		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a "
-				+ "  where a.nroLegajo = ? order by a.idAutodiagnostico desc";
+				+ "  where a.nroLegajo = ? and a.dni = ? order by a.idAutodiagnostico desc";
+		
 		StringBuilder sb = new StringBuilder(query);
 		Connection conn = null;
 		Autodiagnostico nuevoAutoD = null;
@@ -123,7 +124,8 @@ public class BusquedaService {
 			conn = Conexion.generarConexion();
 			log.info("Query_statement: " + sb.toString());
 			PreparedStatement pstm = conn.prepareStatement(sb.toString());
-			pstm.setInt(1, nroLegajo);
+			pstm.setString(1, nroLegajo);
+			pstm.setString(2, dni);
 			ResultSet rs = pstm.executeQuery();
 			if (rs.next()) {
 				nuevoAutoD = new Autodiagnostico(rs.getInt("idAutodiagnostico"), rs.getString("nroLegajo"),

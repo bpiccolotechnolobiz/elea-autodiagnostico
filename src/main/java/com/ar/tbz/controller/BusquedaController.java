@@ -49,8 +49,8 @@ public class BusquedaController {
 	}
 
 	@GetMapping(value = "/autodiagnostico", produces = "application/json")
-	public Autodiagnostico buscarAutodiagnostico(@RequestParam int nroLegajo) throws Exception {
-		return busquedaService.buscarAutodiagnostico(nroLegajo);
+	public Autodiagnostico buscarAutodiagnostico(@RequestParam String nroLegajo, @RequestParam String dni) throws Exception {
+		return busquedaService.buscarAutodiagnostico(nroLegajo, dni);
 	}
 
 	@GetMapping(value = "/respuestas", produces = "application/json")
