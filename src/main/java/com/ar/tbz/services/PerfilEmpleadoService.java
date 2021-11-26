@@ -103,17 +103,19 @@ public class PerfilEmpleadoService {
 		pstm.setInt(3, perfil.getEstadoLogico());
 		pstm.executeUpdate();
 
-		List<Respuesta> respuestas = perfil.getPreguntasRespuestas().stream().map(x -> x.getRespuesta())
-				.collect(Collectors.toList());
+		List<Respuesta> respuestas = new ArrayList<Respuesta>();
+		for (PreguntaRespuesta pregResp : perfil.getPreguntasRespuestas()) {
+			respuestas.add(pregResp.getRespuesta());
+		}
 
-		respuestas.forEach(res -> {
+		for (Respuesta res : respuestas) {
 			try {
 				respuestaService.insertRespuestaPerfil(res, perfil.getNroLegajo());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		});
+		}
 		conn.close();
 	}
 
@@ -129,18 +131,19 @@ public class PerfilEmpleadoService {
 		pstm.setInt(2, perfil.getEstadoLogico());
 		pstm.setString(3, perfil.getNroLegajo());
 		pstm.executeUpdate();
-		
-		List<Respuesta> respuestas = perfil.getPreguntasRespuestas().stream().map(x -> x.getRespuesta())
-				.collect(Collectors.toList());
 
-		respuestas.forEach(res -> {
+		List<Respuesta> respuestas = new ArrayList<Respuesta>();
+		for (PreguntaRespuesta pregResp : perfil.getPreguntasRespuestas()) {
+			respuestas.add(pregResp.getRespuesta());
+		}
+
+		for (Respuesta res : respuestas) {
 			try {
 				respuestaService.updateRespuestaPerfil(res, perfil.getNroLegajo());
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		});
+		}
 		conn.close();
 	}
 
