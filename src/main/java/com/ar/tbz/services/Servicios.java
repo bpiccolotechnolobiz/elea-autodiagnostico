@@ -2,7 +2,6 @@ package com.ar.tbz.services;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -32,7 +31,6 @@ import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.itextpdf.text.Image;
 
 @Service
 public class Servicios {
@@ -80,44 +78,6 @@ public class Servicios {
 		mail.envioMail2(resultado);
 //		Servicios.grabarArchivo("c://tmp//mail", textoMail);
 	}
-
-	public void crearPDF(Resultado resultado) throws Exception {
-//		Image image = qrService.generateQR(resultado);
-		ByteArrayOutputStream baos = qrService.generateQR(resultado);
-		Image qrImage = com.itextpdf.text.Image.getInstance(baos.toByteArray());
-
-//		Graphics2D g2d = dimg.createGraphics();
-//		g2d.drawImage(tmp, 0, 0, null);
-//		g2d.dispose();
-//
-//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//		ImageIO.write(dimg, "PNG", baos);
-//
-//		img = com.itextpdf.text.Image.getInstance(baos.toByteArray());
-//		
-
-		pdfBuilder.buildPDFDocument(resultado, qrImage);
-	}
-
-	// crear codigo qr------------------------------------
-//	public  void generarQRCode(Resultado resultado) throws UnirestException {
-//		String body = "{\n" + 
-//				"\"data\":\"https://www.qrcode-monkey.com\",\n" + 
-//				"\"config\":{\n" + 
-//				"\"body\":\"square\",\n" + 
-//				"\"eye\":\"frame0\",\n" + 
-//				"\"bodyColor\":\"#3f51b5\",\n" + 
-//				"\"logo\":\"#facebook\"\n" + 
-//				"},\n" + 
-//				"\"size\":300,\n" + 
-//				"\"download\":false,\n" + 
-//				"\"file\":\"svg\"\n" + 
-//				"}";
-//		
-//		Unirest.get("/qr/custom" + "/{placeholder}")
-//		  .routeParam("placeholder", "value")
-//		  .asJson();
-//	}
 
 	public void crearQRCode(Resultado resultado) throws Exception {
 
@@ -257,19 +217,6 @@ public class Servicios {
 
 	}
 
-	// ------------------------------------------- legajo by dni y legajo
-
-	/**
-	 * Recupera el empleado usando como key el nro de legajo ingresado en la
-	 * pantalla Retorna una insancia de Legajo para mostrar los datos en la pantalla
-	 * 
-	 * @param nroLegajo
-	 * @return Legajo
-	 * @throws Exception
-	 */
-
-	// ------------------------------------------- Grabar datos en AutoDiagnostico
-
 	/**
 	 * Actualiza la base de datosde AutoDiagnostico con los datos enviados por el
 	 * Front End Utiliza para esto el nuevo id enviado en el paso inicial
@@ -300,22 +247,6 @@ public class Servicios {
 
 					+ "values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ? ) "; // son 17
 
-			/*
-			 * Insert example
-			 * 
-			 * INSERT INTO ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico (nroLegajo, dni, nombre,
-			 * apellido, telefono, empresa, mail, estadoSintomas, estadoContactoEstrecho,
-			 * estadoAntecedentes, resultado, fecha_autodiagnostico, fecha_hasta_resultado,
-			 * comentario, modificadoPor, modificadoEn, idLugarAcceso) VALUES('', '', '',
-			 * '', '', '', '', 0, 0, 0, 0, '', '', '', '', '', 0);
-			 * 
-			 * Link --> sql timestamp
-			 * https://www.dariawan.com/tutorials/java/java-sql-date-java-sql-time-and-java-
-			 * sql-timestamp/
-			 * 
-			 */
-
-//			pstm = conn.prepareStatement(query);
 			pstm = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
 			pstm.setObject(1, resultado.getLegajo().getNroLegajo());
@@ -334,9 +265,6 @@ public class Servicios {
 			pstm.setObject(12, resultado.isEstadoAntecedentes());
 			pstm.setObject(13, resultado.isResultado());
 
-//			pstm.setObject(14, resultado.getFecha_autodiagnostico());
-//			pstm.setObject(15, resultado.getFecha_hasta_resultado());
-
 			pstm.setString(14, resultado.getFecha_autodiagnostico());
 			pstm.setString(15, resultado.getFecha_hasta_resultado());
 
@@ -344,96 +272,9 @@ public class Servicios {
 			pstm.setObject(17, resultado.getModificadoPor());
 			pstm.setObject(18, resultado.getModificadoEn());
 
-			// --------------------------------------------------
-			/*
-			 * -- ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico definition
-			 * 
-			 * -- Drop table
-			 * 
-			 * -- DROP TABLE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico;
-			 * 
-			 * CREATE TABLE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico ( idAutodiagnostico int
-			 * IDENTITY(1,1) NOT NULL, nroLegajo varchar(10) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NULL, dni varchar(10) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, nombre varchar(25) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, apellido varchar(25) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, telefono varchar(20) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, empresa varchar(50) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, mail varchar(50) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NOT NULL, estadoSintomas bit NOT NULL,
-			 * estadoContactoEstrecho bit NOT NULL, estadoAntecedentes bit NOT NULL,
-			 * resultado bit NOT NULL, fecha_autodiagnostico datetime NOT NULL,
-			 * fecha_hasta_resultado datetime NOT NULL, comentario varchar(100) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NULL, modificadoPor varchar(10) COLLATE
-			 * SQL_Latin1_General_CP1_CI_AS NULL, modificadoEn datetime NULL, idLugarAcceso
-			 * int NOT NULL, CONSTRAINT PK__autodiag__0A767AEC5B6FF7D0 PRIMARY KEY
-			 * (idAutodiagnostico) );
-			 * 
-			 * 
-			 * -- ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico foreign keys
-			 * 
-			 * ALTER TABLE ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico ADD CONSTRAINT
-			 * FK__autodiagn__idLug__2CF2ADDF FOREIGN KEY (idLugarAcceso) REFERENCES
-			 * ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso(idLugarAcceso);
-			 */
-			// ----------------------------------------------------
-
-			/*
-			 * Autodiagnosticos (tabla)
-			 * 
-			 * idAutodiagnostico int nroLegajo String dni String nombre String apellido
-			 * String telefono String empresa String mail String idLugarAcceso int
-			 * estadoSintomas boolean estadoContactoEstrecho boolean estadoAntecedentes
-			 * boolean resultado boolean fecha_autodiagnostico DateTime
-			 * fecha_hasta_resultado DateTime comentario string modificadoPor int
-			 * modificadoEn DateTime
-			 * 
-			 * 
-			 */
-
-			/*
-			 * Resultado
-			 * 
-			 * private Legajo legajo; private String temperaturaLabel ; private String
-			 * sintemasLabel ; private String contactosEstrechoLabel ; private String
-			 * antecedentesLabel ; private String temperatura ; private String sintomas ;
-			 * // @@ idSintomaLabel, 0/1 @@............@@ private String antecedentes ;
-			 * // @@ idAntecedenteLabel, 0/1 @@............@@ ;
-			 * 
-			 * // --------------------------------------------- nuevo modelo
-			 * 
-			 * private boolean estadoSintomas; private boolean estadoContactoEstrecho;
-			 * private boolean estadoAntecedentes;
-			 * 
-			 * private boolean resultado; private Date fecha_autodiagnostico; private Date
-			 * fecha_hasta_resultado; private String comentario; private int modificadoPor;
-			 * private Date modificadoEn;
-			 * 
-			 * // -------------------------------------------------
-			 * 
-			 * 
-			 * 
-			 * Legajo
-			 * 
-			 * private Integer idAutodiagnostico; private Integer version;
-			 * 
-			 * private String nroLegajo; private String dni; private String nombre; private
-			 * String apellido; private String telefono; private String empresa; private
-			 * String mail; private int idLugarAcceso;
-			 * 
-			 */
-
 			System.out.println("query autodiagnostico " + query.toString());
 			pstm.executeUpdate();
 
-			// recuperamos el id generado
-
-			// query = "SELECT * from EVAL_AUTODIAGNOSTICO.dbo.autodiagnostico where
-			// fecha_autodiagnostico = ?";
-			// query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico order by
-			// idAutodiagnostico desc ";
-
-			////////////////////////////////////////////////////////
 			// Recuperar el ID del autodiagnostico
 			int llave = 0;
 			ResultSet rsKeysAutodiag = pstm.getGeneratedKeys();
@@ -444,23 +285,6 @@ public class Servicios {
 
 			idAutodiagnostico = llave;
 			resultado.getLegajo().setIdAutodiagnostico(idAutodiagnostico);
-			////////////////////////////////////////////////////////
-
-//			query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico where  fecha_autodiagnostico = ? and nroLegajo = ?";
-//			pstm = conn.prepareStatement(query);
-//			String fecha = resultado.getFecha_autodiagnostico().replace("T", " ");
-//			fecha = fecha.substring(0,17) + "00";
-//			pstm.setString(1, fecha);
-//			pstm.setString(2, resultado.getLegajo().getNroLegajo());
-//			rs = pstm.executeQuery();
-
-//			while (rs.next()) {
-//				idAutodiagnostico = rs.getInt("idAutodiagnostico");
-//				// recuperar el dni y comparar para ver si es el usuario correcto ?
-//				resultado.getLegajo().setIdAutodiagnostico(idAutodiagnostico);
-//				System.out.println("Id autodiagnostico luego de guardarse en resultado: " + idAutodiagnostico);
-//				break;
-//			}
 
 			System.out.println("Id autodiagnostico " + idAutodiagnostico);
 
@@ -649,84 +473,4 @@ public class Servicios {
 		return 0;
 	}
 
-} // end class servicios
-
-// -------------------------------------------------------
-
-/*
- * Resumen de autoevaluación
- * 
- * Mi temperatura es: 37.0
- * 
- * Sin síntomas
- * 
- * Sin contacto estrecho
- * 
- * Sin antecedentes
- * 
- * 
- * 
- * 
- * 
- */
-
-/*
- * 
- * • FORM AUTOEVALUACION - TEMPERATURA
- * 
- * 37 • FORM AUTOEVALUACION - SINTOMAS
- * 
- * [ "no", "no", "no", "no", "no", "no", "no", "no", "no" ] • FORM
- * AUTOEVALUACION - ANTECEDENTES
- * 
- * [ false, false, false, false, false, false, false, false, false ] • ESTADO
- * SINTOMAS
- * 
- * false • ESTADO CONTACTO ESTRECHO
- * 
- * false • ESTADO ANTECEDENTES
- * 
- * false
- * 
- * 
- */
-
-// -----------------------------------------------------------------
-
-/*
- * 
- * Respuestas
- * 
- * -- ELEA_AUTODIAGNOSTICO.dbo.respuestas definition
- * 
- * -- Drop table
- * 
- * -- DROP TABLE ELEA_AUTODIAGNOSTICO.dbo.respuestas;
- * 
- * CREATE TABLE ELEA_AUTODIAGNOSTICO.dbo.respuestas ( idAutodiagnostico int
- * IDENTITY(1,1) NOT NULL, idPregunta int NOT NULL, respuestaPregunta
- * varchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL );
- * 
- * 
- * -- ELEA_AUTODIAGNOSTICO.dbo.respuestas foreign keys
- * 
- * ALTER TABLE ELEA_AUTODIAGNOSTICO.dbo.respuestas ADD CONSTRAINT
- * FK__respuesta__idAut__2739D489 FOREIGN KEY (idAutodiagnostico) REFERENCES
- * ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico(idAutodiagnostico); ALTER TABLE
- * ELEA_AUTODIAGNOSTICO.dbo.respuestas ADD CONSTRAINT
- * FK__respuesta__idPre__282DF8C2 FOREIGN KEY (idPregunta) REFERENCES
- * ELEA_AUTODIAGNOSTICO.dbo.preguntas(idPregunta);
- * 
- * 
- * 
- * // se agrega el campo id al comienzo para hacerlo autoincremental
- * 
- * CREATE TABLE ELEA_AUTODIAGNOSTICO.dbo.respuestas ( id int IDENTITY(1,1) NOT
- * NULL, idAutodiagnostico int NOT NULL, idPregunta int NOT NULL,
- * respuestaPregunta varchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
- * );
- * 
- * 
- * 
- * 
- */
+}

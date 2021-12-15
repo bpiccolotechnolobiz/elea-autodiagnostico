@@ -5,10 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -171,12 +168,9 @@ public class PreguntaService {
 //				+ "and p.idPregunta = r.idPregunta  and r.idAutodiagnostico = a.idAutodiagnostico "
 //				+ "and a.nroLegajo = ? order by a.fecha_autodiagnostico desc";
 		String query = "SELECT r.*, p.descripcionPregunta FROM preguntas p "
-				+ "LEFT JOIN respuestas r ON p.idPregunta = r.idPregunta " 
-				+ "WHERE p.idPantalla = ? " 
-				+ "AND r.idAutodiagnostico IN (SELECT MAX(ad.idAutodiagnostico) FROM autodiagnostico ad " 
-				+ " WHERE ad.nroLegajo = ?) "
-				+ "AND p.estadoLogico = 1 "
-				+ "ORDER BY p.idPregunta";
+				+ "LEFT JOIN respuestas r ON p.idPregunta = r.idPregunta " + "WHERE p.idPantalla = ? "
+				+ "AND r.idAutodiagnostico IN (SELECT MAX(ad.idAutodiagnostico) FROM autodiagnostico ad "
+				+ " WHERE ad.nroLegajo = ?) " + "AND p.estadoLogico = 1 " + "ORDER BY p.idPregunta";
 		Connection conn = null;
 		PreparedStatement pstm = null;
 
@@ -190,34 +184,25 @@ public class PreguntaService {
 //		Map<Integer, Respuesta> respuestasMap = new HashMap<>();
 		int idPregunta = 0;
 		while (rs.next()) {
-//			idPregunta = rs.getInt("idPregunta");
-//			if (respuestasMap.get(idPregunta) == null) {
 
-				Respuesta respuesta = new Respuesta();
-//				respuesta.setVersion(rs.getInt("version"));
-				respuesta.setTextoPregunta(rs.getString("descripcionPregunta"));
-				respuesta.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
-				respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
-				respuesta.setIdPregunta(rs.getInt("idPregunta"));
-//				respuestasMap.put(idPregunta, respuesta);
-				respuestas.add(respuesta);
-//			}
+			Respuesta respuesta = new Respuesta();
+			respuesta.setTextoPregunta(rs.getString("descripcionPregunta"));
+			respuesta.setIdAutodiagnostico(rs.getInt("idAutodiagnostico"));
+			respuesta.setRespuestaPregunta(rs.getString("respuestaPregunta"));
+			respuesta.setIdPregunta(rs.getInt("idPregunta"));
+			respuestas.add(respuesta);
 		}
-//		respuestas = respuestasMap.values().stream().collect(Collectors.toList());
-
 		if (conn != null) {
 			conn.close();
 		}
 		return respuestas;
 
 	}
-	
+
 	public List<Respuesta> getRespuestasPerfilEmpleado(String legajo) throws SQLException {
 		String query = "SELECT r.*, p.descripcionPregunta FROM preguntas p "
-				+ "LEFT JOIN respuestasPerfilEmpleado r ON p.idPregunta = r.idPregunta " 
-				+ "WHERE (p.idPantalla = 4 OR p.idPantalla = 5) " 
-				+ "AND r.nroLegajo = ? "
-				+ "AND p.estadoLogico = 1 "
+				+ "LEFT JOIN respuestasPerfilEmpleado r ON p.idPregunta = r.idPregunta "
+				+ "WHERE (p.idPantalla = 4 OR p.idPantalla = 5) " + "AND r.nroLegajo = ? " + "AND p.estadoLogico = 1 "
 				+ "ORDER BY p.idPregunta";
 		Connection conn = null;
 		PreparedStatement pstm = null;

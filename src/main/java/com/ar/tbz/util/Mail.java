@@ -1,8 +1,5 @@
 package com.ar.tbz.util;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,11 +16,8 @@ import java.util.Set;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.imageio.ImageIO;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -41,7 +35,6 @@ import com.ar.tbz.domain.Resultado;
 import com.ar.tbz.services.EstadisticaService;
 import com.ar.tbz.services.LugarAccesoService;
 import com.ar.tbz.services.PreguntaService;
-import com.itextpdf.text.Image;
 
 @Component
 public class Mail {
@@ -59,7 +52,6 @@ public class Mail {
 	QRService qrService;
 
 	public void envioMail2(Resultado resultado) throws Exception {
-		System.out.println("Enviando mail");
 
 		Properties propertiesFile = new Properties();
 		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
@@ -235,208 +227,6 @@ public class Mail {
 		}
 	}
 
-	// ENVIO MAIL
-	public void envioMail(Resultado resultado) throws Exception {
-		System.out.println("Enviando mail");
-
-		// Sender's email ID needs to be mentioned
-//		String from = "test.technolobiz@gmail.com";
-//		String password = "test.0321";
-//		String password = "test.0321";
-
-		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(Conexion.BACKEND_PROPERTIES_FILE)));
-
-		// Recipient's email ID needs to be mentioned.
-		String to = resultado.getLegajo().getEmailUsuario();
-//		String to2 = "consultorio.medico@elea.com";
-		String to2 = propertiesFile.getProperty("email.to");
-		List<Parametro> parametros = estadisticaService.obtenerParametros();
-		for (Parametro param : parametros) {
-			if (param.getDescripcionParametro().contains("Email del consultorio")) {
-				to2 = param.getValorParametro();
-			}
-		}
-		// Assuming you are sending email from through gmails smtp
-//		String host = "smtp.gmail.com";
-
-		String from = propertiesFile.getProperty("email.from");
-		String password = propertiesFile.getProperty("email.password");
-		String nameFrom = propertiesFile.getProperty("email.name");
-		// Assuming you are sending email from through gmails smtp
-
-		// Get system properties
-		Properties properties = System.getProperties();
-
-		// Setup mail server
-		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
-//		properties.put("mail.smtp.port", "465");
-		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
-
-//		properties.put("mail.smtp.ssl.enable", "true");
-//		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.ssl.enable", "false");
-		properties.put("mail.smtp.auth", "false");
-
-		// Get the Session object.// and pass username and password
-//		Session session = Session.getDefaultInstance(properties);
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, password);
-			}
-		});
-
-		// Used to debug SMTP issues
-		session.setDebug(false);
-
-		String cuerpoMail = "";
-		try {
-			// Create a default MimeMessage object.
-			MimeMessage message = new MimeMessage(session);
-
-			// Set From: header field of the header.
-			message.setFrom(new InternetAddress(from, nameFrom));
-
-			// Set To: header field of the header.
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-			// Set Subject: header field
-			String resultadoLeyenda = "";
-			if (resultado.isResultado()) {
-				resultadoLeyenda = "Habilitado";
-			} else {
-				resultadoLeyenda = "No habilitado";
-			}
-			message.setSubject(resultado.getLegajo().getNombre() + " " + resultado.getLegajo().getApellido()
-					+ " - Resultado de Autodiagnóstico: " + resultadoLeyenda);
-
-			// Hora del envio
-			message.setSentDate(new Date());
-
-			// -------------------------------------------PREPARANDO CUERPO DEL MAIL
-			Multipart multipart = new MimeMultipart();
-
-			// Imagenes
-//			String rutaImgElea = "..\\..\\..\\..\\..\\..\\..\\img\\elea-logo.png";
-//			String rutaImgTechnolobiz = "..\\..\\..\\..\\..\\..\\..\\img\\TechnoloBiz-logo.png";
-
-			// Url del directorio donde estan las imagenes
-			String urlImagenes = "..\\\\..\\\\..\\\\..\\\\..\\\\..\\\\..\\\\img";
-			File directorio = new File(urlImagenes);
-
-			// Obtener los nombres de las imagenes en el directorio
-			String[] imagenesDirectorio = directorio.list();
-
-			// Now set the actual message
-//			Image qrImage = qrService.generateQR(resultado);
-			ByteArrayOutputStream baos = qrService.generateQR(resultado);
-			Image qrImage = com.itextpdf.text.Image.getInstance(baos.toByteArray());
-
-			// Nombre del pdf
-			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
-			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
-
-			pdfCreateFile.crearPDF(resultado, qrImage, fileName);
-			String qrFileName = resultado.getLegajo().getDni() + QR_PNG;
-//			File outputfile = new File(qrFileName);
-			cuerpoMail = crearCuerpoMail(resultado, "");
-
-			// Creo la parte del mensaje HTML
-			MimeBodyPart mimeBodyPart = new MimeBodyPart();
-			mimeBodyPart.setContent(cuerpoMail, "text/html");
-
-			// Validar que el directorio si tenga las imagenes
-			if (imagenesDirectorio != null) {
-				for (int i = 0; i < imagenesDirectorio.length; i++) {
-
-					MimeBodyPart imagePart = new MimeBodyPart();
-					imagePart.setHeader("Content-ID", "<" + imagenesDirectorio[i] + ">");
-					imagePart.setDisposition(MimeBodyPart.INLINE);
-					imagePart.attachFile(urlImagenes + imagenesDirectorio[i]);
-					multipart.addBodyPart(imagePart);
-				}
-			} else {
-				System.out.println("No hay imagenes en el directorio");
-			}
-
-			// Agregar la parte del mensaje HTML al multiPart
-			multipart.addBodyPart(mimeBodyPart);
-
-			// PDF
-			MimeBodyPart pdfPart = new MimeBodyPart();
-
-//			String timestamp = DateUtil.formatSdf("yyyyMMddHHmm", new Date());
-//			String fileName = resultado.getLegajo().getDni() + timestamp + ".pdf";
-
-			DataSource source = new FileDataSource(fileName); // RUTA + NOMBRE DEL ARCHIVO A DESCARGAR
-			pdfPart.setDataHandler(new DataHandler(source));
-			pdfPart.setFileName(fileName); // NOMBRE CON EL CUÁL SE VA A
-											// DESCARGAR
-
-			pdfPart.setDisposition(MimeBodyPart.ATTACHMENT);
-			multipart.addBodyPart(pdfPart);
-
-			byte[] imageBytes = baos.toByteArray();
-			String qrFile = resultado.getLegajo().getDni() + QR_PNG;
-			ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
-			BufferedImage bImage2 = ImageIO.read(bis);
-			File outputFile = new File(qrFile);
-			ImageIO.write(bImage2, "png", outputFile);
-
-			String pathImg = new File(outputFile.toURI()).getAbsolutePath();
-
-			DataSource fds = new FileDataSource(pathImg);
-
-			MimeBodyPart messageBodyPartQR = new MimeBodyPart();
-			messageBodyPartQR.setDataHandler(new DataHandler(fds));
-			messageBodyPartQR.setHeader("Content-ID", "<image>");
-
-			// add image to the multipart
-			multipart.addBodyPart(messageBodyPartQR);
-
-//			att.setDataHandler(new DataHandler(bds));
-			// Agregar el multipart al cuerpo del mensaje
-			message.setContent(multipart);
-
-			System.out.println("sending...");
-
-			// Send message
-			Transport.send(message);
-			System.out.println("Mail enviado a Usuario");
-
-			// Enviando al Médico en caso No habilitado
-			if (!resultado.isResultado()) {
-				String[] toAddresses = to2.replace(" ", "").split(",");
-				message.setRecipient(Message.RecipientType.TO, new InternetAddress(toAddresses[0]));
-
-				if (toAddresses.length > 1) {
-					InternetAddress[] cc = new InternetAddress[toAddresses.length - 1];
-					for (int i = 1; i <= toAddresses.length - 1; i++) {
-						cc[i - 1] = new InternetAddress(toAddresses[i]);
-					}
-
-					message.addRecipients(Message.RecipientType.CC, cc);
-				}
-
-				message.setContent(cuerpoMail, "text/html");
-
-				System.out.println("sending...");
-
-				// Send message
-				Transport.send(message);
-				System.out.println("Mail enviado a Consultorio Médico");
-			}
-
-			Path pathFilename = Paths.get(fileName);
-			Files.delete(pathFilename);
-			Path pathFilenameQR = Paths.get(pathImg);
-			Files.delete(pathFilenameQR);
-		} catch (MessagingException mex) {
-			mex.printStackTrace();
-		}
-
-	}
-
 	// CUERPO MAIL
 	public String crearCuerpoMail(Resultado resultado, String cidKeyQR) throws IOException {
 		Legajo legajo = resultado.getLegajo();
@@ -446,13 +236,8 @@ public class Mail {
 		cuerpoMail.append(
 				"<div style=\"color:black;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:14px;background-color:#fff;margin:0 auto;padding:3em 0 3em;width:90%;\">");
 
-		// Agregando estilos
-//		cuerpoMail += stylesMail();
-
-		// Agregando header
 		cuerpoMail.append(headerMail());
 
-		// Datos del usuario
 		cuerpoMail.append("<p>Estimado/a,</p>"
 				+ "<p style=\"margin-bottom:0;\">El resultado del autodiagnóstico realizado por<strong> "
 				+ legajo.getNombre() + " " + legajo.getApellido() + "</strong> es:</p>");
@@ -557,10 +342,6 @@ public class Mail {
 		return "<br>\r\n" + "    <p>Este correo es automático, por favor no responder.</p>\r\n"
 				+ "    <p style=\"margin-top: 0;\">Gracias.<br>\r\n" + "        Saludos.<br>\r\n"
 				+ "        APP - Autodiagnóstico.<p>";
-//				+ "    <div style=\"text-align:center;\">\r\n"
-//				+ "        <div style=\"text-align:left;\"><img style=\"width:25%;max-width:175px;\" src=\"http://34.239.14.244/assets/elea-logo-v2@2x.png\" alt=\"elea-logo\"></div>\r\n"
-//				+ "        <div style=\"text-align:left;\"><img style=\"width:30%;max-width:250px;\" src=\"http://34.239.14.244/assets/TechnoloBiz.png\" alt=\"technolobiz-logo\"></div>\r\n"
-//				+ "    </div>";
 	}
 
 	// RESPUESTAS VACUNACION

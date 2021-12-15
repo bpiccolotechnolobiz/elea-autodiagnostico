@@ -124,10 +124,6 @@ public class LegajoController {
 			System.out.println("Sale del  read base de datos " + new Date());
 
 		}
-//		Servicios.crearMail(new Resultado());
-
-		System.out.println("Sale  del proceso legajo " + new Date() + "   " + legajo);
-
 		return legajo;
 
 	}
@@ -164,33 +160,10 @@ public class LegajoController {
 	@RequestMapping(value = "/autodiagnostico/{id}", method = RequestMethod.POST, produces = "application/json")
 	public void crearAutodiagnostico(@PathVariable Integer id) throws Exception {
 
-		Resultado resultado = new Resultado();
-
-		// test create results......
-		boolean createResults = true;
-
-		// ------------------------------------ sacar se usa solo testing
-
-		System.out.println("Entra al proceso autodiagnostico/{id} " + new Date() + "ID " + id);
-
-		// boolean createResults = false ;
-		Resultado resultTest = null;
-		if (createResults) {
-			resultado = createResultsToText();
-		}
-
-		Legajo legajo = resultado.getLegajo();
-		// legajo
+		Resultado resultado = createResultsToText();
 
 		Servicios.grabarAutoDiagnostico(resultado);
-
-//		Servicios.crearTransacciones(resultado);
-
 		servicios.crearMail(resultado);
-//		Servicios.crearPDF(resultado);
-//		Servicios.crearQRCode(resultado);
-
-		// Servicios.envioMail(resultado);
 
 	}
 

@@ -48,6 +48,7 @@ public class BusquedaService {
 						sb.append(" and a." + entry.getKey() + " = " + entry.getValue());
 					}
 				}
+
 			}
 
 			sb.append(" order by fecha_autodiagnostico desc");
@@ -115,7 +116,7 @@ public class BusquedaService {
 	public Autodiagnostico buscarAutodiagnostico(String nroLegajo, String dni) throws Exception {
 		String query = "SELECT * from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a "
 				+ "  where a.nroLegajo = ? and a.dni = ? order by a.idAutodiagnostico desc";
-		
+
 		StringBuilder sb = new StringBuilder(query);
 		Connection conn = null;
 		Autodiagnostico nuevoAutoD = null;
@@ -159,10 +160,10 @@ public class BusquedaService {
 		}
 		return nuevoAutoD;
 	}
-	
-	
+
 	// buscar autodiagnosticos con respuestas
-	public List<Autodiagnostico> buscarDiagnosticoConRespuestas(Map<String, String> form, String min, String max) throws Exception {
+	public List<Autodiagnostico> buscarDiagnosticoConRespuestas(Map<String, String> form, String min, String max)
+			throws Exception {
 		String query = "SELECT a.*, l.* from ELEA_AUTODIAGNOSTICO.dbo.autodiagnostico a, ELEA_AUTODIAGNOSTICO.dbo.lugarAcceso l "
 				+ "  where 1=1 and a.idLugarAcceso = l.idLugarAcceso ";
 		// ROWNUM BETWEEN " + min + " AND " + max +
@@ -213,24 +214,24 @@ public class BusquedaService {
 				nuevoAutoD.setModificadoPor(rs.getInt("modificadoPor"));
 				nuevoAutoD.setModificadoEn(rs.getTimestamp("modificadoEn"));
 				nuevoAutoD.setDescripcionLugarAcceso(rs.getString("descripcionLugarAcceso"));
-				
-				
+
 				List<Respuesta> respuestas = new ArrayList<>();
-				String queryRtas = "SELECT * FROM ELEA_AUTODIAGNOSTICO.dbo.respuestas WHERE idAutodiagnostico = " + rs.getInt("idAutodiagnostico");
+				String queryRtas = "SELECT * FROM ELEA_AUTODIAGNOSTICO.dbo.respuestas WHERE idAutodiagnostico = "
+						+ rs.getInt("idAutodiagnostico");
 				pstm = conn.prepareStatement(queryRtas);
 				ResultSet rsRtas = pstm.executeQuery();
-				while(rsRtas.next()) {
+				while (rsRtas.next()) {
 					Respuesta rta = new Respuesta();
 					rta.setId(rsRtas.getInt("id"));
 					rta.setIdAutodiagnostico(rsRtas.getInt("idAutodiagnostico"));
 					rta.setIdPregunta(rsRtas.getInt("idPregunta"));
 					rta.setRespuestaPregunta(rsRtas.getString("respuestaPregunta"));
-					
+
 					respuestas.add(rta);
 				}
-				
+
 				nuevoAutoD.setRespuestas(respuestas);
-				
+
 				resultado.add(nuevoAutoD);
 			}
 
