@@ -18,6 +18,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -51,6 +52,10 @@ public class Mail {
 	@Autowired
 	QRService qrService;
 
+	public static final String EVENT_FILE = "/aplicaciones/autodiagnostico/imagen-evento.jpg";
+	private static final String CID_IMAGE_EVENT = "imageEvent";
+	private static final String CID_IMAGE_QR = "imageEvent";
+
 	public void envioMail2(Resultado resultado) throws Exception {
 
 		Properties propertiesFile = new Properties();
@@ -69,18 +74,18 @@ public class Mail {
 		// Setup mail server
 		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
-		properties.put("mail.smtp.ssl.enable", "false");
-		properties.put("mail.smtp.auth", "false");
-//		properties.put("mail.smtp.ssl.enable", "true");
-//		properties.put("mail.smtp.auth", "true");
+//		properties.put("mail.smtp.ssl.enable", "false");
+//		properties.put("mail.smtp.auth", "false");
+		properties.put("mail.smtp.ssl.enable", "true");
+		properties.put("mail.smtp.auth", "true");
 
 		// Get the Session object.// and pass username and password
-		Session session = Session.getDefaultInstance(properties);
-//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-//			protected PasswordAuthentication getPasswordAuthentication() {
-//				return new PasswordAuthentication(from, password);
-//			}
-//		});
+//		Session session = Session.getDefaultInstance(properties);
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(from, password);
+			}
+		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
@@ -103,12 +108,13 @@ public class Mail {
 		String fileNamePDF = resultado.getLegajo().getDni() + timestamp + ".pdf";
 		// Nombre de la imagen QR
 		String fileNameQR = resultado.getLegajo().getDni() + QR_PNG;
-
+		File imageEvent = new File(EVENT_FILE);
 		// CID imgs
-		String cidKeyQR = "QR";
+
 		Map<String, String> inlineImages = new HashMap<String, String>();
 		if (resultado.isResultado()) {
-			inlineImages.put(cidKeyQR, fileNameQR);
+			inlineImages.put(CID_IMAGE_QR, fileNameQR);
+			inlineImages.put(CID_IMAGE_EVENT, imageEvent.getPath());
 		}
 
 		try {
@@ -154,7 +160,7 @@ public class Mail {
 			}
 
 			// ---------------CUERPO MAIL
-			cuerpoMail = crearCuerpoMail(resultado, cidKeyQR);
+			cuerpoMail = crearCuerpoMail(resultado, CID_IMAGE_QR, CID_IMAGE_EVENT);
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -228,7 +234,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado, String cidKeyQR) throws IOException {
+	public String crearCuerpoMail(Resultado resultado, String cidKeyQR, String cidKeyImageEvent) throws IOException {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -277,6 +283,10 @@ public class Mail {
 		cuerpoMail.append("<p style=\"margin: 2px 0 8px; font-size: 40px;\">");
 		if (resultado.isResultado()) {
 			cuerpoMail.append("<strong style=\"color: #28a745;\">Habilitado</strong>");
+			if (cidKeyImageEvent != null && !legajo.getNroLegajo().equals("0")) {
+				cuerpoMail.append("<img src=\"cid:" + cidKeyImageEvent + "\" width=\"150\" height=\"150\">");
+
+			}
 		} else {
 			cuerpoMail.append("<strong style=\"color: #dc3545;\">No habilitado</strong>");
 		}
