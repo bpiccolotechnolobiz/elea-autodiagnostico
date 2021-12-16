@@ -52,9 +52,9 @@ public class Mail {
 	@Autowired
 	QRService qrService;
 
-	public static final String EVENT_FILE = "/aplicaciones/autodiagnostico/imagen-evento.jpg";
+	public static final String EVENT_FILE = "/aplicaciones/autodiagnostico/imagen-evento.png";
 	private static final String CID_IMAGE_EVENT = "imageEvent";
-	private static final String CID_IMAGE_QR = "imageEvent";
+	private static final String CID_IMAGE_QR = "QR";
 
 	public void envioMail2(Resultado resultado) throws Exception {
 
@@ -74,18 +74,23 @@ public class Mail {
 		// Setup mail server
 		properties.put("mail.smtp.host", propertiesFile.getProperty("email.smtp"));
 		properties.put("mail.smtp.port", propertiesFile.getProperty("email.port"));
-//		properties.put("mail.smtp.ssl.enable", "false");
-//		properties.put("mail.smtp.auth", "false");
-		properties.put("mail.smtp.ssl.enable", "true");
-		properties.put("mail.smtp.auth", "true");
+		
+		// Config Elea
+		properties.put("mail.smtp.ssl.enable", "false");
+		properties.put("mail.smtp.auth", "false");
+		// Config TBIZ
+//		properties.put("mail.smtp.ssl.enable", "true");
+//		properties.put("mail.smtp.auth", "true");
 
 		// Get the Session object.// and pass username and password
-//		Session session = Session.getDefaultInstance(properties);
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(from, password);
-			}
-		});
+		// Config Elea
+		Session session = Session.getDefaultInstance(properties);
+		// Config TBIZ
+//		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+//			protected PasswordAuthentication getPasswordAuthentication() {
+//				return new PasswordAuthentication(from, password);
+//			}
+//		});
 
 		// Used to debug SMTP issues
 		session.setDebug(false);
@@ -108,13 +113,21 @@ public class Mail {
 		String fileNamePDF = resultado.getLegajo().getDni() + timestamp + ".pdf";
 		// Nombre de la imagen QR
 		String fileNameQR = resultado.getLegajo().getDni() + QR_PNG;
+		
+		// Imagen evento
 		File imageEvent = new File(EVENT_FILE);
+		boolean existeImgEvento = false;
+		if(imageEvent.exists()) {
+			existeImgEvento = true;
+		}
+		
 		// CID imgs
-
 		Map<String, String> inlineImages = new HashMap<String, String>();
 		if (resultado.isResultado()) {
 			inlineImages.put(CID_IMAGE_QR, fileNameQR);
-			inlineImages.put(CID_IMAGE_EVENT, imageEvent.getPath());
+			if(existeImgEvento) {
+				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE);
+			}
 		}
 
 		try {
@@ -160,7 +173,7 @@ public class Mail {
 			}
 
 			// ---------------CUERPO MAIL
-			cuerpoMail = crearCuerpoMail(resultado, CID_IMAGE_QR, CID_IMAGE_EVENT);
+			cuerpoMail = crearCuerpoMail(resultado, existeImgEvento);
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -234,7 +247,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado, String cidKeyQR, String cidKeyImageEvent) throws IOException {
+	public String crearCuerpoMail(Resultado resultado, boolean existeImgEvento) throws IOException {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -279,14 +292,16 @@ public class Mail {
 		cuerpoMail.append("</u><br>");
 		// fin datos del usuario
 
+
+		// Img evento
+		if (existeImgEvento && resultado.isResultado() && !legajo.getNroLegajo().equals("0")) {
+			cuerpoMail.append("<div style=\"text-align:center;\"><img src=\"cid:" + CID_IMAGE_EVENT + "\" width=\"150\" height=\"150\"></div>");
+		}
+		
 		// Datos del autodiagnostico
 		cuerpoMail.append("<p style=\"margin: 2px 0 8px; font-size: 40px;\">");
 		if (resultado.isResultado()) {
 			cuerpoMail.append("<strong style=\"color: #28a745;\">Habilitado</strong>");
-			if (cidKeyImageEvent != null && !legajo.getNroLegajo().equals("0")) {
-				cuerpoMail.append("<img src=\"cid:" + cidKeyImageEvent + "\" width=\"150\" height=\"150\">");
-
-			}
 		} else {
 			cuerpoMail.append("<strong style=\"color: #dc3545;\">No habilitado</strong>");
 		}
@@ -318,7 +333,7 @@ public class Mail {
 
 			cuerpoMail.append(
 					"<br><p>Presente este código QR a quien corresponda para certificar que su resultado fue habilitado.</p>\r\n"
-							+ "    <div style=\"text-align:center;\"><img src=\"cid:" + cidKeyQR + "\" "
+							+ "    <div style=\"text-align:center;\"><img src=\"cid:" + CID_IMAGE_QR + "\" "
 							+ "alt=\"qr-resultado\" width=\"150\" height=\"150\"></div>");
 
 		}
