@@ -52,7 +52,9 @@ public class Mail {
 	@Autowired
 	QRService qrService;
 
-	public static final String EVENT_FILE = "/aplicaciones/autodiagnostico/imagen-evento.png";
+	public static final String EVENT_FILE_EMPLEADOS = "/aplicaciones/autodiagnostico/imagen-evento-empleados.png";
+	public static final String EVENT_FILE_EXTERNOS = "/aplicaciones/autodiagnostico/imagen-evento-externos.png";
+	public static final String EVENT_FILE_TODOS = "/aplicaciones/autodiagnostico/imagen-evento-todos.png";
 	private static final String CID_IMAGE_EVENT = "imageEvent";
 	private static final String CID_IMAGE_QR = "QR";
 
@@ -115,20 +117,35 @@ public class Mail {
 		String fileNameQR = resultado.getLegajo().getDni() + QR_PNG;
 		
 		// Imagen evento
-		File imageEvent = new File(EVENT_FILE);
-		boolean existeImgEvento = false;
+		boolean existeImgEventoEmpleados = false;
+		boolean existeImgEventoExternos = false;
+		File imageEvent = new File(EVENT_FILE_TODOS);
 		if(imageEvent.exists()) {
-			existeImgEvento = true;
+			existeImgEventoEmpleados = true;
+			existeImgEventoExternos = true;
+		}
+		imageEvent = new File(EVENT_FILE_EMPLEADOS);
+		if(imageEvent.exists()) {
+			existeImgEventoEmpleados = true;
+		}
+		imageEvent = new File(EVENT_FILE_EXTERNOS);
+		if(imageEvent.exists()) {
+			existeImgEventoExternos = true;
 		}
 		
 		// CID imgs
 		Map<String, String> inlineImages = new HashMap<String, String>();
 		if (resultado.isResultado()) {
 			inlineImages.put(CID_IMAGE_QR, fileNameQR);
-			if(existeImgEvento) {
-				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE);
+			if(existeImgEventoEmpleados && existeImgEventoExternos) {
+				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_TODOS);
+			} else if(existeImgEventoEmpleados && !resultado.getLegajo().getNroLegajo().equals("0")) {
+				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_EMPLEADOS);
+			} else if(existeImgEventoExternos && resultado.getLegajo().getNroLegajo().equals("0")) {
+				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_EXTERNOS);
 			}
-		}
+		} // se verifica tambien el nro de legajo para que no adjunte la imagen en el mail por mas q no
+		  // la agregue despues al cuerpo del mismo
 
 		try {
 			// Create a default MimeMessage object.
@@ -173,7 +190,7 @@ public class Mail {
 			}
 
 			// ---------------CUERPO MAIL
-			cuerpoMail = crearCuerpoMail(resultado, existeImgEvento);
+			cuerpoMail = crearCuerpoMail(resultado, existeImgEventoEmpleados, existeImgEventoExternos);
 
 			// Creo la parte del mensaje HTML
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -247,7 +264,7 @@ public class Mail {
 	}
 
 	// CUERPO MAIL
-	public String crearCuerpoMail(Resultado resultado, boolean existeImgEvento) throws IOException {
+	public String crearCuerpoMail(Resultado resultado, boolean existeImgEventoEmpleados, boolean existeImgEventoExternos) throws IOException {
 		Legajo legajo = resultado.getLegajo();
 
 		StringBuffer cuerpoMail = new StringBuffer();
@@ -294,7 +311,9 @@ public class Mail {
 
 
 		// Img evento
-		if (existeImgEvento && resultado.isResultado() && !legajo.getNroLegajo().equals("0")) {
+		if (resultado.isResultado() && 
+				((existeImgEventoEmpleados && !legajo.getNroLegajo().equals("0"))
+				|| (existeImgEventoExternos && legajo.getNroLegajo().equals("0")))) {
 			cuerpoMail.append("<div style=\"text-align:center;\"><img src=\"cid:" + CID_IMAGE_EVENT + "\" width=\"150\" height=\"150\"></div>");
 		}
 		
