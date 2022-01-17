@@ -18,7 +18,6 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -27,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ar.tbz.conexion.Conexion;
@@ -52,9 +52,12 @@ public class Mail {
 	@Autowired
 	QRService qrService;
 
-	public static final String EVENT_FILE_EMPLEADOS = "/aplicaciones/autodiagnostico/imagen-evento-empleados.png";
-	public static final String EVENT_FILE_EXTERNOS = "/aplicaciones/autodiagnostico/imagen-evento-externos.png";
-	public static final String EVENT_FILE_TODOS = "/aplicaciones/autodiagnostico/imagen-evento-todos.png";
+	@Value("${event.file.employee}")
+	String eventFileEmpl;
+	@Value("${event.file.external}")
+	String eventFileExt;
+	@Value("${event.file.all}")
+	String eventFileAll;
 	private static final String CID_IMAGE_EVENT = "imageEvent";
 	private static final String CID_IMAGE_QR = "QR";
 
@@ -119,16 +122,16 @@ public class Mail {
 		// Imagen evento
 		boolean existeImgEventoEmpleados = false;
 		boolean existeImgEventoExternos = false;
-		File imageEvent = new File(EVENT_FILE_TODOS);
+		File imageEvent = new File(eventFileEmpl);
 		if(imageEvent.exists()) {
 			existeImgEventoEmpleados = true;
 			existeImgEventoExternos = true;
 		}
-		imageEvent = new File(EVENT_FILE_EMPLEADOS);
+		imageEvent = new File(eventFileExt);
 		if(imageEvent.exists()) {
 			existeImgEventoEmpleados = true;
 		}
-		imageEvent = new File(EVENT_FILE_EXTERNOS);
+		imageEvent = new File(eventFileAll);
 		if(imageEvent.exists()) {
 			existeImgEventoExternos = true;
 		}
@@ -138,11 +141,11 @@ public class Mail {
 		if (resultado.isResultado()) {
 			inlineImages.put(CID_IMAGE_QR, fileNameQR);
 			if(existeImgEventoEmpleados && existeImgEventoExternos) {
-				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_TODOS);
+				inlineImages.put(CID_IMAGE_EVENT, eventFileEmpl);
 			} else if(existeImgEventoEmpleados && !resultado.getLegajo().getNroLegajo().equals("0")) {
-				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_EMPLEADOS);
+				inlineImages.put(CID_IMAGE_EVENT, eventFileExt);
 			} else if(existeImgEventoExternos && resultado.getLegajo().getNroLegajo().equals("0")) {
-				inlineImages.put(CID_IMAGE_EVENT, EVENT_FILE_EXTERNOS);
+				inlineImages.put(CID_IMAGE_EVENT, eventFileAll);
 			}
 		} // se verifica tambien el nro de legajo para que no adjunte la imagen en el mail por mas q no
 		  // la agregue despues al cuerpo del mismo
