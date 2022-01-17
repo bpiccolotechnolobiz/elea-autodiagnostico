@@ -122,16 +122,16 @@ public class Mail {
 		// Imagen evento
 		boolean existeImgEventoEmpleados = false;
 		boolean existeImgEventoExternos = false;
-		File imageEvent = new File(eventFileEmpl);
+		File imageEvent = new File(eventFileAll);
 		if(imageEvent.exists()) {
 			existeImgEventoEmpleados = true;
 			existeImgEventoExternos = true;
 		}
-		imageEvent = new File(eventFileExt);
+		imageEvent = new File(eventFileEmpl);
 		if(imageEvent.exists()) {
 			existeImgEventoEmpleados = true;
 		}
-		imageEvent = new File(eventFileAll);
+		imageEvent = new File(eventFileExt);
 		if(imageEvent.exists()) {
 			existeImgEventoExternos = true;
 		}
@@ -141,11 +141,11 @@ public class Mail {
 		if (resultado.isResultado()) {
 			inlineImages.put(CID_IMAGE_QR, fileNameQR);
 			if(existeImgEventoEmpleados && existeImgEventoExternos) {
-				inlineImages.put(CID_IMAGE_EVENT, eventFileEmpl);
-			} else if(existeImgEventoEmpleados && !resultado.getLegajo().getNroLegajo().equals("0")) {
-				inlineImages.put(CID_IMAGE_EVENT, eventFileExt);
-			} else if(existeImgEventoExternos && resultado.getLegajo().getNroLegajo().equals("0")) {
 				inlineImages.put(CID_IMAGE_EVENT, eventFileAll);
+			} else if(existeImgEventoEmpleados && !resultado.getLegajo().getNroLegajo().equals("0")) {
+				inlineImages.put(CID_IMAGE_EVENT, eventFileEmpl);
+			} else if(existeImgEventoExternos && resultado.getLegajo().getNroLegajo().equals("0")) {
+				inlineImages.put(CID_IMAGE_EVENT, eventFileExt);
 			}
 		} // se verifica tambien el nro de legajo para que no adjunte la imagen en el mail por mas q no
 		  // la agregue despues al cuerpo del mismo
