@@ -40,6 +40,9 @@ import com.ar.tbz.services.PreguntaService;
 @Component
 public class Mail {
 
+//	private static final String LOGO_ELEA_PNG = "elea-logo.png";
+	@Value("${logo.elea.file}")
+	private String logoElea;
 	private static final String QR_PNG = "qr.png";
 	@Autowired
 	LugarAccesoService lugarAccesoService;
@@ -60,6 +63,7 @@ public class Mail {
 	String eventFileAll;
 	private static final String CID_IMAGE_EVENT = "imageEvent";
 	private static final String CID_IMAGE_QR = "QR";
+	private static final String CID_IMAGE_LOGO_ELEA = "logoElea";
 
 	public void envioMail2(Resultado resultado) throws Exception {
 
@@ -138,6 +142,7 @@ public class Mail {
 		
 		// CID imgs
 		Map<String, String> inlineImages = new HashMap<String, String>();
+		inlineImages.put(CID_IMAGE_LOGO_ELEA, logoElea);
 		if (resultado.isResultado()) {
 			inlineImages.put(CID_IMAGE_QR, fileNameQR);
 			if(existeImgEventoEmpleados && existeImgEventoExternos) {
@@ -317,7 +322,7 @@ public class Mail {
 		if (resultado.isResultado() && 
 				((existeImgEventoEmpleados && !legajo.getNroLegajo().equals("0"))
 				|| (existeImgEventoExternos && legajo.getNroLegajo().equals("0")))) {
-			cuerpoMail.append("<div style=\"text-align:center;\"><img src=\"cid:" + CID_IMAGE_EVENT + "\" width=\"150\" height=\"150\"></div>");
+			cuerpoMail.append("<div style=\"text-align:center;\"><img src=\"cid:" + CID_IMAGE_EVENT + "\" alt=\"imagen-evento\" width=\"150\" height=\"150\"></div>");
 		}
 		
 		// Datos del autodiagnostico
@@ -379,8 +384,7 @@ public class Mail {
 
 	private static String headerMail() {
 		return "<div style=\"text-align:center;\">\r\n"
-				+ "        <img style=\"width:50%;max-width:215px;\" src=\"http://34.239.14.244/assets/elea-logo-v2@2x.png\" alt=\"elea-logo\">\r\n"
-//				+ "        <img style=\"width:50%;max-width:215px;\" src=\"cid:elea-logo.png\" alt=\"elea-logo\">\r\n"
+				+ "        <img style=\"width:50%;max-width:215px;\" src=\"cid:" + CID_IMAGE_LOGO_ELEA + "\" alt=\"elea-logo\">\r\n"
 				+ "    </div>\r\n" + "    <br>";
 	}
 
